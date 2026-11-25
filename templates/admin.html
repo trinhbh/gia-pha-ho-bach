@@ -1,0 +1,1031 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Quản Trị Gia Phả Họ Bạch - Web App</title>
+    <style>
+        :root {
+            --primary: #7b1e1e;
+            --primary-dark: #581212;
+            --gold: #c8963e;
+            --bg: #f6f4f0;
+            --card: #ffffff;
+            --text: #222222;
+            --muted: #666666;
+            --border: #e2ddd5;
+            --blue: #2563eb;
+            --green: #15803d;
+            --danger: #dc2626;
+        }
+        * { box-sizing: border-box; margin: 0; padding: 0; }
+        body { font-family: "Segoe UI", Roboto, Arial, sans-serif; background: var(--bg); color: var(--text); }
+
+        header {
+            background: linear-gradient(135deg, var(--primary-dark), var(--primary));
+            color: #fff;
+            padding: 16px 24px;
+            display: flex;
+            flex-wrap: wrap;
+            justify-content: space-between;
+            align-items: center;
+            gap: 12px;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.15);
+        }
+        header h1 { font-size: 1.35rem; letter-spacing: 0.3px; }
+        header p { font-size: 0.85rem; opacity: 0.9; margin-top: 2px; }
+        .header-actions { display: flex; gap: 10px; flex-wrap: wrap; }
+
+        .btn {
+            padding: 8px 14px;
+            border-radius: 6px;
+            border: none;
+            font-size: 0.88rem;
+            font-weight: 600;
+            cursor: pointer;
+            display: inline-flex;
+            align-items: center;
+            gap: 6px;
+            text-decoration: none;
+            transition: opacity 0.15s, transform 0.1s;
+        }
+        .btn:hover { opacity: 0.92; }
+        .btn:active { transform: scale(0.98); }
+        .btn-gold { background: var(--gold); color: #fff; }
+        .btn-primary { background: var(--primary); color: #fff; }
+        .btn-blue { background: var(--blue); color: #fff; }
+        .btn-green { background: var(--green); color: #fff; }
+        .btn-danger { background: var(--danger); color: #fff; }
+        .btn-light { background: #fff; color: var(--text); border: 1px solid var(--border); }
+        .btn-sm { padding: 5px 10px; font-size: 0.8rem; }
+
+        .nav-tabs {
+            background: #fff;
+            border-bottom: 1px solid var(--border);
+            padding: 0 24px;
+            display: flex;
+            gap: 8px;
+            overflow-x: auto;
+        }
+        .tab-btn {
+            background: transparent;
+            border: none;
+            padding: 13px 16px;
+            font-size: 0.92rem;
+            font-weight: 600;
+            color: var(--muted);
+            cursor: pointer;
+            border-bottom: 3px solid transparent;
+            white-space: nowrap;
+        }
+        .tab-btn.active { color: var(--primary); border-bottom-color: var(--primary); }
+
+        .container { max-width: 1400px; margin: 20px auto; padding: 0 20px; }
+        .tab-pane { display: none; }
+        .tab-pane.active { display: block; }
+
+        .card {
+            background: var(--card);
+            border: 1px solid var(--border);
+            border-radius: 10px;
+            padding: 18px;
+            box-shadow: 0 1px 4px rgba(0,0,0,0.04);
+            margin-bottom: 18px;
+        }
+        .toolbar {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 10px;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 14px;
+        }
+        .filters { display: flex; flex-wrap: wrap; gap: 10px; flex: 1; }
+        input[type="text"], select, textarea {
+            padding: 8px 11px;
+            border: 1px solid #d1d5db;
+            border-radius: 6px;
+            font-size: 0.9rem;
+            font-family: inherit;
+        }
+        input[type="text"]:focus, select:focus, textarea:focus {
+            outline: none;
+            border-color: var(--primary);
+        }
+        .search-box { min-width: 260px; flex: 1; max-width: 420px; }
+
+        .table-wrap { overflow-x: auto; }
+        table { width: 100%; border-collapse: collapse; font-size: 0.88rem; }
+        th, td { padding: 10px 10px; border-bottom: 1px solid var(--border); text-align: left; vertical-align: top; }
+        th { background: #faf8f5; color: var(--primary-dark); font-weight: 700; white-space: nowrap; }
+        tr:hover { background: #fdfbf8; }
+
+        .badge {
+            display: inline-block;
+            padding: 2px 8px;
+            border-radius: 12px;
+            font-size: 0.76rem;
+            font-weight: 600;
+            background: #f3ece2;
+            color: var(--primary);
+            white-space: nowrap;
+        }
+        .contact-pill {
+            display: inline-block;
+            font-size: 0.78rem;
+            padding: 2px 7px;
+            border-radius: 4px;
+            background: #eff6ff;
+            color: #1d4ed8;
+            text-decoration: none;
+            margin-right: 4px;
+            margin-bottom: 3px;
+        }
+
+        .modal {
+            display: none;
+            position: fixed;
+            inset: 0;
+            background: rgba(0,0,0,0.55);
+            z-index: 1000;
+            padding: 20px;
+            overflow-y: auto;
+            align-items: flex-start;
+            justify-content: center;
+        }
+        .modal.active { display: flex; }
+        .modal-box {
+            background: #fff;
+            width: 100%;
+            max-width: 820px;
+            border-radius: 10px;
+            padding: 22px;
+            margin: 20px auto;
+            box-shadow: 0 10px 30px rgba(0,0,0,0.25);
+        }
+        .modal-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            border-bottom: 1px solid var(--border);
+            padding-bottom: 10px;
+            margin-bottom: 16px;
+        }
+        .modal-header h2 { color: var(--primary); font-size: 1.2rem; }
+        .close-btn { background: none; border: none; font-size: 1.6rem; cursor: pointer; color: var(--muted); }
+
+        .form-section-title {
+            font-size: 0.85rem;
+            text-transform: uppercase;
+            color: var(--primary);
+            font-weight: 700;
+            margin: 14px 0 8px;
+            padding-bottom: 4px;
+            border-bottom: 1px dashed var(--border);
+        }
+        .form-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+            gap: 12px;
+        }
+        .form-group { display: flex; flex-direction: column; gap: 4px; }
+        .form-group label { font-size: 0.82rem; font-weight: 600; color: #374151; }
+        .form-group.full { grid-column: 1 / -1; }
+        .modal-footer {
+            display: flex;
+            justify-content: flex-end;
+            gap: 10px;
+            margin-top: 18px;
+            padding-top: 12px;
+            border-top: 1px solid var(--border);
+        }
+
+        .toast {
+            position: fixed;
+            bottom: 20px;
+            right: 20px;
+            background: #1f2937;
+            color: #fff;
+            padding: 12px 18px;
+            border-radius: 8px;
+            font-size: 0.9rem;
+            z-index: 2000;
+            display: none;
+            box-shadow: 0 4px 12px rgba(0,0,0,0.2);
+        }
+        .toast.show { display: block; }
+        .toast.error { background: var(--danger); }
+        .toast.success { background: var(--green); }
+
+        .guide-list { padding-left: 20px; line-height: 1.75; font-size: 0.92rem; }
+        .checkbox-row {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            background: #fffbeb;
+            border: 1px solid #fde68a;
+            padding: 12px 14px;
+            border-radius: 8px;
+            margin: 12px 0;
+            font-size: 0.92rem;
+        }
+        .father-picker { position: relative; }
+        .father-search-wrap { display: flex; align-items: center; gap: 6px; }
+        .father-dropdown {
+            position: absolute;
+            top: 100%;
+            left: 0;
+            right: 0;
+            max-height: 300px;
+            overflow-y: auto;
+            background: #fff;
+            border: 1px solid #d1d5db;
+            border-radius: 0 0 8px 8px;
+            box-shadow: 0 12px 28px rgba(0,0,0,0.16);
+            z-index: 1200;
+            display: none;
+        }
+        .father-dropdown.open { display: block; }
+        .father-opt {
+            padding: 7px 12px;
+            cursor: pointer;
+            border-bottom: 1px solid #f3f4f6;
+            font-size: 0.85rem;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            gap: 10px;
+        }
+        .father-opt:hover { background: #fdf6e7; }
+        .father-opt.selected { background: #fef3c7; font-weight: 600; }
+        .father-opt-main { overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+        .father-tree-prefix { color: #9ca3af; font-family: Consolas, monospace; }
+        .father-opt-meta { font-size: 0.76rem; color: var(--muted); white-space: nowrap; flex-shrink: 0; }
+    </style>
+</head>
+<body>
+    <header>
+        <div>
+            <h1>🏛️ HỆ THỐNG QUẢN TRỊ GIA PHẢ HỌ BẠCH</h1>
+            <p id="headerSummary">Đang tải dữ liệu gia phả...</p>
+        </div>
+        <div class="header-actions">
+            <a href="/viewer" target="_blank" class="btn btn-light">🌳 Xem Cây Phả Hệ</a>
+            <button class="btn btn-gold" onclick="quickExportHtml()">🚀 Xuất HTML Public (1-Click)</button>
+        </div>
+    </header>
+
+    <div class="nav-tabs">
+        <button class="tab-btn active" onclick="switchTab('tab-people', this)">👥 Quản Lý Nhân Đinh</button>
+        <button class="tab-btn" onclick="switchTab('tab-deaths', this)">📅 Quản Lý Lịch Kỵ Giỗ</button>
+        <button class="tab-btn" onclick="switchTab('tab-publish', this)">🌐 Xuất Bản Lên Internet</button>
+    </div>
+
+    <div class="container">
+        <!-- TAB 1: NHÂN ĐINH -->
+        <div id="tab-people" class="tab-pane active">
+            <div class="card">
+                <div class="toolbar">
+                    <div class="filters">
+                        <input type="text" id="searchInput" class="search-box" placeholder="Tìm tên, SĐT, địa chỉ, năm sinh, ngày giỗ..." oninput="renderPeople()">
+                        <select id="canFilter" onchange="renderPeople()">
+                            <option value="ALL">Tất cả các Can</option>
+                            <option value="Trung Chi 2">Trung Chi 2 (Khởi phát)</option>
+                            <option value="Tiểu Chi 1">Tiểu Chi 1</option>
+                            <option value="Can 1">Can 1 (Tổ Cư)</option>
+                            <option value="Can 2">Can 2 (Tổ Khâu)</option>
+                            <option value="Can 3">Can 3 (Tổ Nghi)</option>
+                            <option value="Can 4">Can 4 (Tổ Kế)</option>
+                        </select>
+                        <select id="doiFilter" onchange="renderPeople()">
+                            <option value="ALL">Tất cả các Đời</option>
+                            <option value="Khởi phát">Khởi phát</option>
+                            <option value="Đời 1">Đời 1</option>
+                            <option value="Đời 2">Đời 2</option>
+                            <option value="Đời 3">Đời 3</option>
+                            <option value="Đời 4">Đời 4</option>
+                            <option value="Đời 5">Đời 5</option>
+                            <option value="Đời 6">Đời 6</option>
+                            <option value="Đời 7">Đời 7</option>
+                            <option value="Đời 8">Đời 8</option>
+                            <option value="Đời 9">Đời 9</option>
+                        </select>
+                    </div>
+                    <button class="btn btn-primary" onclick="openPersonModal()">➕ Thêm Nhân Đinh</button>
+                </div>
+
+                <div class="table-wrap">
+                    <table>
+                        <thead>
+                            <tr>
+                                <th>STT / Mã</th>
+                                <th>Họ và Tên</th>
+                                <th>Nhánh / Đời</th>
+                                <th>Cha / Mẹ</th>
+                                <th>Sinh • Mất • Ngày giỗ</th>
+                                <th>Liên hệ (SĐT / Facebook / Nơi ở)</th>
+                                <th style="width: 130px;">Thao tác</th>
+                            </tr>
+                        </thead>
+                        <tbody id="peopleBody"></tbody>
+                    </table>
+                </div>
+            </div>
+        </div>
+
+        <!-- TAB 2: KỴ GIỖ -->
+        <div id="tab-deaths" class="tab-pane">
+            <div class="card">
+                <div class="toolbar">
+                    <div>
+                        <strong style="color: var(--primary);">Danh sách Bảng Kỵ Giỗ gốc trong Excel</strong>
+                        <span id="deathsCountBadge" class="badge" style="margin-left: 8px;">0 dòng</span>
+                    </div>
+                    <button class="btn btn-primary" onclick="openDeathModal()">➕ Thêm Ngày Giỗ</button>
+                </div>
+                <div class="table-wrap">
+                    <table>
+                        <thead>
+                            <tr>
+                                <th>Ngày Âm lịch</th>
+                                <th>Người được giỗ</th>
+                                <th>Can / Đời</th>
+                                <th>Mộ phần</th>
+                                <th>Ghi chú</th>
+                                <th style="width: 130px;">Thao tác</th>
+                            </tr>
+                        </thead>
+                        <tbody id="deathsBody"></tbody>
+                    </table>
+                </div>
+            </div>
+        </div>
+
+        <!-- TAB 3: XUẤT BẢN -->
+        <div id="tab-publish" class="tab-pane">
+            <div class="card">
+                <h2 style="color: var(--primary); margin-bottom: 8px;">🌐 Xuất File HTML Độc Lập Để Public Lên Internet</h2>
+                <p style="color: var(--muted); font-size: 0.92rem;">
+                    Hệ thống sẽ đóng gói toàn bộ dữ liệu gia phả, cây phả hệ, tra cứu và lịch kỵ giỗ vào <strong>1 file HTML duy nhất</strong> (không cần máy chủ Python khi đưa lên mạng).
+                </p>
+
+                <label class="checkbox-row">
+                    <input type="checkbox" id="hidePrivateToggle">
+                    <span><strong>Ẩn thông tin riêng tư (Số điện thoại, Link Facebook, Nơi ở hiện tại)</strong> trong bản HTML Public để bảo mật cho con cháu đang sống khi đăng công khai lên Internet.</span>
+                </label>
+
+                <div style="display: flex; gap: 10px; flex-wrap: wrap; margin-top: 14px;">
+                    <button class="btn btn-gold" onclick="exportHtmlFromTab()">🚀 Xuất Bản HTML Public Ngay</button>
+                    <a href="/api/download-html" class="btn btn-green">⬇️ Tải về file index.html</a>
+                    <a href="/public-preview" target="_blank" class="btn btn-blue">👁️ Xem trước bản Public</a>
+                </div>
+                <div id="exportResultBox" style="margin-top: 14px; font-size: 0.9rem; color: var(--green); font-weight: 600;"></div>
+            </div>
+
+            <div class="card">
+                <h3 style="color: var(--primary); margin-bottom: 10px;">📖 Hướng dẫn đưa file HTML lên Internet miễn phí (2 phút)</h3>
+                <ol class="guide-list">
+                    <li>Bấm nút <strong>Xuất Bản HTML Public Ngay</strong> và bấm <strong>Tải về file index.html</strong>.</li>
+                    <li><strong>Cách 1 (Nhanh nhất - Netlify Drop):</strong> Truy cập <a href="https://app.netlify.com/drop" target="_blank" rel="noopener noreferrer">app.netlify.com/drop</a>, kéo thả thư mục chứa file <code>index.html</code> vào là có ngay link web công khai.</li>
+                    <li><strong>Cách 2 (GitHub Pages):</strong> Tạo một repository trên GitHub, tải file <code>index.html</code> lên rồi bật <em>Settings → Pages → Deploy from branch</em>.</li>
+                    <li>Mỗi lần sau này có thêm/sửa con cháu trên Web Python này, chỉ cần bấm xuất lại file <code>index.html</code> và cập nhật đè lên là xong.</li>
+                </ol>
+            </div>
+        </div>
+    </div>
+
+    <!-- MODAL NHÂN ĐINH -->
+    <div id="personModal" class="modal">
+        <div class="modal-box">
+            <div class="modal-header">
+                <h2 id="personModalTitle">Thêm Nhân Đinh Mới</h2>
+                <button class="close-btn" onclick="closeModal('personModal')">&times;</button>
+            </div>
+            <form id="personForm" onsubmit="savePerson(event)">
+                <input type="hidden" id="f_stt">
+                <div class="form-section-title">1. Thông tin cơ bản & Nhánh phả hệ</div>
+                <div class="form-grid">
+                    <div class="form-group">
+                        <label>Họ và Tên *</label>
+                        <input type="text" id="f_ho_ten" required placeholder="VD: Bạch Hưng An">
+                    </div>
+                    <div class="form-group">
+                        <label>Tên Húy / Biệt danh</label>
+                        <input type="text" id="f_huy" placeholder="Nếu có">
+                    </div>
+                    <div class="form-group">
+                        <label>Giới tính</label>
+                        <select id="f_gioi_tinh">
+                            <option value="Nam">Nam</option>
+                            <option value="Nữ">Nữ</option>
+                        </select>
+                    </div>
+                    <div class="form-group">
+                        <label>Can / Chi *</label>
+                        <select id="f_can">
+                            <option value="Trung Chi 2">Trung Chi 2</option>
+                            <option value="Tiểu Chi 1">Tiểu Chi 1</option>
+                            <option value="Can 1">Can 1</option>
+                            <option value="Can 2" selected>Can 2</option>
+                            <option value="Can 3">Can 3</option>
+                            <option value="Can 4">Can 4</option>
+                        </select>
+                    </div>
+                    <div class="form-group">
+                        <label>Đời *</label>
+                        <input type="text" id="f_doi" value="Đời 8" required placeholder="VD: Đời 8">
+                    </div>
+                    <div class="form-group">
+                        <label>Mã định danh (để trống sẽ tự tạo)</label>
+                        <input type="text" id="f_ma" placeholder="VD: C2-D8-126">
+                    </div>
+                </div>
+
+                <div class="form-section-title">2. Quan hệ huyết thống (Cha • Mẹ • Phối ngẫu)</div>
+                <div class="form-grid">
+                    <div class="form-group full">
+                        <label>Chọn Thân phụ (Cha) trong gia phả (sắp xếp theo cây, tự động gắn ID_CHA)</label>
+                        <input type="hidden" id="f_id_cha" value="0">
+                        <div class="father-picker" id="fatherPicker">
+                            <div class="father-search-wrap">
+                                <input type="text" id="f_cha_search" style="flex:1;" autocomplete="off"
+                                    placeholder="🔍 Gõ tên (có dấu hoặc không dấu), Mã ĐD, STT hoặc tên Ông để tìm..."
+                                    onfocus="openFatherDropdown()"
+                                    oninput="renderFatherDropdown(this.value)">
+                                <button type="button" class="btn btn-light btn-sm" title="Đặt về Gốc / Không chọn Cha" onclick="selectFather(0)">✖ Gốc</button>
+                            </div>
+                            <div id="fatherSelectedHint" style="font-size:0.78rem; color:var(--primary); margin-top:4px; font-weight:600;"></div>
+                            <div id="fatherDropdown" class="father-dropdown"></div>
+                        </div>
+                    </div>
+                    <div class="form-group">
+                        <label>Tên Cha (tự điền hoặc nhập tay)</label>
+                        <input type="text" id="f_cha">
+                    </div>
+                    <div class="form-group">
+                        <label>Thân mẫu (Mẹ)</label>
+                        <input type="text" id="f_me">
+                    </div>
+                    <div class="form-group full">
+                        <label>Phối ngẫu (Vợ / Chồng)</label>
+                        <input type="text" id="f_phoi_ngau" placeholder="VD: Nguyễn Thị A (sinh 1995, quê...)">
+                    </div>
+                </div>
+
+                <div class="form-section-title">3. Sinh • Mất • Ngày Giỗ (Tách biệt)</div>
+                <div class="form-grid">
+                    <div class="form-group">
+                        <label>Năm sinh</label>
+                        <input type="text" id="f_nam_sinh" placeholder="VD: 1990 (Canh Ngọ)">
+                    </div>
+                    <div class="form-group">
+                        <label>Năm mất / Thọ</label>
+                        <input type="text" id="f_nam_mat" placeholder="VD: 1998 - Thọ 75 (để trống nếu còn sống)">
+                    </div>
+                    <div class="form-group">
+                        <label>Ngày mất cụ thể (Dương/Âm)</label>
+                        <input type="text" id="f_ngay_mat" placeholder="VD: 15/05/1998 DL">
+                    </div>
+                    <div class="form-group">
+                        <label>Ngày giỗ Âm lịch</label>
+                        <input type="text" id="f_ngay_gio" placeholder="VD: 14/04 ÂL">
+                    </div>
+                    <div class="form-group full">
+                        <label>Mộ phần / Nơi an táng</label>
+                        <input type="text" id="f_mo_phan">
+                    </div>
+                </div>
+
+                <div class="form-section-title">4. Thông tin liên hệ & Quản lý hiện đại</div>
+                <div class="form-grid">
+                    <div class="form-group">
+                        <label>Số điện thoại</label>
+                        <input type="text" id="f_sdt" placeholder="VD: 0912345678">
+                    </div>
+                    <div class="form-group">
+                        <label>Link Facebook</label>
+                        <input type="text" id="f_facebook" placeholder="https://facebook.com/...">
+                    </div>
+                    <div class="form-group">
+                        <label>Nơi ở hiện tại</label>
+                        <input type="text" id="f_dia_chi" placeholder="VD: TP. Vinh, Nghệ An">
+                    </div>
+                    <div class="form-group">
+                        <label>Nghề nghiệp / Học vấn</label>
+                        <input type="text" id="f_nghe_nghiep" placeholder="VD: Kỹ sư CNTT">
+                    </div>
+                </div>
+
+                <div class="form-section-title">5. Công trạng / Tiểu sử / Ghi chú</div>
+                <div class="form-group full">
+                    <textarea id="f_ghi_chu" rows="4" placeholder="Nhập tiểu sử, công trạng, lời dặn hoặc văn bản gốc..."></textarea>
+                </div>
+
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-light" onclick="closeModal('personModal')">Hủy</button>
+                    <button type="submit" class="btn btn-primary">💾 Lưu Vào Excel</button>
+                </div>
+            </form>
+        </div>
+    </div>
+
+    <!-- MODAL KỴ GIỖ -->
+    <div id="deathModal" class="modal">
+        <div class="modal-box" style="max-width: 560px;">
+            <div class="modal-header">
+                <h2 id="deathModalTitle">Thêm Ngày Kỵ Giỗ</h2>
+                <button class="close-btn" onclick="closeModal('deathModal')">&times;</button>
+            </div>
+            <form id="deathForm" onsubmit="saveDeath(event)">
+                <input type="hidden" id="d_row_idx">
+                <div class="form-grid">
+                    <div class="form-group">
+                        <label>Ngày Âm lịch *</label>
+                        <input type="text" id="d_ngay_str" required placeholder="VD: 14 tháng Tư">
+                    </div>
+                    <div class="form-group">
+                        <label>Người được giỗ *</label>
+                        <input type="text" id="d_ten" required placeholder="VD: Cụ Bạch Hưng ...">
+                    </div>
+                    <div class="form-group">
+                        <label>Can / Đời</label>
+                        <input type="text" id="d_can" placeholder="VD: Can 2 - Đời 6">
+                    </div>
+                    <div class="form-group">
+                        <label>Mộ phần</label>
+                        <input type="text" id="d_mo">
+                    </div>
+                    <div class="form-group full">
+                        <label>Ghi chú kỵ giỗ</label>
+                        <textarea id="d_ghi" rows="3"></textarea>
+                    </div>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-light" onclick="closeModal('deathModal')">Hủy</button>
+                    <button type="submit" class="btn btn-primary">💾 Lưu Ngày Giỗ</button>
+                </div>
+            </form>
+        </div>
+    </div>
+
+    <div id="toast" class="toast"></div>
+
+    <script>
+        let appData = { people: [], deaths: [], raw_deaths: [] };
+
+        function escapeHtml(str) {
+            if (!str) return "";
+            return String(str)
+                .replace(/&/g, "&amp;")
+                .replace(/</g, "&lt;")
+                .replace(/>/g, "&gt;")
+                .replace(/"/g, "&quot;")
+                .replace(/'/g, "&#39;");
+        }
+
+        function safeUrl(url) {
+            if (!url) return "";
+            const s = String(url).trim();
+            if (/^https?:\/\//i.test(s)) return s;
+            if (/^(www\.)?(facebook\.com|fb\.com)/i.test(s)) return "https://" + s;
+            return "";
+        }
+
+        function showToast(msg, type = "success") {
+            const el = document.getElementById("toast");
+            el.textContent = msg;
+            el.className = `toast show ${type}`;
+            setTimeout(() => { el.className = "toast"; }, 3500);
+        }
+
+        function switchTab(tabId, btn) {
+            document.querySelectorAll(".tab-pane").forEach(p => p.classList.remove("active"));
+            document.querySelectorAll(".tab-btn").forEach(b => b.classList.remove("active"));
+            document.getElementById(tabId).classList.add("active");
+            if (btn) btn.classList.add("active");
+        }
+
+        async function loadData() {
+            const res = await fetch("/api/data");
+            if (!res.ok) {
+                showToast("Không tải được dữ liệu Excel", "error");
+                return;
+            }
+            appData = await res.json();
+            document.getElementById("headerSummary").textContent =
+                `Thừa kế chuẩn xác ${appData.people.length} nhân đinh • ${appData.deaths.length} ngày kỵ giỗ (Nguồn: Danh_Sach_Nhan_Dinh_Ho_Bach.xlsx)`;
+            populateFatherDropdown();
+            renderPeople();
+            renderDeaths();
+        }
+
+        let fatherTreeNodes = [];
+
+        function stripAccents(str) {
+            if (!str) return "";
+            return String(str)
+                .normalize("NFD")
+                .replace(/[\u0300-\u036f]/g, "")
+                .replace(/đ/g, "d")
+                .replace(/Đ/g, "D")
+                .toLowerCase();
+        }
+
+        function buildFatherTreeList(excludeStt = null) {
+            const byStt = {};
+            const childrenMap = {};
+            appData.people.forEach(p => {
+                byStt[p.stt] = p;
+                const pid = p.id_cha || 0;
+                if (!childrenMap[pid]) childrenMap[pid] = [];
+                childrenMap[pid].push(p);
+            });
+
+            // Thu thập chính nhân đinh đang sửa + con cháu để chống vòng lặp
+            const excluded = new Set();
+            if (excludeStt) {
+                const stack = [excludeStt];
+                while (stack.length > 0) {
+                    const curr = stack.pop();
+                    if (excluded.has(curr)) continue;
+                    excluded.add(curr);
+                    (childrenMap[curr] || []).forEach(ch => stack.push(ch.stt));
+                }
+            }
+
+            const result = [];
+            const visited = new Set();
+
+            function dfs(node, depth, parentName) {
+                if (!node || visited.has(node.stt) || excluded.has(node.stt)) return;
+                visited.add(node.stt);
+                result.push({
+                    person: node,
+                    depth,
+                    parentName: parentName || "Khởi phát / Gốc",
+                });
+                (childrenMap[node.stt] || []).forEach(child => dfs(child, depth + 1, node.ho_ten));
+            }
+
+            const roots = appData.people.filter(p => !p.id_cha || p.id_cha === 0 || !byStt[p.id_cha]);
+            roots.forEach(r => dfs(r, 0, ""));
+            // Bổ sung các node chưa thăm nếu có
+            appData.people.forEach(p => {
+                if (!visited.has(p.stt) && !excluded.has(p.stt)) {
+                    dfs(p, 0, p.cha || "");
+                }
+            });
+            fatherTreeNodes = result;
+        }
+
+        function populateFatherDropdown(excludeStt = null) {
+            buildFatherTreeList(excludeStt);
+            renderFatherDropdown(document.getElementById("f_cha_search")?.value || "");
+        }
+
+        function openFatherDropdown() {
+            renderFatherDropdown(document.getElementById("f_cha_search").value);
+            document.getElementById("fatherDropdown").classList.add("open");
+        }
+
+        function renderFatherDropdown(query = "") {
+            const dd = document.getElementById("fatherDropdown");
+            if (!dd) return;
+            const currentId = parseInt(document.getElementById("f_id_cha").value || "0", 10);
+            const tokens = stripAccents(query).trim().split(/\s+/).filter(Boolean);
+
+            let html = `
+                <div class="father-opt ${currentId === 0 ? "selected" : ""}" onclick="selectFather(0)">
+                    <span class="father-opt-main">🏛️ — Không chọn / Gốc (ID_CHA = 0) —</span>
+                    <span class="father-opt-meta">Gốc</span>
+                </div>
+            `;
+
+            const matched = fatherTreeNodes.filter(item => {
+                if (tokens.length === 0) return true;
+                const p = item.person;
+                const hay = stripAccents(`${p.stt} ${p.ma} ${p.ho_ten} ${p.huy} ${p.can} ${p.doi} ${item.parentName}`);
+                return tokens.every(tk => hay.includes(tk));
+            });
+
+            if (matched.length === 0) {
+                html += `<div style="padding:12px; color:var(--muted); font-size:0.85rem; text-align:center;">Không tìm thấy thân phụ phù hợp.</div>`;
+            } else {
+                matched.forEach(item => {
+                    const p = item.person;
+                    const isSel = currentId === p.stt;
+                    const indent = tokens.length === 0 && item.depth > 0
+                        ? `<span class="father-tree-prefix">${"&nbsp;&nbsp;│".repeat(Math.max(0, item.depth - 1))}&nbsp;&nbsp;├─ </span>`
+                        : "";
+                    const huyTxt = p.huy ? ` (${escapeHtml(p.huy)})` : "";
+                    const parentInfo = item.depth > 0 ? `Con cụ ${escapeHtml(item.parentName)}` : "Khởi phát";
+                    html += `
+                        <div class="father-opt ${isSel ? "selected" : ""}" onclick="selectFather(${p.stt})">
+                            <span class="father-opt-main">
+                                ${indent}<strong>${escapeHtml(p.ho_ten)}</strong>${huyTxt}
+                                <span style="color:#6b7280; font-size:0.78rem;"> • ${parentInfo}</span>
+                            </span>
+                            <span class="father-opt-meta">[#${p.stt}] ${escapeHtml(p.can)} • ${escapeHtml(p.doi)}</span>
+                        </div>
+                    `;
+                });
+            }
+            dd.innerHTML = html;
+        }
+
+        function selectFather(stt) {
+            const idVal = parseInt(stt || "0", 10);
+            document.getElementById("f_id_cha").value = idVal;
+            const hint = document.getElementById("fatherSelectedHint");
+            const searchInput = document.getElementById("f_cha_search");
+
+            if (idVal === 0) {
+                searchInput.value = "";
+                document.getElementById("f_cha").value = "";
+                hint.textContent = "Đang chọn: Không có Cha / Gốc (ID_CHA = 0)";
+            } else {
+                const node = fatherTreeNodes.find(x => x.person.stt === idVal) ||
+                             { person: appData.people.find(p => p.stt === idVal), parentName: "" };
+                const father = node.person;
+                if (father) {
+                    searchInput.value = `${father.ho_ten} (${father.can} - ${father.doi})`;
+                    document.getElementById("f_cha").value = father.ho_ten;
+                    const parentCtx = node.parentName ? ` • Con cụ ${node.parentName}` : "";
+                    hint.textContent = `Đã gắn ID_CHA = ${father.stt} (${father.ho_ten}${parentCtx})`;
+                }
+            }
+            document.getElementById("fatherDropdown").classList.remove("open");
+        }
+
+        document.addEventListener("click", (e) => {
+            const picker = document.getElementById("fatherPicker");
+            if (picker && !picker.contains(e.target)) {
+                document.getElementById("fatherDropdown")?.classList.remove("open");
+            }
+        });
+
+        function renderPeople() {
+            const q = document.getElementById("searchInput").value.toLowerCase().trim();
+            const can = document.getElementById("canFilter").value;
+            const doi = document.getElementById("doiFilter").value;
+
+            const filtered = appData.people.filter(p => {
+                if (can !== "ALL" && p.can !== can) return false;
+                if (doi !== "ALL" && p.doi !== doi) return false;
+                if (!q) return true;
+                const hay = `${p.ma} ${p.ho_ten} ${p.huy} ${p.cha} ${p.me} ${p.nam_sinh} ${p.nam_mat} ${p.ngay_mat} ${p.ngay_gio} ${p.sdt} ${p.facebook} ${p.dia_chi} ${p.nghe_nghiep}`.toLowerCase();
+                return hay.includes(q);
+            });
+
+            const tbody = document.getElementById("peopleBody");
+            tbody.innerHTML = "";
+            filtered.forEach(p => {
+                const fbUrl = safeUrl(p.facebook);
+                let contactHtml = "";
+                if (p.sdt) contactHtml += `<a class="contact-pill" href="tel:${escapeHtml(p.sdt)}">📞 ${escapeHtml(p.sdt)}</a>`;
+                if (fbUrl) contactHtml += `<a class="contact-pill" href="${escapeHtml(fbUrl)}" target="_blank" rel="noopener noreferrer">🌐 Facebook ↗</a>`;
+                else if (p.facebook) contactHtml += `<span class="contact-pill">🌐 ${escapeHtml(p.facebook)}</span>`;
+                if (p.dia_chi) contactHtml += `<div style="font-size:0.8rem; color:#4b5563; margin-top:2px;">📍 ${escapeHtml(p.dia_chi)}</div>`;
+                if (p.nghe_nghiep) contactHtml += `<div style="font-size:0.8rem; color:#4b5563;">💼 ${escapeHtml(p.nghe_nghiep)}</div>`;
+
+                const tr = document.createElement("tr");
+                tr.innerHTML = `
+                    <td><strong>#${p.stt}</strong><br><span style="font-size:0.78rem; color:var(--muted);">${escapeHtml(p.ma)}</span></td>
+                    <td>
+                        <strong style="color:var(--primary); font-size:0.95rem;">${escapeHtml(p.ho_ten)}</strong>
+                        ${p.huy ? `<div style="font-size:0.8rem; color:var(--muted);">Húy: ${escapeHtml(p.huy)}</div>` : ""}
+                    </td>
+                    <td><span class="badge">${escapeHtml(p.can)} • ${escapeHtml(p.doi)}</span></td>
+                    <td style="font-size:0.83rem;">
+                        <div>Cha: <strong>${escapeHtml(p.cha || "—")}</strong></div>
+                        ${p.me ? `<div style="color:var(--muted);">Mẹ: ${escapeHtml(p.me)}</div>` : ""}
+                    </td>
+                    <td style="font-size:0.83rem;">
+                        <div>Sinh: ${escapeHtml(p.nam_sinh || "—")}</div>
+                        ${p.nam_mat ? `<div>Mất/Thọ: ${escapeHtml(p.nam_mat)}</div>` : ""}
+                        ${p.ngay_mat ? `<div>Ngày mất: ${escapeHtml(p.ngay_mat)}</div>` : ""}
+                        ${p.ngay_gio ? `<div style="color:var(--primary); font-weight:600;">Giỗ ÂL: ${escapeHtml(p.ngay_gio)}</div>` : ""}
+                    </td>
+                    <td>${contactHtml || '<span style="color:#9ca3af;">—</span>'}</td>
+                    <td>
+                        <button class="btn btn-blue btn-sm" onclick="openPersonModal(${p.stt})">✏️ Sửa</button>
+                        <button class="btn btn-danger btn-sm" onclick="deletePerson(${p.stt}, '${escapeHtml(p.ho_ten)}')">🗑️</button>
+                    </td>
+                `;
+                tbody.appendChild(tr);
+            });
+        }
+
+        function openPersonModal(stt = null) {
+            document.getElementById("personForm").reset();
+            populateFatherDropdown(stt);
+            if (stt) {
+                const p = appData.people.find(x => x.stt === stt);
+                if (!p) return;
+                document.getElementById("personModalTitle").textContent = `Cập Nhật: ${p.ho_ten} (STT ${p.stt})`;
+                document.getElementById("f_stt").value = p.stt;
+                document.getElementById("f_ho_ten").value = p.ho_ten;
+                document.getElementById("f_huy").value = p.huy;
+                document.getElementById("f_gioi_tinh").value = p.gioi_tinh || "Nam";
+                document.getElementById("f_can").value = p.can || "Can 2";
+                document.getElementById("f_doi").value = p.doi || "";
+                document.getElementById("f_ma").value = p.ma;
+                selectFather(p.id_cha || 0);
+                if (p.cha) document.getElementById("f_cha").value = p.cha;
+                document.getElementById("f_me").value = p.me;
+                document.getElementById("f_phoi_ngau").value = p.phoi_ngau;
+                document.getElementById("f_nam_sinh").value = p.nam_sinh;
+                document.getElementById("f_nam_mat").value = p.nam_mat;
+                document.getElementById("f_ngay_mat").value = p.ngay_mat || "";
+                document.getElementById("f_ngay_gio").value = p.ngay_gio;
+                document.getElementById("f_mo_phan").value = p.mo_phan;
+                document.getElementById("f_sdt").value = p.sdt || "";
+                document.getElementById("f_facebook").value = p.facebook || "";
+                document.getElementById("f_dia_chi").value = p.dia_chi || "";
+                document.getElementById("f_nghe_nghiep").value = p.nghe_nghiep || "";
+                document.getElementById("f_ghi_chu").value = p.ghi_chu;
+            } else {
+                document.getElementById("personModalTitle").textContent = "Thêm Nhân Đinh Mới";
+                document.getElementById("f_stt").value = "";
+                selectFather(0);
+            }
+            document.getElementById("personModal").classList.add("active");
+        }
+
+        function closeModal(id) {
+            document.getElementById(id).classList.remove("active");
+        }
+
+        async function savePerson(e) {
+            e.preventDefault();
+            const stt = document.getElementById("f_stt").value;
+            const payload = {
+                ho_ten: document.getElementById("f_ho_ten").value.trim(),
+                huy: document.getElementById("f_huy").value.trim(),
+                gioi_tinh: document.getElementById("f_gioi_tinh").value,
+                can: document.getElementById("f_can").value,
+                doi: document.getElementById("f_doi").value.trim(),
+                ma: document.getElementById("f_ma").value.trim(),
+                id_cha: parseInt(document.getElementById("f_id_cha").value || "0", 10),
+                cha: document.getElementById("f_cha").value.trim(),
+                me: document.getElementById("f_me").value.trim(),
+                phoi_ngau: document.getElementById("f_phoi_ngau").value.trim(),
+                nam_sinh: document.getElementById("f_nam_sinh").value.trim(),
+                nam_mat: document.getElementById("f_nam_mat").value.trim(),
+                ngay_mat: document.getElementById("f_ngay_mat").value.trim(),
+                ngay_gio: document.getElementById("f_ngay_gio").value.trim(),
+                mo_phan: document.getElementById("f_mo_phan").value.trim(),
+                sdt: document.getElementById("f_sdt").value.trim(),
+                facebook: document.getElementById("f_facebook").value.trim(),
+                dia_chi: document.getElementById("f_dia_chi").value.trim(),
+                nghe_nghiep: document.getElementById("f_nghe_nghiep").value.trim(),
+                ghi_chu: document.getElementById("f_ghi_chu").value.trim(),
+            };
+
+            const url = stt ? `/api/people/${stt}` : "/api/people";
+            const method = stt ? "PUT" : "POST";
+            const res = await fetch(url, {
+                method,
+                headers: { "Content-Type": "application/json" },
+                body: JSON.stringify(payload),
+            });
+            const data = await res.json();
+            if (!res.ok) {
+                showToast(data.detail || "Có lỗi xảy ra", "error");
+                return;
+            }
+            showToast(data.message, "success");
+            closeModal("personModal");
+            await loadData();
+        }
+
+        async function deletePerson(stt, name) {
+            if (!confirm(`Bạn có chắc muốn xóa "${name}" (STT ${stt}) không? Hệ thống luôn tự động sao lưu Excel trước khi xóa.`)) {
+                return;
+            }
+            let res = await fetch(`/api/people/${stt}?force=false`, { method: "DELETE" });
+            if (res.status === 409) {
+                const err = await res.json();
+                if (!confirm(`${err.detail}\n\nBạn vẫn muốn xóa bắt buộc?`)) return;
+                res = await fetch(`/api/people/${stt}?force=true`, { method: "DELETE" });
+            }
+            const data = await res.json();
+            if (!res.ok) {
+                showToast(data.detail || "Không thể xóa", "error");
+                return;
+            }
+            showToast(data.message, "success");
+            await loadData();
+        }
+
+        function renderDeaths() {
+            document.getElementById("deathsCountBadge").textContent = `${appData.raw_deaths.length} dòng`;
+            const tbody = document.getElementById("deathsBody");
+            tbody.innerHTML = "";
+            appData.raw_deaths.forEach(d => {
+                const tr = document.createElement("tr");
+                tr.innerHTML = `
+                    <td><strong style="color:var(--primary);">${escapeHtml(d.ngay_str)}</strong></td>
+                    <td><strong>${escapeHtml(d.ten)}</strong></td>
+                    <td><span class="badge">${escapeHtml(d.can)}</span></td>
+                    <td>${escapeHtml(d.mo || "—")}</td>
+                    <td style="font-size:0.84rem;">${escapeHtml(d.ghi || "—")}</td>
+                    <td>
+                        <button class="btn btn-blue btn-sm" onclick="openDeathModal(${d.row_idx})">✏️ Sửa</button>
+                        <button class="btn btn-danger btn-sm" onclick="deleteDeath(${d.row_idx}, '${escapeHtml(d.ten)}')">🗑️</button>
+                    </td>
+                `;
+                tbody.appendChild(tr);
+            });
+        }
+
+        function openDeathModal(rowIdx = null) {
+            document.getElementById("deathForm").reset();
+            if (rowIdx) {
+                const d = appData.raw_deaths.find(x => x.row_idx === rowIdx);
+                if (!d) return;
+                document.getElementById("deathModalTitle").textContent = `Sửa Ngày Giỗ: ${d.ten}`;
+                document.getElementById("d_row_idx").value = d.row_idx;
+                document.getElementById("d_ngay_str").value = d.ngay_str;
+                document.getElementById("d_ten").value = d.ten;
+                document.getElementById("d_can").value = d.can;
+                document.getElementById("d_mo").value = d.mo;
+                document.getElementById("d_ghi").value = d.ghi;
+            } else {
+                document.getElementById("deathModalTitle").textContent = "Thêm Ngày Kỵ Giỗ Mới";
+                document.getElementById("d_row_idx").value = "";
+            }
+            document.getElementById("deathModal").classList.add("active");
+        }
+
+        async function saveDeath(e) {
+            e.preventDefault();
+            const rowIdx = document.getElementById("d_row_idx").value;
+            const payload = {
+                ngay_str: document.getElementById("d_ngay_str").value.trim(),
+                ten: document.getElementById("d_ten").value.trim(),
+                can: document.getElementById("d_can").value.trim(),
+                mo: document.getElementById("d_mo").value.trim(),
+                ghi: document.getElementById("d_ghi").value.trim(),
+            };
+            const url = rowIdx ? `/api/deaths/${rowIdx}` : "/api/deaths";
+            const method = rowIdx ? "PUT" : "POST";
+            const res = await fetch(url, {
+                method,
+                headers: { "Content-Type": "application/json" },
+                body: JSON.stringify(payload),
+            });
+            const data = await res.json();
+            if (!res.ok) {
+                showToast(data.detail || "Lỗi lưu ngày giỗ", "error");
+                return;
+            }
+            showToast(data.message, "success");
+            closeModal("deathModal");
+            await loadData();
+        }
+
+        async function deleteDeath(rowIdx, name) {
+            if (!confirm(`Xóa ngày giỗ của "${name}"?`)) return;
+            const res = await fetch(`/api/deaths/${rowIdx}`, { method: "DELETE" });
+            const data = await res.json();
+            if (!res.ok) {
+                showToast(data.detail || "Lỗi xóa", "error");
+                return;
+            }
+            showToast(data.message, "success");
+            await loadData();
+        }
+
+        async function exportHtml(hidePrivate) {
+            const res = await fetch("/api/export-html", {
+                method: "POST",
+                headers: { "Content-Type": "application/json" },
+                body: JSON.stringify({ hide_private: hidePrivate }),
+            });
+            const data = await res.json();
+            if (!res.ok) {
+                showToast(data.detail || "Lỗi xuất HTML", "error");
+                return;
+            }
+            showToast(data.message, "success");
+            const box = document.getElementById("exportResultBox");
+            if (box) {
+                box.textContent = `✅ ${data.message} — Đã tạo file ${data.file_name} (${hidePrivate ? "đã ẩn SĐT/Facebook/Địa chỉ" : "kèm đầy đủ thông tin"}).`;
+            }
+        }
+
+        function quickExportHtml() {
+            const hidePrivate = document.getElementById("hidePrivateToggle")?.checked || false;
+            exportHtml(hidePrivate);
+        }
+
+        function exportHtmlFromTab() {
+            const hidePrivate = document.getElementById("hidePrivateToggle").checked;
+            exportHtml(hidePrivate);
+        }
+
+        window.onload = loadData;
+    </script>
+</body>
+</html>
