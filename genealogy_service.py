@@ -1,7 +1,7 @@
 # -*- coding: utf-8 -*-
 """
-Service layer xử lý đọc/ghi Excel, sao lưu tự động và xuất bản HTML Public
-cho Hệ thống Quản trị Gia Phả Họ Bạch.
+Service layer xử lý đọc/ghi dữ liệu kép (Excel local hoặc Google Sheets cloud),
+sao lưu tự động, phân quyền người dùng và xuất bản HTML Public cho Gia Phả Họ Bạch.
 """
 import os
 import re
@@ -10,8 +10,11 @@ import shutil
 from datetime import datetime
 import openpyxl
 from openpyxl.styles import Font, Alignment
+from dotenv import load_dotenv
 
 BASE_DIR = os.path.dirname(os.path.abspath(__file__))
+load_dotenv(os.path.join(BASE_DIR, ".env"))
+
 EXCEL_PATH = os.path.join(BASE_DIR, "Danh_Sach_Nhan_Dinh_Ho_Bach.xlsx")
 HTML_TEMPLATE_PATH = os.path.join(BASE_DIR, "Gia_Pha_Viewer.html")
 PUBLIC_HTML_PATH = os.path.join(BASE_DIR, "Gia_Pha_Public.html")
@@ -29,6 +32,38 @@ SUB_SHEET_MAP = {
     "Can 3": "Can 3 & Can 4",
     "Can 4": "Can 3 & Can 4",
 }
+
+
+def is_gsheets_enabled() -> bool:
+    """Kiểm tra xem biến môi trường Google Sheets đã được cấu hình chưa."""
+    sheet_id = os.environ.get("GOOGLE_SHEET_ID", "").strip()
+    sa_json = os.environ.get("GOOGLE_SERVICE_ACCOUNT_JSON", "").strip()
+    return bool(sheet_id and sa_json)
+
+
+def _use_gsheets(excel_path: str) -> bool:
+    """Chỉ dùng Google Sheets khi đã cấu hình và đang thao tác trên DB chính (không phải file test)."""
+    return is_gsheets_enabled() and os.path.abspath(excel_path) == os.path.abspath(EXCEL_PATH)
+
+
+def _get_gsheet_spreadsheet():
+    """Kết nối tới Google Spreadsheet bằng Service Account credentials."""
+    import gspread
+    from google.oauth2.service_account import Credentials
+
+    sheet_id = os.environ.get("GOOGLE_SHEET_ID", "").strip()
+    sa_raw = os.environ.get("GOOGLE_SERVICE_ACCOUNT_JSON", "").strip()
+    scopes = ["https://www.googleapis.com/auth/spreadsheets"]
+
+    if sa_raw.startswith("{"):
+        info = json.loads(sa_raw)
+        creds = Credentials.from_service_account_info(info, scopes=scopes)
+    else:
+        sa_path = sa_raw if os.path.isabs(sa_raw) else os.path.join(BASE_DIR, sa_raw)
+        creds = Credentials.from_service_account_file(sa_path, scopes=scopes)
+
+    client = gspread.authorize(creds)
+    return client.open_by_key(sheet_id)
 
 
 def clean_person_name(name):
@@ -103,7 +138,7 @@ def create_backup(excel_path=EXCEL_PATH):
 
 
 def _parse_id_cha(raw_val):
-    if raw_val is None:
+    if raw_val is None or raw_val == "":
         return 0
     s = str(raw_val).strip()
     if s.isdigit():
@@ -111,23 +146,23 @@ def _parse_id_cha(raw_val):
     return s if s and s != "0" else 0
 
 
-def load_all_data(excel_path=EXCEL_PATH):
-    """Đọc toàn bộ nhân đinh (21 cột) và lịch kỵ giỗ từ Excel."""
-    if not os.path.exists(excel_path):
-        raise FileNotFoundError(f"Không tìm thấy file Excel tại {excel_path}")
+def _pad_row(vals, size):
+    row = list(vals[:size])
+    while len(row) < size:
+        row.append("")
+    return row
 
-    wb = openpyxl.load_workbook(excel_path, data_only=True)
-    ws_all = wb["Toàn bộ nhân đinh"]
 
+def _build_records_from_rows(indexed_rows):
     records = []
-    for row_idx in range(5, ws_all.max_row + 1):
-        vals = [ws_all.cell(row=row_idx, column=c).value for c in range(1, 22)]
+    for row_idx, raw_vals in indexed_rows:
+        vals = _pad_row(raw_vals, 21)
         if not vals[4] or str(vals[4]).strip() == "":
             continue
 
         stt_val = vals[0]
         try:
-            stt_int = int(stt_val) if stt_val is not None else len(records) + 1
+            stt_int = int(stt_val) if stt_val not in (None, "") else len(records) + 1
         except (ValueError, TypeError):
             stt_int = len(records) + 1
 
@@ -164,49 +199,49 @@ def load_all_data(excel_path=EXCEL_PATH):
                 r["cha"] = stt_to_name[r["id_cha"]]
             elif r["id_cha"] in ma_to_name:
                 r["cha"] = ma_to_name[r["id_cha"]]
+    return records
 
-    # Đọc Bảng Kỵ Giỗ
-    ws_gio = wb["Bảng Kỵ Giỗ"] if "Bảng Kỵ Giỗ" in wb.sheetnames else None
+
+def _build_deaths_from_rows(indexed_gio_rows, records):
     raw_deaths = []
     gio_items = []
     seen_keys = set()
 
-    if ws_gio:
-        for row_idx in range(5, ws_gio.max_row + 1):
-            vals = [ws_gio.cell(row=row_idx, column=c).value for c in range(1, 7)]
-            if not vals[2] or str(vals[2]).strip() == "":
-                continue
-            date_str = str(vals[1] or "").strip()
-            name = str(vals[2] or "").strip()
-            can = str(vals[3] or "").strip()
-            mo = str(vals[4] or "").strip()
-            ghi = str(vals[5] or "").strip()
+    for row_idx, raw_vals in indexed_gio_rows:
+        vals = _pad_row(raw_vals, 6)
+        if not vals[2] or str(vals[2]).strip() == "":
+            continue
+        date_str = str(vals[1] or "").strip()
+        name = str(vals[2] or "").strip()
+        can = str(vals[3] or "").strip()
+        mo = str(vals[4] or "").strip()
+        ghi = str(vals[5] or "").strip()
 
-            raw_deaths.append({
-                "row_idx": row_idx,
-                "stt": vals[0] or (len(raw_deaths) + 1),
-                "ngay_str": date_str,
+        raw_deaths.append({
+            "row_idx": row_idx,
+            "stt": vals[0] or (len(raw_deaths) + 1),
+            "ngay_str": date_str,
+            "ten": name,
+            "can": can,
+            "mo": mo,
+            "ghi": ghi,
+        })
+
+        d_str, m_num = parse_lunar_date(date_str)
+        if d_str and m_num:
+            name_clean = clean_person_name(name)
+            name_core = re.sub(r'\(.*?\)', '', name_clean).strip()
+            seen_keys.add((d_str, m_num, name_clean))
+            seen_keys.add((d_str, m_num, name_core))
+            gio_items.append({
+                "thang": m_num,
+                "ngay": d_str,
                 "ten": name,
                 "can": can,
                 "mo": mo,
                 "ghi": ghi,
+                "ngay_str": date_str,
             })
-
-            d_str, m_num = parse_lunar_date(date_str)
-            if d_str and m_num:
-                name_clean = clean_person_name(name)
-                name_core = re.sub(r'\(.*?\)', '', name_clean).strip()
-                seen_keys.add((d_str, m_num, name_clean))
-                seen_keys.add((d_str, m_num, name_core))
-                gio_items.append({
-                    "thang": m_num,
-                    "ngay": d_str,
-                    "ten": name,
-                    "can": can,
-                    "mo": mo,
-                    "ghi": ghi,
-                    "ngay_str": date_str,
-                })
 
     # Tự động quét thêm từ Toàn bộ nhân đinh
     for r in records:
@@ -236,7 +271,7 @@ def load_all_data(excel_path=EXCEL_PATH):
                         "ngay_str": date_display,
                     })
 
-    # Tự động quét phối ngẫu
+    # Tự động quét phối ngẫu (ưu tiên ngày giỗ trước ngày mất)
     for r in records:
         pn = r.get("phoi_ngau", "")
         if not pn:
@@ -284,8 +319,114 @@ def load_all_data(excel_path=EXCEL_PATH):
                 })
 
     gio_items.sort(key=lambda x: (x["thang"], int(x["ngay"])))
+    return gio_items, raw_deaths
+
+
+def load_all_data(excel_path=EXCEL_PATH):
+    """Đọc toàn bộ nhân đinh (21 cột) và lịch kỵ giỗ từ Google Sheets hoặc Excel."""
+    if _use_gsheets(excel_path):
+        ss = _get_gsheet_spreadsheet()
+        ws_all = ss.worksheet("Toàn bộ nhân đinh")
+        all_rows = ws_all.get_all_values()
+        indexed_people = [(idx + 1, row) for idx, row in enumerate(all_rows) if idx >= 4]
+        records = _build_records_from_rows(indexed_people)
+
+        indexed_gio = []
+        try:
+            ws_gio = ss.worksheet("Bảng Kỵ Giỗ")
+            gio_rows = ws_gio.get_all_values()
+            indexed_gio = [(idx + 1, row) for idx, row in enumerate(gio_rows) if idx >= 4]
+        except Exception:
+            indexed_gio = []
+
+        gio_items, raw_deaths = _build_deaths_from_rows(indexed_gio, records)
+        return {"people": records, "deaths": gio_items, "raw_deaths": raw_deaths}
+
+    if not os.path.exists(excel_path):
+        raise FileNotFoundError(f"Không tìm thấy file Excel tại {excel_path}")
+
+    wb = openpyxl.load_workbook(excel_path, data_only=True)
+    ws_all = wb["Toàn bộ nhân đinh"]
+    indexed_people = [
+        (r, [ws_all.cell(row=r, column=c).value for c in range(1, 22)])
+        for r in range(5, ws_all.max_row + 1)
+    ]
+    records = _build_records_from_rows(indexed_people)
+
+    indexed_gio = []
+    if "Bảng Kỵ Giỗ" in wb.sheetnames:
+        ws_gio = wb["Bảng Kỵ Giỗ"]
+        indexed_gio = [
+            (r, [ws_gio.cell(row=r, column=c).value for c in range(1, 7)])
+            for r in range(5, ws_gio.max_row + 1)
+        ]
+
+    gio_items, raw_deaths = _build_deaths_from_rows(indexed_gio, records)
     wb.close()
     return {"people": records, "deaths": gio_items, "raw_deaths": raw_deaths}
+
+
+def load_authorized_users(excel_path=EXCEL_PATH) -> dict:
+    """Đọc danh sách tài khoản được phép chỉnh sửa từ sheet 'nguoi_dung'."""
+    rows = []
+    if _use_gsheets(excel_path):
+        try:
+            ss = _get_gsheet_spreadsheet()
+            ws = ss.worksheet("nguoi_dung")
+            rows = ws.get_all_values()
+        except Exception:
+            return {}
+    else:
+        if not os.path.exists(excel_path):
+            return {}
+        wb = openpyxl.load_workbook(excel_path, data_only=True)
+        if "nguoi_dung" not in wb.sheetnames:
+            wb.close()
+            return {}
+        ws = wb["nguoi_dung"]
+        rows = [[ws.cell(r, c).value for c in range(1, ws.max_column + 1)] for r in range(1, ws.max_row + 1)]
+        wb.close()
+
+    # Tìm dòng header chứa cột 'Email'
+    header_idx = None
+    email_col = 1
+    name_col = 2
+    role_col = 3
+    status_col = 4
+
+    for idx, row in enumerate(rows[:10]):
+        lowered = [str(c or "").strip().lower() for c in row]
+        if "email" in lowered:
+            header_idx = idx
+            email_col = lowered.index("email")
+            for col_i, h in enumerate(lowered):
+                if "tên" in h or "name" in h:
+                    name_col = col_i
+                elif "vai trò" in h or "role" in h or "quyền" in h:
+                    role_col = col_i
+                elif "trạng thái" in h or "status" in h:
+                    status_col = col_i
+            break
+
+    start_idx = (header_idx + 1) if header_idx is not None else 1
+    users = {}
+    for row in rows[start_idx:]:
+        if len(row) <= email_col:
+            continue
+        email = str(row[email_col] or "").strip().lower()
+        if not email or "@" not in email:
+            continue
+        status = str(row[status_col] if len(row) > status_col else "").strip()
+        status_lower = status.lower()
+        if status_lower in ("khóa", "khoa", "inactive", "disabled", "0", "false"):
+            continue
+        users[email] = {
+            "email": email,
+            "name": str(row[name_col] if len(row) > name_col else "").strip() or email,
+            "role": str(row[role_col] if len(row) > role_col else "").strip() or "Biên tập",
+            "status": status or "Hoạt động",
+        }
+    return users
 
 
 def _generate_ma_dd(can, doi, stt):
@@ -324,11 +465,83 @@ def _find_last_data_row(ws, name_col=5):
     return last_row
 
 
+def _build_person_row_vals(stt, ma, can, doi, ho_ten, payload, cha_name, id_cha):
+    return [
+        stt,
+        ma,
+        can,
+        doi,
+        ho_ten,
+        str(payload.get("huy") or "").strip(),
+        str(payload.get("gioi_tinh") or "Nam").strip(),
+        str(payload.get("nam_sinh") or "").strip(),
+        str(payload.get("nam_mat") or "").strip(),
+        str(payload.get("ngay_gio") or "").strip(),
+        cha_name,
+        str(payload.get("me") or "").strip(),
+        str(payload.get("phoi_ngau") or "").strip(),
+        str(payload.get("mo_phan") or "").strip(),
+        str(payload.get("ghi_chu") or "").strip(),
+        id_cha if id_cha else 0,
+        str(payload.get("ngay_mat") or "").strip(),
+        str(payload.get("sdt") or "").strip(),
+        str(payload.get("facebook") or "").strip(),
+        str(payload.get("dia_chi") or "").strip(),
+        str(payload.get("nghe_nghiep") or "").strip(),
+    ]
+
+
 def add_person(payload, excel_path=EXCEL_PATH):
-    """Thêm mới một nhân đinh vào Excel và tự động sao lưu trước khi ghi."""
+    """Thêm mới một nhân đinh vào Google Sheets hoặc Excel."""
     ho_ten = str(payload.get("ho_ten") or "").strip()
     if not ho_ten:
         raise ValueError("Họ và tên không được để trống.")
+
+    if _use_gsheets(excel_path):
+        ss = _get_gsheet_spreadsheet()
+        ws = ss.worksheet("Toàn bộ nhân đinh")
+        all_rows = ws.get_all_values()
+        max_stt = 0
+        stt_to_name = {}
+        last_row = 4
+        for idx, row in enumerate(all_rows):
+            if idx < 4:
+                continue
+            if len(row) > 4 and str(row[4]).strip():
+                last_row = idx + 1
+                if str(row[0]).strip().isdigit():
+                    s_int = int(row[0])
+                    max_stt = max(max_stt, s_int)
+                    stt_to_name[s_int] = str(row[4]).strip()
+
+        new_stt = max_stt + 1
+        can = str(payload.get("can") or "Can 2").strip()
+        doi = str(payload.get("doi") or "Đời 8").strip()
+        ma = str(payload.get("ma") or "").strip() or _generate_ma_dd(can, doi, new_stt)
+        id_cha = _parse_id_cha(payload.get("id_cha"))
+        cha_name = str(payload.get("cha") or "").strip()
+        if not cha_name and isinstance(id_cha, int) and id_cha in stt_to_name:
+            cha_name = stt_to_name[id_cha]
+
+        row_vals = _build_person_row_vals(new_stt, ma, can, doi, ho_ten, payload, cha_name, id_cha)
+        target_row = last_row + 1
+        ws.update(f"A{target_row}:U{target_row}", [row_vals])
+
+        sub_name = SUB_SHEET_MAP.get(can)
+        if sub_name:
+            try:
+                ws_sub = ss.worksheet(sub_name)
+                sub_rows = ws_sub.get_all_values()
+                sub_last = 4
+                for idx, row in enumerate(sub_rows):
+                    if idx >= 4 and len(row) > 4 and str(row[4]).strip():
+                        sub_last = idx + 1
+                sub_vals = list(row_vals[:16])
+                sub_vals[0] = (sub_last - 4) + 1
+                ws_sub.update(f"A{sub_last + 1}:P{sub_last + 1}", [sub_vals])
+            except Exception:
+                pass
+        return new_stt
 
     create_backup(excel_path)
     wb = openpyxl.load_workbook(excel_path)
@@ -354,34 +567,10 @@ def add_person(payload, excel_path=EXCEL_PATH):
     if not cha_name and isinstance(id_cha, int) and id_cha in stt_to_name:
         cha_name = stt_to_name[id_cha]
 
-    row_vals = [
-        new_stt,
-        ma,
-        can,
-        doi,
-        ho_ten,
-        str(payload.get("huy") or "").strip(),
-        str(payload.get("gioi_tinh") or "Nam").strip(),
-        str(payload.get("nam_sinh") or "").strip(),
-        str(payload.get("nam_mat") or "").strip(),
-        str(payload.get("ngay_gio") or "").strip(),
-        cha_name,
-        str(payload.get("me") or "").strip(),
-        str(payload.get("phoi_ngau") or "").strip(),
-        str(payload.get("mo_phan") or "").strip(),
-        str(payload.get("ghi_chu") or "").strip(),
-        id_cha if id_cha else 0,
-        str(payload.get("ngay_mat") or "").strip(),
-        str(payload.get("sdt") or "").strip(),
-        str(payload.get("facebook") or "").strip(),
-        str(payload.get("dia_chi") or "").strip(),
-        str(payload.get("nghe_nghiep") or "").strip(),
-    ]
-
+    row_vals = _build_person_row_vals(new_stt, ma, can, doi, ho_ten, payload, cha_name, id_cha)
     target_row = last_row + 1
     _write_person_row(ws, target_row, row_vals)
 
-    # Đồng bộ vào Sheet nhánh nếu có
     sub_name = SUB_SHEET_MAP.get(can)
     if sub_name and sub_name in wb.sheetnames:
         ws_sub = wb[sub_name]
@@ -396,10 +585,65 @@ def add_person(payload, excel_path=EXCEL_PATH):
 
 
 def update_person(stt, payload, excel_path=EXCEL_PATH):
-    """Cập nhật thông tin nhân đinh theo STT trong Excel."""
+    """Cập nhật thông tin nhân đinh theo STT trong Google Sheets hoặc Excel."""
     ho_ten = str(payload.get("ho_ten") or "").strip()
     if not ho_ten:
         raise ValueError("Họ và tên không được để trống.")
+
+    if _use_gsheets(excel_path):
+        ss = _get_gsheet_spreadsheet()
+        ws = ss.worksheet("Toàn bộ nhân đinh")
+        all_rows = ws.get_all_values()
+        target_row = None
+        old_ma = ""
+        old_can = ""
+        old_doi = ""
+        stt_to_name = {}
+        for idx, row in enumerate(all_rows):
+            if idx < 4 or not row:
+                continue
+            s = str(row[0] or "").strip()
+            if s.isdigit():
+                n = str(row[4] if len(row) > 4 else "").strip()
+                stt_to_name[int(s)] = n
+                if int(s) == int(stt):
+                    target_row = idx + 1
+                    old_ma = str(row[1] if len(row) > 1 else "").strip()
+                    old_can = str(row[2] if len(row) > 2 else "").strip()
+                    old_doi = str(row[3] if len(row) > 3 else "").strip()
+
+        if target_row is None:
+            raise ValueError(f"Không tìm thấy nhân đinh có STT {stt}.")
+
+        can = str(payload.get("can") or old_can).strip()
+        doi = str(payload.get("doi") or old_doi).strip()
+        ma = str(payload.get("ma") or old_ma or _generate_ma_dd(can, doi, stt)).strip()
+        id_cha = _parse_id_cha(payload.get("id_cha"))
+        cha_name = str(payload.get("cha") or "").strip()
+        if not cha_name and isinstance(id_cha, int) and id_cha in stt_to_name:
+            cha_name = stt_to_name[id_cha]
+
+        row_vals = _build_person_row_vals(int(stt), ma, can, doi, ho_ten, payload, cha_name, id_cha)
+        ws.update(f"A{target_row}:U{target_row}", [row_vals])
+
+        for idx, row in enumerate(all_rows):
+            if idx >= 4 and len(row) > 15 and _parse_id_cha(row[15]) == int(stt):
+                ws.update_cell(idx + 1, 11, ho_ten)
+
+        if old_ma:
+            for sname in ("Can 1 - Tổ Cư", "Can 2 - Tổ Khâu", "Can 3 & Can 4"):
+                try:
+                    ws_sub = ss.worksheet(sname)
+                    sub_rows = ws_sub.get_all_values()
+                    for idx, row in enumerate(sub_rows):
+                        if idx >= 4 and len(row) > 1 and str(row[1]).strip() == old_ma:
+                            sub_vals = list(row_vals[:16])
+                            sub_vals[0] = row[0]
+                            ws_sub.update(f"A{idx + 1}:P{idx + 1}", [sub_vals])
+                            break
+                except Exception:
+                    pass
+        return int(stt)
 
     create_backup(excel_path)
     wb = openpyxl.load_workbook(excel_path)
@@ -429,38 +673,14 @@ def update_person(stt, payload, excel_path=EXCEL_PATH):
     if not cha_name and isinstance(id_cha, int) and id_cha in stt_to_name:
         cha_name = stt_to_name[id_cha]
 
-    row_vals = [
-        int(stt),
-        ma,
-        can,
-        doi,
-        ho_ten,
-        str(payload.get("huy") or "").strip(),
-        str(payload.get("gioi_tinh") or "Nam").strip(),
-        str(payload.get("nam_sinh") or "").strip(),
-        str(payload.get("nam_mat") or "").strip(),
-        str(payload.get("ngay_gio") or "").strip(),
-        cha_name,
-        str(payload.get("me") or "").strip(),
-        str(payload.get("phoi_ngau") or "").strip(),
-        str(payload.get("mo_phan") or "").strip(),
-        str(payload.get("ghi_chu") or "").strip(),
-        id_cha if id_cha else 0,
-        str(payload.get("ngay_mat") or "").strip(),
-        str(payload.get("sdt") or "").strip(),
-        str(payload.get("facebook") or "").strip(),
-        str(payload.get("dia_chi") or "").strip(),
-        str(payload.get("nghe_nghiep") or "").strip(),
-    ]
+    row_vals = _build_person_row_vals(int(stt), ma, can, doi, ho_ten, payload, cha_name, id_cha)
     _write_person_row(ws, target_row, row_vals)
 
-    # Cập nhật tên Cha cho các con nếu tên nhân đinh thay đổi
     for r in range(5, ws.max_row + 1):
         child_id_cha = _parse_id_cha(ws.cell(row=r, column=16).value)
         if child_id_cha == int(stt):
             ws.cell(row=r, column=11).value = ho_ten
 
-    # Đồng bộ vào sub-sheet nếu khớp Mã ĐD
     if old_ma:
         for sname in ("Can 1 - Tổ Cư", "Can 2 - Tổ Khâu", "Can 3 & Can 4"):
             if sname in wb.sheetnames:
@@ -478,6 +698,50 @@ def update_person(stt, payload, excel_path=EXCEL_PATH):
 
 def delete_person(stt, force=False, excel_path=EXCEL_PATH):
     """Xóa nhân đinh theo STT. Cảnh báo nếu nhân đinh đang có con cháu."""
+    if _use_gsheets(excel_path):
+        ss = _get_gsheet_spreadsheet()
+        ws = ss.worksheet("Toàn bộ nhân đinh")
+        all_rows = ws.get_all_values()
+        target_row = None
+        target_ma = ""
+        children = []
+        child_rows = []
+        for idx, row in enumerate(all_rows):
+            if idx < 4 or not row:
+                continue
+            s = str(row[0] or "").strip()
+            if s.isdigit() and int(s) == int(stt):
+                target_row = idx + 1
+                target_ma = str(row[1] if len(row) > 1 else "").strip()
+            if len(row) > 15 and _parse_id_cha(row[15]) == int(stt):
+                children.append(str(row[4] if len(row) > 4 else f"STT {s}"))
+                child_rows.append(idx + 1)
+
+        if target_row is None:
+            raise ValueError(f"Không tìm thấy nhân đinh có STT {stt}.")
+        if children and not force:
+            raise ValueError(
+                f"Nhân đinh này đang là Cha của {len(children)} người ({', '.join(children[:5])}). "
+                "Hãy chuyển liên kết con cái trước hoặc xác nhận xóa bắt buộc."
+            )
+        if children and force:
+            for cr in child_rows:
+                ws.update_cell(cr, 16, 0)
+        ws.delete_rows(target_row)
+
+        if target_ma:
+            for sname in ("Can 1 - Tổ Cư", "Can 2 - Tổ Khâu", "Can 3 & Can 4"):
+                try:
+                    ws_sub = ss.worksheet(sname)
+                    sub_rows = ws_sub.get_all_values()
+                    for idx, row in enumerate(sub_rows):
+                        if idx >= 4 and len(row) > 1 and str(row[1]).strip() == target_ma:
+                            ws_sub.delete_rows(idx + 1)
+                            break
+                except Exception:
+                    pass
+        return True
+
     wb = openpyxl.load_workbook(excel_path)
     ws = wb["Toàn bộ nhân đinh"]
 
@@ -536,6 +800,26 @@ def add_death(payload, excel_path=EXCEL_PATH):
     if not ngay_str or not ten:
         raise ValueError("Ngày giỗ Âm lịch và Tên người được giỗ không được trống.")
 
+    if _use_gsheets(excel_path):
+        ss = _get_gsheet_spreadsheet()
+        ws = ss.worksheet("Bảng Kỵ Giỗ")
+        rows = ws.get_all_values()
+        last_row = 4
+        for idx, row in enumerate(rows):
+            if idx >= 4 and len(row) > 2 and str(row[2]).strip():
+                last_row = idx + 1
+        new_stt = (last_row - 4) + 1
+        vals = [
+            new_stt,
+            ngay_str,
+            ten,
+            str(payload.get("can") or "").strip(),
+            str(payload.get("mo") or "").strip(),
+            str(payload.get("ghi") or "").strip(),
+        ]
+        ws.update(f"A{last_row + 1}:F{last_row + 1}", [vals])
+        return last_row + 1
+
     create_backup(excel_path)
     wb = openpyxl.load_workbook(excel_path)
     ws = wb["Bảng Kỵ Giỗ"]
@@ -565,6 +849,22 @@ def update_death(row_idx, payload, excel_path=EXCEL_PATH):
     if not ngay_str or not ten:
         raise ValueError("Ngày giỗ Âm lịch và Tên người được giỗ không được trống.")
 
+    if _use_gsheets(excel_path):
+        ss = _get_gsheet_spreadsheet()
+        ws = ss.worksheet("Bảng Kỵ Giỗ")
+        rows = ws.get_all_values()
+        if row_idx < 5 or row_idx > len(rows) or not str(rows[row_idx - 1][2]).strip():
+            raise ValueError(f"Không tìm thấy dòng kỵ giỗ ở vị trí {row_idx}.")
+        vals = [
+            ngay_str,
+            ten,
+            str(payload.get("can") or "").strip(),
+            str(payload.get("mo") or "").strip(),
+            str(payload.get("ghi") or "").strip(),
+        ]
+        ws.update(f"B{row_idx}:F{row_idx}", [vals])
+        return row_idx
+
     create_backup(excel_path)
     wb = openpyxl.load_workbook(excel_path)
     ws = wb["Bảng Kỵ Giỗ"]
@@ -584,6 +884,15 @@ def update_death(row_idx, payload, excel_path=EXCEL_PATH):
 
 def delete_death(row_idx, excel_path=EXCEL_PATH):
     """Xóa dòng kỵ giỗ khỏi Sheet Bảng Kỵ Giỗ."""
+    if _use_gsheets(excel_path):
+        ss = _get_gsheet_spreadsheet()
+        ws = ss.worksheet("Bảng Kỵ Giỗ")
+        rows = ws.get_all_values()
+        if row_idx < 5 or row_idx > len(rows) or not str(rows[row_idx - 1][2]).strip():
+            raise ValueError(f"Không tìm thấy dòng kỵ giỗ ở vị trí {row_idx}.")
+        ws.delete_rows(row_idx)
+        return True
+
     create_backup(excel_path)
     wb = openpyxl.load_workbook(excel_path)
     ws = wb["Bảng Kỵ Giỗ"]
@@ -601,6 +910,7 @@ def export_public_html(
     template_path=HTML_TEMPLATE_PATH,
     output_path=PUBLIC_HTML_PATH,
     hide_private=False,
+    write_to_disk=True,
 ):
     """Xuất file HTML tĩnh độc lập sẵn sàng upload lên Internet."""
     if not os.path.exists(template_path):
@@ -672,12 +982,14 @@ def export_public_html(
         html_content,
     )
 
-    with open(output_path, "w", encoding="utf-8") as f:
-        f.write(html_content)
+    if write_to_disk and output_path:
+        with open(output_path, "w", encoding="utf-8") as f:
+            f.write(html_content)
 
     return {
         "output_path": output_path,
         "people_count": len(js_records),
         "deaths_count": len(js_deaths),
         "hide_private": hide_private,
+        "html_content": html_content,
     }

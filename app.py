@@ -1,22 +1,24 @@
 # -*- coding: utf-8 -*-
 """
 Web Quản Trị Gia Phả Họ Bạch (FastAPI)
-- Thừa kế toàn bộ dữ liệu từ Danh_Sach_Nhan_Dinh_Ho_Bach.xlsx
+- Thừa kế dữ liệu từ Google Sheets (trên Cloud/Render) hoặc Excel (trên máy cá nhân)
+- Xác thực qua Google Sign-In & phân quyền theo sheet 'nguoi_dung'
 - Hỗ trợ Thêm / Sửa / Xóa nhân đinh & Lịch Kỵ Giỗ
-- Xuất bản file HTML tĩnh độc lập (index.html / Gia_Pha_Public.html) để public lên Internet
+- Xuất bản file HTML tĩnh độc lập (index.html) để public lên Internet
 """
 import os
 from typing import Optional, Union
-from fastapi import FastAPI, HTTPException, Query
-from fastapi.responses import HTMLResponse, FileResponse
+from fastapi import FastAPI, HTTPException, Query, Request, Response, Depends
+from fastapi.responses import HTMLResponse
 from pydantic import BaseModel
 
 import genealogy_service as svc
+import auth_service as auth
 
 BASE_DIR = os.path.dirname(os.path.abspath(__file__))
 ADMIN_TEMPLATE_PATH = os.path.join(BASE_DIR, "templates", "admin.html")
 
-app = FastAPI(title="Quản Trị Gia Phả Họ Bạch", version="2.0.0")
+app = FastAPI(title="Quản Trị Gia Phả Họ Bạch", version="3.0.0")
 
 
 class PersonPayload(BaseModel):
@@ -54,6 +56,45 @@ class ExportPayload(BaseModel):
     hide_private: bool = False
 
 
+class GoogleLoginPayload(BaseModel):
+    credential: str
+
+
+def _get_current_user(request: Request) -> Optional[dict]:
+    token = request.cookies.get(auth.SESSION_COOKIE_NAME)
+    if not token:
+        return None
+    session_data = auth.verify_session_token(token)
+    if not session_data:
+        return None
+    # Đối chiếu lại với sheet nguoi_dung để đảm bảo quyền vẫn còn hiệu lực
+    authorized = auth.check_authorized_email(session_data.get("email", ""))
+    if not authorized:
+        return None
+    return {
+        "email": authorized["email"],
+        "name": session_data.get("name") or authorized["name"],
+        "role": authorized["role"],
+        "picture": session_data.get("picture", ""),
+    }
+
+
+def require_editor(request: Request) -> dict:
+    token = request.cookies.get(auth.SESSION_COOKIE_NAME)
+    if not token or not auth.verify_session_token(token):
+        raise HTTPException(status_code=401, detail="Vui lòng đăng nhập bằng tài khoản Google để thực hiện thao tác này.")
+    user = _get_current_user(request)
+    if not user:
+        raise HTTPException(status_code=403, detail="Email của bạn không có trong danh sách sheet 'nguoi_dung' hoặc đã bị khóa quyền.")
+    return user
+
+
+def _sync_viewer():
+    """Tự động cập nhật Gia_Pha_Viewer.html ngay sau khi sửa dữ liệu (khi chạy local)."""
+    if not svc.is_gsheets_enabled():
+        svc.export_public_html(output_path=svc.HTML_TEMPLATE_PATH, hide_private=False, write_to_disk=True)
+
+
 @app.get("/", response_class=HTMLResponse)
 def serve_admin():
     if not os.path.exists(ADMIN_TEMPLATE_PATH):
@@ -64,17 +105,69 @@ def serve_admin():
 
 @app.get("/viewer", response_class=HTMLResponse)
 def serve_viewer():
-    if not os.path.exists(svc.HTML_TEMPLATE_PATH):
-        raise HTTPException(status_code=404, detail="Không tìm thấy Gia_Pha_Viewer.html")
-    with open(svc.HTML_TEMPLATE_PATH, "r", encoding="utf-8") as f:
-        return HTMLResponse(content=f.read())
+    result = svc.export_public_html(output_path=svc.HTML_TEMPLATE_PATH, hide_private=False, write_to_disk=not svc.is_gsheets_enabled())
+    return HTMLResponse(content=result["html_content"])
 
 
 @app.get("/public-preview", response_class=HTMLResponse)
-def serve_public_preview():
-    target = svc.PUBLIC_HTML_PATH if os.path.exists(svc.PUBLIC_HTML_PATH) else svc.HTML_TEMPLATE_PATH
-    with open(target, "r", encoding="utf-8") as f:
-        return HTMLResponse(content=f.read())
+def serve_public_preview(hide_private: bool = Query(False)):
+    result = svc.export_public_html(output_path=svc.PUBLIC_HTML_PATH, hide_private=hide_private, write_to_disk=False)
+    return HTMLResponse(content=result["html_content"])
+
+
+@app.get("/api/auth/config")
+def get_auth_config():
+    return {
+        "google_client_id": auth.get_google_client_id(),
+        "storage_mode": "gsheets" if svc.is_gsheets_enabled() else "excel",
+    }
+
+
+@app.get("/api/auth/me")
+def get_auth_me(request: Request):
+    user = _get_current_user(request)
+    return {"authenticated": bool(user), "user": user}
+
+
+@app.post("/api/auth/google")
+def login_with_google(payload: GoogleLoginPayload, request: Request, response: Response):
+    try:
+        g_user = auth.verify_google_credential(payload.credential)
+    except ValueError as exc:
+        raise HTTPException(status_code=401, detail=str(exc)) from exc
+    except Exception as exc:
+        raise HTTPException(status_code=401, detail=f"Token Google không hợp lệ: {exc}") from exc
+
+    authorized = auth.check_authorized_email(g_user["email"])
+    if not authorized:
+        raise HTTPException(
+            status_code=403,
+            detail=f"Email '{g_user['email']}' chưa được cấp quyền trong sheet 'nguoi_dung'.",
+        )
+
+    user_info = {
+        "email": authorized["email"],
+        "name": g_user["name"] or authorized["name"],
+        "role": authorized["role"],
+        "picture": g_user.get("picture", ""),
+    }
+    session_token = auth.create_session_token(user_info)
+    is_https = request.url.scheme == "https" or request.headers.get("x-forwarded-proto") == "https"
+    response.set_cookie(
+        key=auth.SESSION_COOKIE_NAME,
+        value=session_token,
+        httponly=True,
+        samesite="lax",
+        secure=is_https,
+        max_age=auth.SESSION_TTL_SECONDS,
+    )
+    return {"status": "ok", "user": user_info}
+
+
+@app.post("/api/auth/logout")
+def logout(response: Response):
+    response.delete_cookie(key=auth.SESSION_COOKIE_NAME)
+    return {"status": "ok"}
 
 
 @app.get("/api/data")
@@ -85,13 +178,8 @@ def get_all_data():
         raise HTTPException(status_code=500, detail=str(exc)) from exc
 
 
-def _sync_viewer():
-    """Tự động cập nhật Gia_Pha_Viewer.html ngay sau khi sửa dữ liệu Excel."""
-    svc.export_public_html(output_path=svc.HTML_TEMPLATE_PATH, hide_private=False)
-
-
 @app.post("/api/people")
-def create_person(payload: PersonPayload):
+def create_person(payload: PersonPayload, user: dict = Depends(require_editor)):
     try:
         new_stt = svc.add_person(payload.model_dump())
         _sync_viewer()
@@ -103,7 +191,7 @@ def create_person(payload: PersonPayload):
 
 
 @app.put("/api/people/{stt}")
-def edit_person(stt: int, payload: PersonPayload):
+def edit_person(stt: int, payload: PersonPayload, user: dict = Depends(require_editor)):
     try:
         svc.update_person(stt, payload.model_dump())
         _sync_viewer()
@@ -115,7 +203,7 @@ def edit_person(stt: int, payload: PersonPayload):
 
 
 @app.delete("/api/people/{stt}")
-def remove_person(stt: int, force: bool = Query(False)):
+def remove_person(stt: int, force: bool = Query(False), user: dict = Depends(require_editor)):
     try:
         svc.delete_person(stt, force=force)
         _sync_viewer()
@@ -129,7 +217,7 @@ def remove_person(stt: int, force: bool = Query(False)):
 
 
 @app.post("/api/deaths")
-def create_death(payload: DeathPayload):
+def create_death(payload: DeathPayload, user: dict = Depends(require_editor)):
     try:
         row_idx = svc.add_death(payload.model_dump())
         _sync_viewer()
@@ -141,7 +229,7 @@ def create_death(payload: DeathPayload):
 
 
 @app.put("/api/deaths/{row_idx}")
-def edit_death(row_idx: int, payload: DeathPayload):
+def edit_death(row_idx: int, payload: DeathPayload, user: dict = Depends(require_editor)):
     try:
         svc.update_death(row_idx, payload.model_dump())
         _sync_viewer()
@@ -153,7 +241,7 @@ def edit_death(row_idx: int, payload: DeathPayload):
 
 
 @app.delete("/api/deaths/{row_idx}")
-def remove_death(row_idx: int):
+def remove_death(row_idx: int, user: dict = Depends(require_editor)):
     try:
         svc.delete_death(row_idx)
         _sync_viewer()
@@ -165,18 +253,18 @@ def remove_death(row_idx: int):
 
 
 @app.post("/api/export-html")
-def export_html(payload: ExportPayload):
+def export_html(payload: ExportPayload, user: dict = Depends(require_editor)):
     try:
-        # Cập nhật bản nội bộ đầy đủ
-        svc.export_public_html(output_path=svc.HTML_TEMPLATE_PATH, hide_private=False)
-        # Xuất bản Public HTML theo tùy chọn ẩn/hiện thông tin riêng tư (đồng bộ cả index.html cho GitHub Pages)
-        result = svc.export_public_html(output_path=svc.PUBLIC_HTML_PATH, hide_private=payload.hide_private)
-        index_path = os.path.join(BASE_DIR, "index.html")
-        svc.export_public_html(output_path=index_path, hide_private=payload.hide_private)
+        write_disk = not svc.is_gsheets_enabled()
+        if write_disk:
+            svc.export_public_html(output_path=svc.HTML_TEMPLATE_PATH, hide_private=False, write_to_disk=True)
+            index_path = os.path.join(BASE_DIR, "index.html")
+            svc.export_public_html(output_path=index_path, hide_private=payload.hide_private, write_to_disk=True)
+        result = svc.export_public_html(output_path=svc.PUBLIC_HTML_PATH, hide_private=payload.hide_private, write_to_disk=write_disk)
         return {
             "status": "ok",
             "message": f"Đã xuất bản thành công! ({result['people_count']} nhân đinh, {result['deaths_count']} ngày giỗ)",
-            "file_name": os.path.basename(result["output_path"]),
+            "file_name": "index.html",
             "hide_private": payload.hide_private,
         }
     except Exception as exc:
@@ -184,11 +272,10 @@ def export_html(payload: ExportPayload):
 
 
 @app.get("/api/download-html")
-def download_public_html():
-    if not os.path.exists(svc.PUBLIC_HTML_PATH):
-        svc.export_public_html(output_path=svc.PUBLIC_HTML_PATH, hide_private=False)
-    return FileResponse(
-        path=svc.PUBLIC_HTML_PATH,
-        filename="index.html",
+def download_public_html(hide_private: bool = Query(False)):
+    result = svc.export_public_html(output_path=svc.PUBLIC_HTML_PATH, hide_private=hide_private, write_to_disk=False)
+    return Response(
+        content=result["html_content"].encode("utf-8"),
         media_type="text/html; charset=utf-8",
+        headers={"Content-Disposition": 'attachment; filename="index.html"'},
     )

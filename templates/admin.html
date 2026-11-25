@@ -4,6 +4,7 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Quản Trị Gia Phả Họ Bạch - Web App</title>
+    <script src="https://accounts.google.com/gsi/client" async defer></script>
     <style>
         :root {
             --primary: #7b1e1e;
@@ -261,6 +262,32 @@
         .father-opt-main { overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
         .father-tree-prefix { color: #9ca3af; font-family: Consolas, monospace; }
         .father-opt-meta { font-size: 0.76rem; color: var(--muted); white-space: nowrap; flex-shrink: 0; }
+        body:not(.is-editor) .auth-only { display: none !important; }
+        .user-chip {
+            display: inline-flex;
+            align-items: center;
+            gap: 8px;
+            background: rgba(255,255,255,0.16);
+            padding: 5px 10px;
+            border-radius: 20px;
+            font-size: 0.82rem;
+            color: #fff;
+        }
+        .user-chip img { width: 24px; height: 24px; border-radius: 50%; object-fit: cover; }
+        .auth-banner {
+            background: #fffbeb;
+            border: 1px solid #fcd34d;
+            color: #92400e;
+            padding: 10px 16px;
+            border-radius: 8px;
+            margin-bottom: 14px;
+            font-size: 0.88rem;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            flex-wrap: wrap;
+            gap: 8px;
+        }
     </style>
 </head>
 <body>
@@ -269,9 +296,10 @@
             <h1>🏛️ HỆ THỐNG QUẢN TRỊ GIA PHẢ HỌ BẠCH</h1>
             <p id="headerSummary">Đang tải dữ liệu gia phả...</p>
         </div>
-        <div class="header-actions">
+        <div class="header-actions" style="align-items: center;">
             <a href="/viewer" target="_blank" class="btn btn-light">🌳 Xem Cây Phả Hệ</a>
-            <button class="btn btn-gold" onclick="quickExportHtml()">🚀 Xuất HTML Public (1-Click)</button>
+            <button class="btn btn-gold auth-only" onclick="quickExportHtml()">🚀 Xuất HTML Public (1-Click)</button>
+            <div id="googleAuthArea"></div>
         </div>
     </header>
 
@@ -282,6 +310,9 @@
     </div>
 
     <div class="container">
+        <div id="authBanner" class="auth-banner">
+            <span>🔒 <strong>Chế độ Chỉ Xem:</strong> Vui lòng đăng nhập bằng tài khoản Google (có trong sheet <code>nguoi_dung</code>) để mở khóa chức năng Thêm / Sửa / Xóa.</span>
+        </div>
         <!-- TAB 1: NHÂN ĐINH -->
         <div id="tab-people" class="tab-pane active">
             <div class="card">
@@ -311,7 +342,7 @@
                             <option value="Đời 9">Đời 9</option>
                         </select>
                     </div>
-                    <button class="btn btn-primary" onclick="openPersonModal()">➕ Thêm Nhân Đinh</button>
+                    <button class="btn btn-primary auth-only" onclick="openPersonModal()">➕ Thêm Nhân Đinh</button>
                 </div>
 
                 <div class="table-wrap">
@@ -341,7 +372,7 @@
                         <strong style="color: var(--primary);">Danh sách Bảng Kỵ Giỗ gốc trong Excel</strong>
                         <span id="deathsCountBadge" class="badge" style="margin-left: 8px;">0 dòng</span>
                     </div>
-                    <button class="btn btn-primary" onclick="openDeathModal()">➕ Thêm Ngày Giỗ</button>
+                    <button class="btn btn-primary auth-only" onclick="openDeathModal()">➕ Thêm Ngày Giỗ</button>
                 </div>
                 <div class="table-wrap">
                     <table>
@@ -375,7 +406,7 @@
                 </label>
 
                 <div style="display: flex; gap: 10px; flex-wrap: wrap; margin-top: 14px;">
-                    <button class="btn btn-gold" onclick="exportHtmlFromTab()">🚀 Xuất Bản HTML Public Ngay</button>
+                    <button class="btn btn-gold auth-only" onclick="exportHtmlFromTab()">🚀 Xuất Bản HTML Public Ngay</button>
                     <a href="/api/download-html" class="btn btn-green">⬇️ Tải về file index.html</a>
                     <a href="/public-preview" target="_blank" class="btn btn-blue">👁️ Xem trước bản Public</a>
                 </div>
@@ -808,8 +839,8 @@
                     </td>
                     <td>${contactHtml || '<span style="color:#9ca3af;">—</span>'}</td>
                     <td>
-                        <button class="btn btn-blue btn-sm" onclick="openPersonModal(${p.stt})">✏️ Sửa</button>
-                        <button class="btn btn-danger btn-sm" onclick="deletePerson(${p.stt}, '${escapeHtml(p.ho_ten)}')">🗑️</button>
+                        <button class="btn btn-blue btn-sm auth-only" onclick="openPersonModal(${p.stt})">✏️ Sửa</button>
+                        <button class="btn btn-danger btn-sm auth-only" onclick="deletePerson(${p.stt}, '${escapeHtml(p.ho_ten)}')">🗑️</button>
                     </td>
                 `;
                 tbody.appendChild(tr);
@@ -931,8 +962,8 @@
                     <td>${escapeHtml(d.mo || "—")}</td>
                     <td style="font-size:0.84rem;">${escapeHtml(d.ghi || "—")}</td>
                     <td>
-                        <button class="btn btn-blue btn-sm" onclick="openDeathModal(${d.row_idx})">✏️ Sửa</button>
-                        <button class="btn btn-danger btn-sm" onclick="deleteDeath(${d.row_idx}, '${escapeHtml(d.ten)}')">🗑️</button>
+                        <button class="btn btn-blue btn-sm auth-only" onclick="openDeathModal(${d.row_idx})">✏️ Sửa</button>
+                        <button class="btn btn-danger btn-sm auth-only" onclick="deleteDeath(${d.row_idx}, '${escapeHtml(d.ten)}')">🗑️</button>
                     </td>
                 `;
                 tbody.appendChild(tr);
@@ -1025,7 +1056,89 @@
             exportHtml(hidePrivate);
         }
 
-        window.onload = loadData;
+        let currentUser = null;
+        let authConfig = { google_client_id: "", storage_mode: "excel" };
+
+        function renderAuthUI() {
+            const area = document.getElementById("googleAuthArea");
+            const banner = document.getElementById("authBanner");
+            const isEditor = Boolean(currentUser);
+            document.body.classList.toggle("is-editor", isEditor);
+
+            if (isEditor) {
+                if (banner) banner.style.display = "none";
+                area.innerHTML = `
+                    <div class="user-chip">
+                        ${currentUser.picture ? `<img src="${escapeHtml(currentUser.picture)}" alt="avatar">` : ""}
+                        <span><strong>${escapeHtml(currentUser.name)}</strong> (${escapeHtml(currentUser.role)})</span>
+                        <button class="btn btn-light btn-sm" onclick="logoutUser()" style="padding:2px 8px; font-size:0.75rem;">Đăng xuất</button>
+                    </div>
+                `;
+            } else {
+                if (banner) banner.style.display = "flex";
+                if (authConfig.google_client_id) {
+                    area.innerHTML = `<div id="gSignInBtn"></div>`;
+                    if (window.google && google.accounts && google.accounts.id) {
+                        google.accounts.id.initialize({
+                            client_id: authConfig.google_client_id,
+                            callback: handleGoogleCredentialResponse,
+                        });
+                        google.accounts.id.renderButton(document.getElementById("gSignInBtn"), {
+                            theme: "outline",
+                            size: "medium",
+                            text: "signin_with",
+                            locale: "vi",
+                        });
+                    } else if ((renderAuthUI._retries = (renderAuthUI._retries || 0) + 1) <= 20) {
+                        setTimeout(renderAuthUI, 250);
+                    }
+                } else {
+                    area.innerHTML = `<span class="user-chip">⚠️ Chưa cấu hình GOOGLE_CLIENT_ID</span>`;
+                }
+            }
+        }
+
+        async function initAuth() {
+            try {
+                const [cfgRes, meRes] = await Promise.all([fetch("/api/auth/config"), fetch("/api/auth/me")]);
+                if (cfgRes.ok) authConfig = await cfgRes.json();
+                if (meRes.ok) {
+                    const meData = await meRes.json();
+                    currentUser = meData.authenticated ? meData.user : null;
+                }
+            } catch (err) {
+                console.error("Auth init error:", err);
+            }
+            renderAuthUI();
+        }
+
+        async function handleGoogleCredentialResponse(response) {
+            const res = await fetch("/api/auth/google", {
+                method: "POST",
+                headers: { "Content-Type": "application/json" },
+                body: JSON.stringify({ credential: response.credential }),
+            });
+            const data = await res.json();
+            if (!res.ok) {
+                showToast(data.detail || "Đăng nhập thất bại", "error");
+                return;
+            }
+            currentUser = data.user;
+            renderAuthUI();
+            showToast(`Xin chào ${currentUser.name}! Đã mở khóa quyền chỉnh sửa.`, "success");
+        }
+
+        async function logoutUser() {
+            await fetch("/api/auth/logout", { method: "POST" });
+            currentUser = null;
+            renderAuthUI();
+            showToast("Đã đăng xuất.", "success");
+        }
+
+        window.onload = async function() {
+            await initAuth();
+            await loadData();
+        };
     </script>
 </body>
 </html>
