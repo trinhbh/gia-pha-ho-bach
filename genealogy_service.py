@@ -46,12 +46,18 @@ def _use_gsheets(excel_path: str) -> bool:
     return is_gsheets_enabled() and os.path.abspath(excel_path) == os.path.abspath(EXCEL_PATH)
 
 
+def _extract_sheet_id(raw: str) -> str:
+    s = str(raw or "").strip()
+    m = re.search(r"/spreadsheets/d/([a-zA-Z0-9-_]+)", s)
+    return m.group(1) if m else s
+
+
 def _get_gsheet_spreadsheet():
     """Kết nối tới Google Spreadsheet bằng Service Account credentials."""
     import gspread
     from google.oauth2.service_account import Credentials
 
-    sheet_id = os.environ.get("GOOGLE_SHEET_ID", "").strip()
+    sheet_id = _extract_sheet_id(os.environ.get("GOOGLE_SHEET_ID", ""))
     sa_raw = os.environ.get("GOOGLE_SERVICE_ACCOUNT_JSON", "").strip()
     scopes = ["https://www.googleapis.com/auth/spreadsheets"]
 
