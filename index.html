@@ -1032,7 +1032,7 @@
         <div class="badge-bar">
             <span class="badge">🏛️ Đền thờ Di tích Lịch sử (QĐ 1993)</span>
             <span class="badge">📜 Khởi tổ Canh Tuất (1730)</span>
-            <span class="badge">🌳 8 Thế hệ tiếp nối</span>
+            <span class="badge" id="badgeGenCount">🌳 9 Thế hệ tiếp nối</span>
             <span class="badge">🛡️ Trạng nguyên Bạch Liêu (1236 - 1315)</span>
             <span class="badge" style="background: rgba(255, 215, 0, 0.25); color: #fff9c4; font-weight: bold;">✅ Chuẩn xác 100% theo văn bản</span>
         </div>
@@ -1079,6 +1079,7 @@
                         <option value="Đời 6">Đời 6</option>
                         <option value="Đời 7">Đời 7</option>
                         <option value="Đời 8">Đời 8</option>
+                        <option value="Đời 9">Đời 9</option>
                     </select>
                 </div>
 
@@ -1367,7 +1368,7 @@
                         <div class="stat-label">Ngày Kỵ giỗ trong năm</div>
                     </div>
                     <div class="stat-card" style="border-left-color: #d4af37;">
-                        <div class="stat-num">8</div>
+                        <div class="stat-num">9</div>
                         <div class="stat-label">Thế hệ kế tiếp (1730 - 2026)</div>
                     </div>
                 </div>
@@ -5950,6 +5951,35 @@
             const btnCal = document.querySelector("button[onclick*='tab-calendar']");
             if (btnCal) btnCal.innerHTML = `📅 Lịch Kỵ Giỗ Âm Lịch (${deathDays.length})`;
 
+            let maxGen = 0;
+            const doiSet = new Set();
+            people.forEach(p => {
+                if (p.doi) doiSet.add(p.doi);
+                const m = String(p.doi || "").match(/\d+/);
+                if (m) maxGen = Math.max(maxGen, parseInt(m[0], 10));
+            });
+            const genCount = maxGen || 9;
+
+            const badgeGen = document.getElementById("badgeGenCount");
+            if (badgeGen) badgeGen.textContent = `🌳 ${genCount} Thế hệ tiếp nối`;
+
+            const doiSelect = document.getElementById("doiFilter");
+            if (doiSelect) {
+                const existing = new Set(Array.from(doiSelect.options).map(o => o.value));
+                Array.from(doiSet).sort((a, b) => {
+                    const na = parseInt((a.match(/\d+/) || [0])[0], 10);
+                    const nb = parseInt((b.match(/\d+/) || [0])[0], 10);
+                    return na - nb;
+                }).forEach(d => {
+                    if (!existing.has(d)) {
+                        const opt = document.createElement("option");
+                        opt.value = d;
+                        opt.textContent = d;
+                        doiSelect.appendChild(opt);
+                    }
+                });
+            }
+
             const c1 = people.filter(p => p.can === "Can 1").length;
             const c2 = people.filter(p => p.can === "Can 2").length;
             const c34 = people.filter(p => p.can === "Can 3" || p.can === "Can 4").length;
@@ -5961,7 +5991,7 @@
                 statNums[2].textContent = c2;
                 statNums[3].textContent = c34;
                 statNums[4].textContent = deathDays.length;
-                statNums[5].textContent = "8";
+                statNums[5].textContent = String(genCount);
             }
         }
 
