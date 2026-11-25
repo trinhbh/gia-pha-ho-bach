@@ -307,6 +307,7 @@
         <button class="tab-btn active" onclick="switchTab('tab-people', this)">👥 Quản Lý Nhân Đinh</button>
         <button class="tab-btn" onclick="switchTab('tab-deaths', this)">📅 Quản Lý Lịch Kỵ Giỗ</button>
         <button class="tab-btn" onclick="switchTab('tab-publish', this)">🌐 Xuất Bản Lên Internet</button>
+        <button class="tab-btn" onclick="switchTab('tab-guide', this)">📖 Hướng Dẫn Sử Dụng</button>
     </div>
 
     <div class="container">
@@ -421,6 +422,66 @@
                     <li><strong>Cách 2 (GitHub Pages):</strong> Tạo một repository trên GitHub, tải file <code>index.html</code> lên rồi bật <em>Settings → Pages → Deploy from branch</em>.</li>
                     <li>Mỗi lần sau này có thêm/sửa con cháu trên Web Python này, chỉ cần bấm xuất lại file <code>index.html</code> và cập nhật đè lên là xong.</li>
                 </ol>
+            </div>
+        </div>
+
+        <!-- TAB 4: HƯỚNG DẪN SỬ DỤNG -->
+        <div id="tab-guide" class="tab-pane">
+            <div class="card">
+                <h2 style="color: var(--primary); margin-bottom: 10px;">📖 Hướng Dẫn Sử Dụng Hệ Thống Gia Phả Họ Bạch</h2>
+                <p style="color: var(--muted); font-size: 0.92rem; line-height: 1.6;">
+                    Trang web quản trị trực tuyến tại địa chỉ <strong><a href="https://gia-pha-ho-bach.onrender.com/" target="_blank" rel="noopener noreferrer" style="color: var(--primary);">https://gia-pha-ho-bach.onrender.com/</a></strong> kết nối trực tiếp với Google Sheets để con cháu dòng họ có thể tra cứu và cập nhật dữ liệu mọi lúc mọi nơi.
+                </p>
+            </div>
+
+            <div class="card">
+                <h3 style="color: var(--primary); margin-bottom: 10px;">1. Xem & Tra cứu thông tin (Không cần đăng nhập)</h3>
+                <ul class="guide-list">
+                    <li><strong>Tìm kiếm nhanh:</strong> Tại tab <strong>👥 Quản Lý Nhân Đinh</strong>, gõ tên, tên húy, SĐT, địa chỉ, năm sinh hoặc ngày giỗ vào ô tìm kiếm; có thể lọc theo <em>Can nhánh</em> và <em>Đời</em>.</li>
+                    <li><strong>Xem sơ đồ cây & lịch kỵ giỗ đẹp mắt:</strong> Bấm nút <strong>🌳 Xem Cây Phả Hệ</strong> ở góc trên bên phải để mở giao diện tra cứu đầy đủ (Sơ đồ cây đồ họa, cây dọc điện thoại, Lịch Kỵ Giỗ 12 tháng Âm lịch, Thống kê).</li>
+                    <li><strong>Lưu ý khi mở lần đầu:</strong> Nếu hệ thống chạy trên gói miễn phí Render đang nghỉ, lần truy cập đầu tiên có thể chờ khoảng 20–40 giây để máy chủ khởi động lại.</li>
+                </ul>
+            </div>
+
+            <div class="card">
+                <h3 style="color: var(--primary); margin-bottom: 10px;">2. Đăng nhập Google & Phân quyền chỉnh sửa</h3>
+                <ul class="guide-list">
+                    <li>Mặc định hệ thống ở chế độ <strong>🔒 Chỉ Xem</strong> để bảo vệ dữ liệu dòng họ.</li>
+                    <li>Để mở khóa các nút <strong>➕ Thêm</strong>, <strong>✏️ Sửa</strong>, <strong>🗑️ Xóa</strong> và <strong>🚀 Xuất HTML Public</strong>, bấm nút <strong>Đăng nhập bằng Google</strong> ở góc trên bên phải.</li>
+                    <li><strong>Điều kiện cấp quyền:</strong> Địa chỉ Gmail đăng nhập phải có trong sheet <strong><code>nguoi_dung</code></strong> trên Google Sheets (hoặc Excel) với trạng thái <em>Hoạt động</em>.</li>
+                </ul>
+            </div>
+
+            <div class="card">
+                <h3 style="color: var(--primary); margin-bottom: 10px;">3. Quy tắc Thêm / Sửa Nhân Đinh chuẩn xác</h3>
+                <ul class="guide-list">
+                    <li><strong>Chọn Thân phụ (Cha) theo cây:</strong> Trong form Thêm/Sửa, gõ tên (có dấu hoặc không dấu), Mã ĐD hoặc tên Ông vào ô <em>Chọn Thân phụ (Cha)</em>. Danh sách hiển thị theo đúng cây phả hệ kèm tên cha/ông để phân biệt các vị trùng tên và tự động gắn đúng <code>ID_CHA</code>.</li>
+                    <li><strong>Tách biệt Ngày mất & Ngày giỗ:</strong>
+                        <ul>
+                            <li><strong>Năm mất / Thọ:</strong> Ghi năm mất và tuổi thọ (VD: <code>2016 (Bính Thân) - Thọ 63</code>; để trống nếu còn sống).</li>
+                            <li><strong>Ngày mất cụ thể:</strong> Ghi ngày mất thực tế (VD: <code>06/01/2016 ÂL (13/02/2016 DL)</code>).</li>
+                            <li><strong>Ngày giỗ Âm lịch:</strong> Ghi riêng ngày giỗ hàng năm (VD: <code>05/01 ÂL</code>).</li>
+                        </ul>
+                    </li>
+                    <li><strong>Thông tin liên hệ hiện đại:</strong> Có thể điền <em>Số điện thoại</em>, <em>Link Facebook</em>, <em>Nơi ở hiện tại</em>, <em>Nghề nghiệp</em> để con cháu dễ liên lạc.</li>
+                    <li><strong>Xóa an toàn:</strong> Hệ thống sẽ cảnh báo chặn nếu nhân đinh đang là Cha của người khác để tránh đứt cây phả hệ.</li>
+                </ul>
+            </div>
+
+            <div class="card">
+                <h3 style="color: var(--primary); margin-bottom: 10px;">4. Quản lý Lịch Kỵ Giỗ & Phối ngẫu (Vợ/Chồng)</h3>
+                <ul class="guide-list">
+                    <li>Tab <strong>📅 Quản Lý Lịch Kỵ Giỗ</strong> quản lý trực tiếp các dòng trong sheet <code>Bảng Kỵ Giỗ</code> (thường dùng cho các cụ bà/phối ngẫu và các bậc tiền nhân).</li>
+                    <li>Với <strong>Phối ngẫu</strong> trong hồ sơ người chồng, nên ghi rõ cả ngày mất và ngày giỗ theo mẫu: <code>Họ tên (năm sinh - năm mất, mất DD/MM/YYYY DL, giỗ DD/MM ÂL)</code>. Nếu ngày giỗ đã có trong <code>Bảng Kỵ Giỗ</code>, hệ thống tự động gộp tránh trùng lặp 2 dòng.</li>
+                </ul>
+            </div>
+
+            <div class="card">
+                <h3 style="color: var(--primary); margin-bottom: 10px;">5. Xuất bản HTML Public lên Internet</h3>
+                <ul class="guide-list">
+                    <li>Vào tab <strong>🌐 Xuất Bản Lên Internet</strong>, chọn tùy chọn <strong>Ẩn thông tin riêng tư (SĐT, Link Facebook, Nơi ở)</strong> nếu muốn bảo mật thông tin cá nhân của con cháu đang sống khi đăng công khai.</li>
+                    <li>Bấm <strong>⬇️ Tải về file index.html</strong> để lấy file web tĩnh độc lập đưa lên GitHub Pages hoặc Netlify Drop.</li>
+                </ul>
             </div>
         </div>
     </div>

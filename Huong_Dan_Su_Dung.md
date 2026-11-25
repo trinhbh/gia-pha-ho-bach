@@ -91,3 +91,22 @@ Trong bản in gia phả gốc năm 2014, một số trang sơ đồ vẽ hình 
 4. **Trích xuất nguyên trạng 100% văn bản sách ảnh (Cột O):** Toàn bộ 125 nhân đinh trên file Excel và các bản xuất ra đều giữ nguyên trạng từng câu chữ, bài khấn chữ Hán - Việt cổ, chức sắc và di huấn của tiền nhân từ bản dịch gia phả của ông Bạch Hưng Thủng.
 5. **Chuẩn hóa cây phả hệ (Cha $\rightarrow$ Con $\rightarrow$ Cháu):** Bảng nhân đinh được sắp xếp theo đúng thứ tự duyệt cây gia hệ, ID_CHA luôn nhỏ hơn STT của con cháu, đảm bảo liên kết tuyệt đối chính xác và tương thích hoàn toàn khi chạy cập nhật tự động.
 
+---
+
+## V. HƯỚNG DẪN SỬ DỤNG WEB QUẢN TRỊ TRỰC TUYẾN (`https://gia-pha-ho-bach.onrender.com/`)
+
+Hệ thống đã được nâng cấp lên Web Python (FastAPI) chạy trực tuyến, đồng bộ dữ liệu trực tiếp với **Google Sheets** và xác thực bằng **Google Sign-In**:
+
+1. **Truy cập & Tra cứu công khai:**
+   - Mở địa chỉ: **https://gia-pha-ho-bach.onrender.com/** (chờ ~20–40 giây nếu server gói miễn phí Render vừa thức dậy).
+   - Mọi người đều có thể xem danh bạ, tìm kiếm theo tên/SĐT/địa chỉ/ngày giỗ và bấm **🌳 Xem Cây Phả Hệ** để xem sơ đồ cây + lịch kỵ giỗ 12 tháng Âm lịch.
+2. **Đăng nhập Google để mở khóa Thêm / Sửa / Xóa:**
+   - Bấm nút **Đăng nhập bằng Google** ở góc trên bên phải.
+   - Tài khoản Gmail đăng nhập bắt buộc phải nằm trong sheet **`nguoi_dung`** (trạng thái `Hoạt động`). Nếu chưa có trong danh sách, hệ thống chỉ cho phép xem.
+3. **Các trường thông tin mới được bổ sung:**
+   - **Tách biệt Ngày mất & Ngày giỗ:** `Năm mất / Thọ`, `Ngày mất cụ thể (DL/ÂL)`, và `Ngày giỗ Âm lịch` được tách riêng biệt rõ ràng.
+   - **Thông tin liên hệ hiện đại:** `Số điện thoại`, `Link Facebook`, `Nơi ở hiện tại`, `Nghề nghiệp / Học vấn`.
+   - **Chọn Thân phụ theo cây:** Khi Thêm/Sửa nhân đinh, ô chọn Cha sắp xếp theo cây phả hệ và hỗ trợ tìm kiếm tiếng Việt không dấu để tự động gắn đúng `ID_CHA`.
+4. **Xuất bản Web Tĩnh (`index.html`):**
+   - Tại tab **🌐 Xuất Bản Lên Internet**, có tùy chọn **Ẩn thông tin riêng tư (SĐT, Link Facebook, Nơi ở)** trước khi tải về file `index.html` để đưa lên GitHub Pages / Netlify.
+
