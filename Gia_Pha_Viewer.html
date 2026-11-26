@@ -640,9 +640,8 @@
             color: var(--primary-dark);
             line-height: 1.25;
             margin-bottom: 2px;
-            white-space: nowrap;
-            overflow: hidden;
-            text-overflow: ellipsis;
+            white-space: normal;
+            word-break: break-word;
         }
 
         .mc-meta {
@@ -764,9 +763,8 @@
             font-weight: 700;
             color: var(--primary-dark);
             line-height: 1.3;
-            white-space: nowrap;
-            overflow: hidden;
-            text-overflow: ellipsis;
+            white-space: normal;
+            word-break: break-word;
         }
 
         .vtree-meta {
@@ -983,6 +981,26 @@
 
             .mc-meta {
                 font-size: 0.72rem;
+            }
+
+            .vtree-children {
+                padding-left: 10px;
+                margin: 6px 0 0 4px;
+            }
+
+            .vtree-node {
+                padding: 9px 10px;
+                gap: 6px;
+            }
+
+            .vtree-name {
+                font-size: 0.95rem;
+            }
+
+            .vtree-btn-toggle {
+                padding: 5px 8px;
+                font-size: 0.78rem;
+                flex-shrink: 0;
             }
 
             .mc-spouse {
