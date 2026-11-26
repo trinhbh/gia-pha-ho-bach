@@ -356,7 +356,7 @@
                                 <th>Cha / Mẹ</th>
                                 <th>Sinh • Mất • Ngày giỗ</th>
                                 <th>Liên hệ (SĐT / Facebook / Nơi ở)</th>
-                                <th style="width: 130px;">Thao tác</th>
+                                <th style="width: 190px;">Thao tác</th>
                             </tr>
                         </thead>
                         <tbody id="peopleBody"></tbody>
@@ -384,7 +384,7 @@
                                 <th>Can / Đời</th>
                                 <th>Mộ phần</th>
                                 <th>Ghi chú</th>
-                                <th style="width: 130px;">Thao tác</th>
+                                <th style="width: 190px;">Thao tác</th>
                             </tr>
                         </thead>
                         <tbody id="deathsBody"></tbody>
@@ -664,6 +664,52 @@
         </div>
     </div>
 
+    <!-- MODAL THÊM NHANH CON -->
+    <div id="quickChildModal" class="modal">
+        <div class="modal-box" style="max-width: 540px;">
+            <div class="modal-header">
+                <h2 id="quickChildTitle">➕ Thêm Nhanh Con</h2>
+                <button class="close-btn" onclick="closeModal('quickChildModal')">&times;</button>
+            </div>
+            <div id="quickChildContext" style="background:#f8fafc; border:1px solid var(--border); border-radius:6px; padding:10px 12px; font-size:0.86rem; margin-bottom:14px; line-height:1.5;"></div>
+            <form id="quickChildForm" onsubmit="saveQuickChild(event, false)">
+                <input type="hidden" id="qc_parent_stt">
+                <div class="form-grid">
+                    <div class="form-group full">
+                        <label>Họ và Tên con *</label>
+                        <input type="text" id="qc_ho_ten" required placeholder="Gõ nhanh họ tên (VD: Bạch Hưng ...)">
+                    </div>
+                    <div class="form-group">
+                        <label>Giới tính</label>
+                        <select id="qc_gioi_tinh">
+                            <option value="Nam">Nam</option>
+                            <option value="Nữ">Nữ</option>
+                        </select>
+                    </div>
+                    <div class="form-group">
+                        <label>Thứ tự con</label>
+                        <input type="number" id="qc_thu_tu" min="1" style="padding:8px 11px; border:1px solid #d1d5db; border-radius:6px; font-size:0.9rem;">
+                    </div>
+                    <div class="form-group">
+                        <label>Năm sinh (tùy chọn)</label>
+                        <input type="text" id="qc_nam_sinh" placeholder="VD: 2010 (Canh Dần)">
+                    </div>
+                    <div class="form-group">
+                        <label>Số điện thoại (tùy chọn)</label>
+                        <input type="text" id="qc_sdt" placeholder="VD: 0912345678">
+                    </div>
+                </div>
+                <div class="modal-footer" style="justify-content: space-between; flex-wrap: wrap;">
+                    <button type="button" class="btn btn-light" onclick="closeModal('quickChildModal')">Đóng</button>
+                    <div style="display:flex; gap:8px;">
+                        <button type="button" class="btn btn-blue" onclick="saveQuickChild(event, true)">💾 Lưu & Thêm tiếp</button>
+                        <button type="submit" class="btn btn-green">✅ Lưu & Đóng</button>
+                    </div>
+                </div>
+            </form>
+        </div>
+    </div>
+
     <div id="toast" class="toast"></div>
 
     <script>
@@ -922,13 +968,97 @@
                         ${p.ngay_gio ? `<div style="color:var(--primary); font-weight:600;">Giỗ ÂL: ${escapeHtml(p.ngay_gio)}</div>` : ""}
                     </td>
                     <td>${contactHtml || '<span style="color:#9ca3af;">—</span>'}</td>
-                    <td>
+                    <td style="white-space: nowrap;">
+                        <button class="btn btn-green btn-sm auth-only" title="Thêm nhanh con của người này" onclick="openQuickChildModal(${p.stt})">➕ Con</button>
                         <button class="btn btn-blue btn-sm auth-only" onclick="openPersonModal(${p.stt})">✏️ Sửa</button>
                         <button class="btn btn-danger btn-sm auth-only" onclick="deletePerson(${p.stt}, '${escapeHtml(p.ho_ten)}')">🗑️</button>
                     </td>
                 `;
                 tbody.appendChild(tr);
             });
+        }
+
+        function computeNextDoi(parentDoi) {
+            const s = String(parentDoi || "").trim();
+            if (/khởi\s*phát/i.test(s)) return "Đời 1";
+            const m = s.match(/(\d+)/);
+            if (m) return `Đời ${parseInt(m[1], 10) + 1}`;
+            return "Đời 8";
+        }
+
+        function openQuickChildModal(parentStt) {
+            const parent = appData.people.find(x => x.stt === parentStt);
+            if (!parent) return;
+            document.getElementById("quickChildForm").reset();
+            document.getElementById("qc_parent_stt").value = parent.stt;
+
+            const nextDoi = computeNextDoi(parent.doi);
+            const isFemale = (parent.gioi_tinh || "").trim().toLowerCase() === "nữ";
+            const spouse = extractSpouseName(parent.phoi_ngau);
+            const chaName = isFemale ? spouse : parent.ho_ten;
+            const meName = isFemale ? parent.ho_ten : spouse;
+            const existingKids = appData.people.filter(x => x.id_cha === parent.stt).length;
+
+            document.getElementById("quickChildTitle").textContent = `➕ Thêm Con của: ${parent.ho_ten}`;
+            document.getElementById("quickChildContext").innerHTML = `
+                <div><strong>Nhánh / Đời tự động:</strong> ${escapeHtml(parent.can)} • <strong>${escapeHtml(nextDoi)}</strong> (ID_CHA = ${parent.stt})</div>
+                <div><strong>Cha:</strong> ${escapeHtml(chaName || "—")} &nbsp;|&nbsp; <strong>Mẹ:</strong> ${escapeHtml(meName || "—")}</div>
+            `;
+            document.getElementById("qc_thu_tu").value = existingKids + 1;
+            document.getElementById("quickChildModal").classList.add("active");
+            setTimeout(() => document.getElementById("qc_ho_ten").focus(), 60);
+        }
+
+        async function saveQuickChild(e, keepOpen) {
+            if (e) e.preventDefault();
+            const hoTen = document.getElementById("qc_ho_ten").value.trim();
+            if (!hoTen) {
+                showToast("Vui lòng nhập Họ và Tên con.", "error");
+                document.getElementById("qc_ho_ten").focus();
+                return;
+            }
+            const parentStt = parseInt(document.getElementById("qc_parent_stt").value, 10);
+            const parent = appData.people.find(x => x.stt === parentStt);
+            if (!parent) return;
+
+            const isFemale = (parent.gioi_tinh || "").trim().toLowerCase() === "nữ";
+            const spouse = extractSpouseName(parent.phoi_ngau);
+            const payload = {
+                ho_ten: hoTen,
+                gioi_tinh: document.getElementById("qc_gioi_tinh").value,
+                can: parent.can || "Can 2",
+                doi: computeNextDoi(parent.doi),
+                id_cha: parent.stt,
+                cha: isFemale ? spouse : parent.ho_ten,
+                me: isFemale ? parent.ho_ten : spouse,
+                thu_tu: document.getElementById("qc_thu_tu").value.trim(),
+                nam_sinh: document.getElementById("qc_nam_sinh").value.trim(),
+                sdt: document.getElementById("qc_sdt").value.trim(),
+            };
+
+            const res = await fetch("/api/people", {
+                method: "POST",
+                headers: { "Content-Type": "application/json" },
+                body: JSON.stringify(payload),
+            });
+            const data = await res.json();
+            if (!res.ok) {
+                showToast(data.detail || "Lỗi khi thêm con", "error");
+                return;
+            }
+            showToast(data.message, "success");
+            await loadData();
+
+            if (keepOpen) {
+                const nextOrder = (parseInt(document.getElementById("qc_thu_tu").value || "1", 10) || 1) + 1;
+                document.getElementById("qc_ho_ten").value = "";
+                document.getElementById("qc_nam_sinh").value = "";
+                document.getElementById("qc_sdt").value = "";
+                document.getElementById("qc_thu_tu").value = nextOrder;
+                document.getElementById("qc_ho_ten").focus();
+            } else {
+                closeModal("quickChildModal");
+            }
         }
 
         function openPersonModal(stt = null) {
