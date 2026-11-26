@@ -1,0 +1,57 @@
+name: Dong bo index.html tu Render sang GitHub Pages
+
+on:
+  workflow_dispatch:
+    inputs:
+      hide_private:
+        description: "An SDT, Link Facebook, Noi o khi xuat public (true/false)"
+        required: false
+        default: "false"
+        type: choice
+        options:
+          - "false"
+          - "true"
+  schedule:
+    # Tu dong chay hang ngay luc 08:00 sang gio Viet Nam (01:00 UTC)
+    - cron: "0 1 * * *"
+
+permissions:
+  contents: write
+
+jobs:
+  sync-index-html:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+
+      - name: Tai index.html moi nhat tu Render (co tu dong cho wake-up)
+        env:
+          HIDE_PRIVATE: ${{ github.event.inputs.hide_private || 'false' }}
+        run: |
+          echo "Dang tai index.html tu Render (hide_private=$HIDE_PRIVATE)..."
+          curl --fail --silent --show-error \
+            --retry 6 --retry-delay 15 --retry-all-errors --max-time 90 \
+            -L "https://gia-pha-ho-bach.onrender.com/api/download-html?hide_private=$HIDE_PRIVATE" \
+            -o index.html.tmp
+
+          # Kiem tra hop le truoc khi ghi de
+          if ! grep -q "const people =" index.html.tmp || ! grep -q "const deathDays =" index.html.tmp; then
+            echo "Loi: File tai ve khong dung dinh dang Gia Pha HTML!"
+            exit 1
+          fi
+
+          mv index.html.tmp index.html
+          ls -lh index.html
+
+      - name: Commit va Push neu co thay doi
+        run: |
+          git config user.name "github-actions[bot]"
+          git config user.email "github-actions[bot]@users.noreply.github.com"
+          if git diff --quiet index.html; then
+            echo "index.html khong co thay doi nao moi."
+          else
+            git add index.html
+            git commit -m "chore: dong bo tu dong index.html tu Render [skip ci]"
+            git push
+          fi
