@@ -79,15 +79,32 @@ for row_idx in range(5, ws_all.max_row + 1):
         "thu_tu": str(vals[21] or "").strip() if len(vals) > 21 else "",
     })
 
-# Tạo bảng tra cứu stt -> ho_ten và ma -> ho_ten để tự động điền tên cha nếu cột Cha bị trống
-stt_to_name = {r["stt"]: r["ho_ten"] for r in records}
-ma_to_name = {r["ma"]: r["ho_ten"] for r in records if r["ma"]}
+def _extract_husband_name(phoi_ngau):
+    if not phoi_ngau:
+        return ""
+    s = str(phoi_ngau).split(";")[0].split("(")[0]
+    s = re.sub(r"^(Chồng|Vợ|Ông|Bà\s*\d*)\s*:\s*", "", s.strip(), flags=re.IGNORECASE).strip()
+    if not s or any(k in s.lower() for k in ("chưa", "không")):
+        return ""
+    return s
+
+
+# Tạo bảng tra cứu stt -> record và ma -> record để tự động điền Cha / Mẹ chuẩn theo giới tính
+stt_to_rec = {r["stt"]: r for r in records}
+ma_to_rec = {r["ma"]: r for r in records if r["ma"]}
 for r in records:
-    if (not r["cha"] or r["cha"].startswith("=")) and r["id_cha"]:
-        if r["id_cha"] in stt_to_name:
-            r["cha"] = stt_to_name[r["id_cha"]]
-        elif r["id_cha"] in ma_to_name:
-            r["cha"] = ma_to_name[r["id_cha"]]
+    if r["id_cha"]:
+        parent_rec = stt_to_rec.get(r["id_cha"]) or ma_to_rec.get(r["id_cha"])
+        if parent_rec:
+            is_female_parent = (parent_rec.get("gioi_tinh") or "").strip().lower() == "nữ"
+            if is_female_parent:
+                if not r["me"]:
+                    r["me"] = parent_rec["ho_ten"]
+                if not r["cha"] or r["cha"].startswith("=") or r["cha"] == parent_rec["ho_ten"]:
+                    r["cha"] = _extract_husband_name(parent_rec.get("phoi_ngau", ""))
+            else:
+                if not r["cha"] or r["cha"].startswith("="):
+                    r["cha"] = parent_rec["ho_ten"]
 
 print(f"    + Đã tải {len(records)} nhân đinh (kèm ID_CHA).")
 

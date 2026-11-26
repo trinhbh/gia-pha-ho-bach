@@ -198,15 +198,32 @@ def _build_records_from_rows(indexed_rows):
             "thu_tu": str(vals[21] or "").strip(),
         })
 
-    stt_to_name = {r["stt"]: r["ho_ten"] for r in records}
-    ma_to_name = {r["ma"]: r["ho_ten"] for r in records if r["ma"]}
+    stt_to_rec = {r["stt"]: r for r in records}
+    ma_to_rec = {r["ma"]: r for r in records if r["ma"]}
     for r in records:
-        if (not r["cha"] or r["cha"].startswith("=")) and r["id_cha"]:
-            if r["id_cha"] in stt_to_name:
-                r["cha"] = stt_to_name[r["id_cha"]]
-            elif r["id_cha"] in ma_to_name:
-                r["cha"] = ma_to_name[r["id_cha"]]
+        if r["id_cha"]:
+            parent_rec = stt_to_rec.get(r["id_cha"]) or ma_to_rec.get(r["id_cha"])
+            if parent_rec:
+                is_female_parent = (parent_rec.get("gioi_tinh") or "").strip().lower() == "nữ"
+                if is_female_parent:
+                    if not r["me"]:
+                        r["me"] = parent_rec["ho_ten"]
+                    if not r["cha"] or r["cha"].startswith("=") or r["cha"] == parent_rec["ho_ten"]:
+                        r["cha"] = _extract_husband_name(parent_rec.get("phoi_ngau", ""))
+                else:
+                    if not r["cha"] or r["cha"].startswith("="):
+                        r["cha"] = parent_rec["ho_ten"]
     return records
+
+
+def _extract_husband_name(phoi_ngau: str) -> str:
+    if not phoi_ngau:
+        return ""
+    s = str(phoi_ngau).split(";")[0].split("(")[0]
+    s = re.sub(r"^(Chồng|Vợ|Ông|Bà\s*\d*)\s*:\s*", "", s.strip(), flags=re.IGNORECASE).strip()
+    if not s or any(k in s.lower() for k in ("chưa", "không")):
+        return ""
+    return s
 
 
 def _build_deaths_from_rows(indexed_gio_rows, records):

@@ -829,7 +829,15 @@
             dd.innerHTML = html;
         }
 
-        function selectFather(stt) {
+        function extractSpouseName(phoiNgau) {
+            if (!phoiNgau) return "";
+            let s = String(phoiNgau).split(";")[0].split("(")[0];
+            s = s.trim().replace(/^(Chồng|Vợ|Ông|Bà\s*\d*)\s*:\s*/i, "").trim();
+            if (!s || /chưa|không/i.test(s)) return "";
+            return s;
+        }
+
+        function selectFather(stt, isInitialLoad = false) {
             const idVal = parseInt(stt || "0", 10);
             document.getElementById("f_id_cha").value = idVal;
             const hint = document.getElementById("fatherSelectedHint");
@@ -837,17 +845,28 @@
 
             if (idVal === 0) {
                 searchInput.value = "";
-                document.getElementById("f_cha").value = "";
-                hint.textContent = "Đang chọn: Không có Cha / Gốc (ID_CHA = 0)";
+                if (!isInitialLoad) document.getElementById("f_cha").value = "";
+                hint.textContent = "Đang chọn: Không có Cha / Mẹ trên cây (ID_CHA = 0)";
             } else {
                 const node = fatherTreeNodes.find(x => x.person.stt === idVal) ||
                              { person: appData.people.find(p => p.stt === idVal), parentName: "" };
                 const father = node.person;
                 if (father) {
+                    const isFemale = (father.gioi_tinh || "").trim().toLowerCase() === "nữ";
                     searchInput.value = `${father.ho_ten} (${father.can} - ${father.doi})`;
-                    document.getElementById("f_cha").value = father.ho_ten;
+                    if (isFemale) {
+                        const husband = extractSpouseName(father.phoi_ngau);
+                        if (!isInitialLoad || !document.getElementById("f_me").value.trim()) {
+                            document.getElementById("f_me").value = father.ho_ten;
+                        }
+                        if (!isInitialLoad || document.getElementById("f_cha").value.trim() === father.ho_ten) {
+                            document.getElementById("f_cha").value = husband;
+                        }
+                    } else if (!isInitialLoad) {
+                        document.getElementById("f_cha").value = father.ho_ten;
+                    }
                     const parentCtx = node.parentName ? ` • Con cụ ${node.parentName}` : "";
-                    hint.textContent = `Đã gắn ID_CHA = ${father.stt} (${father.ho_ten}${parentCtx})`;
+                    hint.textContent = `Đã gắn ID_CHA = ${father.stt} (${father.ho_ten}${isFemale ? " - Mẹ" : ""}${parentCtx})`;
                 }
             }
             document.getElementById("fatherDropdown").classList.remove("open");
@@ -926,8 +945,9 @@
                 document.getElementById("f_can").value = p.can || "Can 2";
                 document.getElementById("f_doi").value = p.doi || "";
                 document.getElementById("f_ma").value = p.ma;
-                selectFather(p.id_cha || 0);
                 if (p.cha) document.getElementById("f_cha").value = p.cha;
+                if (p.me) document.getElementById("f_me").value = p.me;
+                selectFather(p.id_cha || 0, true);
                 document.getElementById("f_me").value = p.me;
                 document.getElementById("f_phoi_ngau").value = p.phoi_ngau;
                 document.getElementById("f_nam_sinh").value = p.nam_sinh;
@@ -944,7 +964,7 @@
             } else {
                 document.getElementById("personModalTitle").textContent = "Thêm Nhân Đinh Mới";
                 document.getElementById("f_stt").value = "";
-                selectFather(0);
+                selectFather(0, true);
             }
             document.getElementById("personModal").classList.add("active");
         }
