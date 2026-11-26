@@ -162,7 +162,7 @@ def _pad_row(vals, size):
 def _build_records_from_rows(indexed_rows):
     records = []
     for row_idx, raw_vals in indexed_rows:
-        vals = _pad_row(raw_vals, 21)
+        vals = _pad_row(raw_vals, 22)
         if not vals[4] or str(vals[4]).strip() == "":
             continue
 
@@ -195,6 +195,7 @@ def _build_records_from_rows(indexed_rows):
             "facebook": str(vals[18] or "").strip(),
             "dia_chi": str(vals[19] or "").strip(),
             "nghe_nghiep": str(vals[20] or "").strip(),
+            "thu_tu": str(vals[21] or "").strip(),
         })
 
     stt_to_name = {r["stt"]: r["ho_ten"] for r in records}
@@ -354,7 +355,7 @@ def load_all_data(excel_path=EXCEL_PATH):
     wb = openpyxl.load_workbook(excel_path, data_only=True)
     ws_all = wb["Toàn bộ nhân đinh"]
     indexed_people = [
-        (r, [ws_all.cell(row=r, column=c).value for c in range(1, 22)])
+        (r, [ws_all.cell(row=r, column=c).value for c in range(1, 23)])
         for r in range(5, ws_all.max_row + 1)
     ]
     records = _build_records_from_rows(indexed_people)
@@ -494,6 +495,7 @@ def _build_person_row_vals(stt, ma, can, doi, ho_ten, payload, cha_name, id_cha)
         str(payload.get("facebook") or "").strip(),
         str(payload.get("dia_chi") or "").strip(),
         str(payload.get("nghe_nghiep") or "").strip(),
+        str(payload.get("thu_tu") or "").strip(),
     ]
 
 
@@ -531,7 +533,7 @@ def add_person(payload, excel_path=EXCEL_PATH):
 
         row_vals = _build_person_row_vals(new_stt, ma, can, doi, ho_ten, payload, cha_name, id_cha)
         target_row = last_row + 1
-        ws.update(f"A{target_row}:U{target_row}", [row_vals])
+        ws.update(f"A{target_row}:V{target_row}", [row_vals])
 
         sub_name = SUB_SHEET_MAP.get(can)
         if sub_name:
@@ -630,7 +632,7 @@ def update_person(stt, payload, excel_path=EXCEL_PATH):
             cha_name = stt_to_name[id_cha]
 
         row_vals = _build_person_row_vals(int(stt), ma, can, doi, ho_ten, payload, cha_name, id_cha)
-        ws.update(f"A{target_row}:U{target_row}", [row_vals])
+        ws.update(f"A{target_row}:V{target_row}", [row_vals])
 
         for idx, row in enumerate(all_rows):
             if idx >= 4 and len(row) > 15 and _parse_id_cha(row[15]) == int(stt):
@@ -947,6 +949,7 @@ def export_public_html(
             "facebook": "" if hide_private else r["facebook"],
             "dia_chi": "" if hide_private else r["dia_chi"],
             "nghe_nghiep": r["nghe_nghiep"],
+            "thu_tu": r.get("thu_tu", ""),
         })
 
     death_person_map = {}

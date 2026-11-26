@@ -42,7 +42,7 @@ wb = openpyxl.load_workbook(EXCEL_PATH, data_only=True)
 ws_all = wb["Toàn bộ nhân đinh"]
 records = []
 for row_idx in range(5, ws_all.max_row + 1):
-    vals = [ws_all.cell(row=row_idx, column=c).value for c in range(1, 22)]
+    vals = [ws_all.cell(row=row_idx, column=c).value for c in range(1, 23)]
     # Bỏ qua dòng trống nếu không có họ tên
     if not vals[4] or str(vals[4]).strip() == "":
         continue
@@ -76,6 +76,7 @@ for row_idx in range(5, ws_all.max_row + 1):
         "facebook": str(vals[18] or "").strip() if len(vals) > 18 else "",
         "dia_chi": str(vals[19] or "").strip() if len(vals) > 19 else "",
         "nghe_nghiep": str(vals[20] or "").strip() if len(vals) > 20 else "",
+        "thu_tu": str(vals[21] or "").strip() if len(vals) > 21 else "",
     })
 
 # Tạo bảng tra cứu stt -> ho_ten và ma -> ho_ten để tự động điền tên cha nếu cột Cha bị trống
@@ -562,6 +563,7 @@ for r in records:
         "facebook": r.get("facebook", ""),
         "dia_chi": r.get("dia_chi", ""),
         "nghe_nghiep": r.get("nghe_nghiep", ""),
+        "thu_tu": r.get("thu_tu", ""),
     })
 
 death_person_map = {}

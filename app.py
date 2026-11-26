@@ -42,6 +42,7 @@ class PersonPayload(BaseModel):
     facebook: Optional[str] = ""
     dia_chi: Optional[str] = ""
     nghe_nghiep: Optional[str] = ""
+    thu_tu: Optional[Union[int, str]] = ""
 
 
 class DeathPayload(BaseModel):

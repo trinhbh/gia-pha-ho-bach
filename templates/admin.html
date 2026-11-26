@@ -531,6 +531,10 @@
                         <label>Mã định danh (để trống sẽ tự tạo)</label>
                         <input type="text" id="f_ma" placeholder="VD: C2-D8-126">
                     </div>
+                    <div class="form-group">
+                        <label>Thứ tự con (1 = Con cả, để trống giữ nguyên)</label>
+                        <input type="number" id="f_thu_tu" min="1" placeholder="VD: 1, 2, 3..." style="padding:8px 11px; border:1px solid #d1d5db; border-radius:6px; font-size:0.9rem;">
+                    </div>
                 </div>
 
                 <div class="form-section-title">2. Quan hệ huyết thống (Cha • Mẹ • Phối ngẫu)</div>
@@ -935,6 +939,7 @@
                 document.getElementById("f_facebook").value = p.facebook || "";
                 document.getElementById("f_dia_chi").value = p.dia_chi || "";
                 document.getElementById("f_nghe_nghiep").value = p.nghe_nghiep || "";
+                document.getElementById("f_thu_tu").value = p.thu_tu || "";
                 document.getElementById("f_ghi_chu").value = p.ghi_chu;
             } else {
                 document.getElementById("personModalTitle").textContent = "Thêm Nhân Đinh Mới";
@@ -971,6 +976,7 @@
                 facebook: document.getElementById("f_facebook").value.trim(),
                 dia_chi: document.getElementById("f_dia_chi").value.trim(),
                 nghe_nghiep: document.getElementById("f_nghe_nghiep").value.trim(),
+                thu_tu: document.getElementById("f_thu_tu").value.trim(),
                 ghi_chu: document.getElementById("f_ghi_chu").value.trim(),
             };
 
