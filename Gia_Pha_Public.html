@@ -1,1417 +1,1689 @@
 <!DOCTYPE html>
 <html lang="vi">
+
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Gia Phả Họ Bạch - Phú Điền, Hưng Phú, Hưng Nguyên</title>
-    <style>
-        :root {
-            --primary: #1f497d;
-            --primary-dark: #122b49;
-            --primary-light: #e8f0fe;
-            --secondary: #8c2d19;
-            --gold: #d4af37;
-            --gold-light: #fff9e6;
-            --text-main: #2c3e50;
-            --text-muted: #666;
-            --bg-light: #f7f9fa;
-            --card-bg: #ffffff;
-            --border: #e2e8f0;
-            --shadow: 0 4px 12px rgba(0,0,0,0.06);
-            --can1-color: #2b6cb0;
-            --can2-color: #276749;
-            --can3-color: #9b2c2c;
-            --can4-color: #744210;
-        }
-
-        * {
-            box-sizing: border-box;
-            margin: 0;
-            padding: 0;
-        }
-
-        body {
-            font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
-            color: var(--text-main);
-            background-color: var(--bg-light);
-            line-height: 1.6;
-        }
-
-        header {
-            background: linear-gradient(135deg, var(--primary-dark), var(--primary));
-            color: #ffffff;
-            padding: 2.5rem 1rem;
-            text-align: center;
-            box-shadow: 0 4px 20px rgba(0,0,0,0.15);
-            position: relative;
-        }
-
-        header h1 {
-            font-size: 2.2rem;
-            letter-spacing: 1px;
-            margin-bottom: 0.5rem;
-            font-family: "Palatino Linotype", "Book Antiqua", Palatino, serif;
-            color: #ffd700;
-            text-shadow: 1px 2px 4px rgba(0,0,0,0.4);
-        }
-
-        header p {
-            font-size: 1.1rem;
-            opacity: 0.92;
-        }
-
-        .badge-bar {
-            margin-top: 15px;
-            display: flex;
-            justify-content: center;
-            gap: 12px;
-            flex-wrap: wrap;
-        }
-
-        .badge {
-            background: rgba(255, 255, 255, 0.15);
-            border: 1px solid rgba(255, 255, 255, 0.3);
-            padding: 5px 14px;
-            border-radius: 20px;
-            font-size: 0.85rem;
-            letter-spacing: 0.5px;
-        }
-
-        .nav-wrapper {
-            background: #ffffff;
-            border-bottom: 1px solid var(--border);
-            position: sticky;
-            top: 0;
-            z-index: 100;
-            box-shadow: 0 2px 6px rgba(0,0,0,0.04);
-        }
-
-        .nav-tabs {
-            display: flex;
-            max-width: 1200px;
-            margin: 0 auto;
-            overflow-x: auto;
-        }
-
-        .tab-btn {
-            padding: 16px 22px;
-            background: none;
-            border: none;
-            border-bottom: 3px solid transparent;
-            font-size: 0.98rem;
-            font-weight: 600;
-            color: var(--text-muted);
-            cursor: pointer;
-            white-space: nowrap;
-            transition: all 0.2s ease;
-        }
-
-        .tab-btn:hover {
-            color: var(--primary);
-            background-color: var(--primary-light);
-        }
-
-        .tab-btn.active {
-            color: var(--primary);
-            border-bottom: 3px solid var(--primary);
-            background-color: #ffffff;
-        }
-
-        main {
-            max-width: 1200px;
-            margin: 24px auto;
-            padding: 0 16px;
-        }
-
-        .tab-content {
-            display: none;
-        }
-
-        .tab-content.active {
-            display: block;
-        }
-
-        .card {
-            background: var(--card-bg);
-            border-radius: 10px;
-            padding: 24px;
-            box-shadow: var(--shadow);
-            border: 1px solid var(--border);
-            margin-bottom: 24px;
-        }
-
-        .card-header {
-            border-bottom: 2px solid var(--primary-light);
-            padding-bottom: 12px;
-            margin-bottom: 18px;
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-            flex-wrap: wrap;
-            gap: 10px;
-        }
-
-        .card-header h2 {
-            color: var(--primary);
-            font-size: 1.4rem;
-        }
-
-        /* Search & Filter Controls */
-        .filter-box {
-            display: flex;
-            gap: 12px;
-            margin-bottom: 20px;
-            flex-wrap: wrap;
-        }
-
-        .search-input {
-            flex: 2;
-            min-width: 260px;
-            padding: 11px 16px;
-            border: 1px solid var(--border);
-            border-radius: 8px;
-            font-size: 0.95rem;
-            outline: none;
-        }
-
-        .search-input:focus {
-            border-color: var(--primary);
-            box-shadow: 0 0 0 3px rgba(31,73,125,0.15);
-        }
-
-        .filter-select {
-            flex: 1;
-            min-width: 160px;
-            padding: 11px 14px;
-            border: 1px solid var(--border);
-            border-radius: 8px;
-            background: white;
-            font-size: 0.95rem;
-            cursor: pointer;
-        }
-
-        /* Table Design */
-        .table-responsive {
-            overflow-x: auto;
-        }
-
-        table {
-            width: 100%;
-            border-collapse: collapse;
-            font-size: 0.92rem;
-            text-align: left;
-        }
-
-        th, td {
-            padding: 12px 14px;
-            border-bottom: 1px solid var(--border);
-            vertical-align: middle;
-        }
-
-        th {
-            background-color: var(--primary);
-            color: #ffffff;
-            font-weight: 600;
-            white-space: nowrap;
-        }
-
-        tr:nth-child(even) {
-            background-color: #fafbfc;
-        }
-
-        tr:hover {
-            background-color: #edf2f7;
-            cursor: pointer;
-        }
-
-        .tag {
-            display: inline-block;
-            padding: 3px 8px;
-            border-radius: 4px;
-            font-size: 0.78rem;
-            font-weight: bold;
-        }
-
-        .tag-can1 { background: #ebf8ff; color: #2b6cb0; border: 1px solid #bee3f8; }
-        .tag-can2 { background: #f0fff4; color: #276749; border: 1px solid #c6f6d5; }
-        .tag-can3 { background: #fff5f5; color: #9b2c2c; border: 1px solid #fed7d7; }
-        .tag-can4 { background: #fffff0; color: #744210; border: 1px solid #fefcbf; }
-        .tag-kp   { background: #f7fafc; color: #4a5568; border: 1px solid #e2e8f0; }
-
-        /* Family Tree Layout */
-        .tree-container {
-            padding: 20px 0;
-            text-align: center;
-        }
-
-        .branch-block {
-            display: inline-block;
-            background: white;
-            border: 1px solid var(--border);
-            border-radius: 8px;
-            padding: 15px;
-            margin: 10px;
-            vertical-align: top;
-            width: 270px;
-            box-shadow: var(--shadow);
-            text-align: left;
-        }
-
-        .branch-header {
-            font-weight: bold;
-            font-size: 1.05rem;
-            padding-bottom: 8px;
-            margin-bottom: 10px;
-            border-bottom: 2px solid var(--primary);
-        }
-
-        .branch-header.root { color: var(--primary); border-color: var(--primary); }
-        .branch-header.c1 { color: var(--can1-color); border-color: var(--can1-color); }
-        .branch-header.c2 { color: var(--can2-color); border-color: var(--can2-color); }
-        .branch-header.c3 { color: var(--can3-color); border-color: var(--can3-color); }
-        .branch-header.c4 { color: var(--can4-color); border-color: var(--can4-color); }
-
-        .branch-body {
-            font-size: 0.9rem;
-        }
-
-        .branch-person {
-            margin-bottom: 10px;
-            padding-bottom: 8px;
-            border-bottom: 1px dashed var(--border);
-        }
-
-        .branch-person:last-child {
-            margin-bottom: 0;
-            padding-bottom: 0;
-            border-bottom: none;
-        }
-
-        .person-name {
-            font-weight: 700;
-            color: var(--primary-dark);
-        }
-
-        .person-meta {
-            font-size: 0.82rem;
-            color: var(--text-muted);
-            margin-top: 2px;
-        }
-
-        /* Stats Grid */
-        .stats-grid {
-            display: grid;
-            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
-            gap: 16px;
-            margin-bottom: 24px;
-        }
-
-        .stat-card {
-            background: white;
-            border-radius: 8px;
-            padding: 18px;
-            border-left: 4px solid var(--primary);
-            box-shadow: var(--shadow);
-        }
-
-        .stat-num {
-            font-size: 2rem;
-            font-weight: 800;
-            color: var(--primary);
-            line-height: 1.1;
-        }
-
-        .stat-label {
-            font-size: 0.88rem;
-            color: var(--text-muted);
-            margin-top: 4px;
-        }
-
-        /* Calendar Grid */
-        .calendar-grid {
-            display: grid;
-            grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
-            gap: 16px;
-        }
-
-        .cal-month {
-            background: white;
-            border: 1px solid var(--border);
-            border-radius: 8px;
-            overflow: hidden;
-            box-shadow: var(--shadow);
-        }
-
-        .cal-month-header {
-            background: var(--primary);
-            color: white;
-            padding: 8px 14px;
-            font-weight: bold;
-            font-size: 0.95rem;
-            display: flex;
-            justify-content: space-between;
-        }
-
-        .cal-item {
-            padding: 10px 14px;
-            border-bottom: 1px solid #edf2f7;
-            font-size: 0.88rem;
-        }
-
-        .cal-item:last-child {
-            border-bottom: none;
-        }
-
-        .cal-date {
-            font-weight: 700;
-            color: var(--secondary);
-            display: inline-block;
-            min-width: 85px;
-        }
-
-        /* Modal Dialog */
-        .modal {
-            display: none;
-            position: fixed;
-            top: 0; left: 0; width: 100%; height: 100%;
-            background: rgba(0,0,0,0.5);
-            z-index: 1000;
-            justify-content: center;
-            align-items: center;
-            padding: 15px;
-        }
-
-        .modal.active {
-            display: flex;
-        }
-
-        .modal-content {
-            background: white;
-            border-radius: 10px;
-            max-width: 650px;
-            width: 100%;
-            max-height: 90vh;
-            overflow-y: auto;
-            padding: 24px;
-            position: relative;
-            box-shadow: 0 10px 30px rgba(0,0,0,0.25);
-        }
-
-        .modal-close {
-            position: absolute;
-            top: 15px; right: 18px;
-            font-size: 1.5rem;
-            cursor: pointer;
-            border: none;
-            background: none;
-            color: var(--text-muted);
-        }
-
-        /* Footer */
-        footer {
-            background: #1a202c;
-            color: #a0aec0;
-            text-align: center;
-            padding: 2rem 1rem;
-            font-size: 0.88rem;
-            margin-top: 40px;
-        }
-
-        footer p {
-            margin: 4px 0;
-        }
-
-        /* Responsive */
-        @media (max-width: 768px) {
-            header h1 { font-size: 1.6rem; }
-            .tab-btn { padding: 12px 14px; font-size: 0.9rem; }
-            .card { padding: 16px; }
-        }
-    
-        /* ========================================================= */
-        /* SƠ ĐỒ CÂY PHẢ HỆ TRỰC QUAN (INTERACTIVE FAMILY TREE CSS)  */
-        /* ========================================================= */
-        .tree-toolbar {
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-            flex-wrap: wrap;
-            gap: 12px;
-            background: #f8fafc;
-            padding: 12px 16px;
-            border-radius: 8px;
-            border: 1px solid var(--border);
-            margin-bottom: 14px;
-        }
-
-        .tree-controls-left, .tree-controls-right {
-            display: flex;
-            align-items: center;
-            gap: 8px;
-            flex-wrap: wrap;
-        }
-
-        .btn-tree-tool {
-            padding: 8px 14px;
-            background: white;
-            border: 1px solid var(--border);
-            border-radius: 6px;
-            font-size: 0.88rem;
-            font-weight: 600;
-            cursor: pointer;
-            transition: all 0.2s;
-            color: var(--text-main);
-            display: inline-flex;
-            align-items: center;
-            gap: 4px;
-        }
-
-        .btn-tree-tool:hover {
-            background: var(--primary-light);
-            color: var(--primary);
-            border-color: var(--primary);
-        }
-
-        .tree-legend {
-            display: flex;
-            align-items: center;
-            gap: 16px;
-            font-size: 0.85rem;
-            margin-bottom: 14px;
-            flex-wrap: wrap;
-            background: white;
-            padding: 8px 14px;
-            border-radius: 6px;
-            border: 1px solid var(--border);
-        }
-
-        .legend-dot {
-            display: inline-block;
-            width: 12px;
-            height: 12px;
-            border-radius: 3px;
-            margin-right: 5px;
-            vertical-align: middle;
-        }
-
-        .dot-kp { background: #1f497d; }
-        .dot-can1 { background: #2b6cb0; }
-        .dot-can2 { background: #276749; }
-        .dot-can3 { background: #9b2c2c; }
-        .dot-can4 { background: #744210; }
-
-        .tree-viewport {
-            width: 100%;
-            height: 720px;
-            overflow: auto;
-            background: radial-gradient(circle, #f1f5f9 10%, #f8fafc 10%);
-            background-size: 20px 20px;
-            border: 1px solid var(--border);
-            border-radius: 8px;
-            position: relative;
-            cursor: grab;
-        }
-
-        .tree-viewport:active {
-            cursor: grabbing;
-        }
-
-        .tree-canvas {
-            display: inline-block;
-            padding: 40px 60px 80px 60px;
-            min-width: 100%;
-            transform-origin: top center;
-            transition: transform 0.15s ease-out;
-        }
-
-        /* Khung nối cây phả hệ (Genealogical CSS Tree Lines) */
-        .genealogy-tree ul {
-            padding-top: 26px;
-            position: relative;
-            transition: all 0.4s;
-            display: flex;
-            justify-content: center;
-            margin: 0 auto;
-            padding-left: 0;
-        }
-
-        .genealogy-tree li {
-            text-align: center;
-            list-style-type: none;
-            position: relative;
-            padding: 26px 8px 0 8px;
-            transition: all 0.4s;
-        }
-
-        .genealogy-tree li::before, .genealogy-tree li::after {
-            content: '';
-            position: absolute;
-            top: 0;
-            right: 50%;
-            border-top: 2px solid #94a3b8;
-            width: 50%;
-            height: 26px;
-        }
-
-        .genealogy-tree li::after {
-            right: auto;
-            left: 50%;
-            border-left: 2px solid #94a3b8;
-        }
-
-        .genealogy-tree li:only-child::after, .genealogy-tree li:only-child::before {
-            display: none;
-        }
-
-        .genealogy-tree li:only-child {
-            padding-top: 0;
-        }
-
-        .genealogy-tree li:first-child::before, .genealogy-tree li:last-child::after {
-            border: 0 none;
-        }
-
-        .genealogy-tree li:last-child::before {
-            border-right: 2px solid #94a3b8;
-            border-radius: 0 8px 0 0;
-        }
-
-        .genealogy-tree li:first-child::after {
-            border-radius: 8px 0 0 0;
-        }
-
-        .genealogy-tree ul ul::before {
-            content: '';
-            position: absolute;
-            top: 0;
-            left: 50%;
-            border-left: 2px solid #94a3b8;
-            width: 0;
-            height: 26px;
-        }
-
-        /* Thẻ thành viên trên cây (Member Card) */
-        .member-card {
-            display: inline-block;
-            width: 185px;
-            background: white;
-            border: 1px solid #cbd5e1;
-            border-radius: 8px;
-            padding: 9px 10px 9px 10px;
-            box-shadow: 0 3px 8px rgba(0,0,0,0.06);
-            position: relative;
-            cursor: pointer;
-            transition: all 0.2s ease;
-            text-align: left;
-            user-select: none;
-        }
-
-        .member-card:hover {
-            transform: translateY(-3px);
-            box-shadow: 0 8px 20px rgba(0,0,0,0.15);
-            border-color: var(--primary);
-        }
-
-        .member-card.highlight {
-            outline: 3px solid #ff9800;
-            box-shadow: 0 0 16px rgba(255,152,0,0.7);
-            background: #fffdf5;
-        }
-
-        .member-card.node-can1 { border-top: 4px solid #2b6cb0; }
-        .member-card.node-can2 { border-top: 4px solid #276749; }
-        .member-card.node-can3 { border-top: 4px solid #9b2c2c; }
-        .member-card.node-can4 { border-top: 4px solid #744210; }
-        .member-card.node-kp   { border-top: 4px solid #1f497d; }
-
-        .mc-doi {
-            font-size: 0.72rem;
-            font-weight: 700;
-            text-transform: uppercase;
-            color: var(--text-muted);
-            margin-bottom: 2px;
-            display: flex;
-            justify-content: space-between;
-        }
-
-        .mc-name {
-            font-size: 0.95rem;
-            font-weight: 700;
-            color: var(--primary-dark);
-            line-height: 1.25;
-            margin-bottom: 2px;
-            white-space: normal;
-            word-break: break-word;
-        }
-
-        .mc-meta {
-            font-size: 0.78rem;
-            color: #64748b;
-            margin-bottom: 2px;
-            white-space: nowrap;
-            overflow: hidden;
-            text-overflow: ellipsis;
-        }
-
-        .mc-spouse {
-            font-size: 0.74rem;
-            color: #475569;
-            font-style: italic;
-            white-space: nowrap;
-            overflow: hidden;
-            text-overflow: ellipsis;
-            border-top: 1px dashed #e2e8f0;
-            padding-top: 3px;
-            margin-top: 3px;
-        }
-
-        .mc-toggle {
-            display: inline-flex;
-            align-items: center;
-            justify-content: center;
-            position: absolute;
-            bottom: -11px;
-            left: 50%;
-            transform: translateX(-50%);
-            width: 22px;
-            height: 22px;
-            background: #ffffff;
-            border: 1px solid #64748b;
-            border-radius: 50%;
-            font-size: 0.75rem;
-            font-weight: bold;
-            cursor: pointer;
-            box-shadow: 0 1px 4px rgba(0,0,0,0.2);
-            z-index: 5;
-            color: #1e293b;
-            transition: all 0.2s;
-        }
-
-        .mc-toggle:hover {
-            background: var(--primary);
-            color: white;
-            border-color: var(--primary);
-            transform: translateX(-50%) scale(1.15);
-        }
-
-        li.node-collapsed > ul {
-            display: none !important;
-        }
-
-    
-        /* ========================================================= */
-        /* TỐI ƯU HÓA CHUYÊN SÂU CHO MÀN HÌNH ĐIỆN THOẠI (MOBILE UI) */
-        /* ========================================================= */
-
-        /* Cây Phân Cấp Dọc (Vertical Mobile Tree) */
-        .mobile-vtree-container {
-            padding: 8px 0;
-        }
-
-        .vtree-list {
-            list-style: none;
-            padding-left: 0;
-            margin: 0;
-        }
-
-        .vtree-item {
-            position: relative;
-            margin-bottom: 10px;
-        }
-
-        .vtree-node {
-            background: #ffffff;
-            border: 1px solid var(--border);
-            border-radius: 10px;
-            padding: 12px 14px;
-            box-shadow: 0 2px 6px rgba(0,0,0,0.05);
-            display: flex;
-            align-items: center;
-            justify-content: space-between;
-            gap: 10px;
-            transition: all 0.2s ease;
-            position: relative;
-            cursor: pointer;
-        }
-
-        .vtree-node:active {
-            background: #f1f5f9;
-            transform: scale(0.99);
-        }
-
-        .vtree-node.node-can1 { border-left: 5px solid #2b6cb0; }
-        .vtree-node.node-can2 { border-left: 5px solid #276749; }
-        .vtree-node.node-can3 { border-left: 5px solid #9b2c2c; }
-        .vtree-node.node-can4 { border-left: 5px solid #744210; }
-        .vtree-node.node-kp   { border-left: 5px solid #1f497d; }
-
-        .vtree-info {
-            flex: 1;
-            min-width: 0;
-        }
-
-        .vtree-badge {
-            font-size: 0.72rem;
-            font-weight: 700;
-            color: var(--text-muted);
-            text-transform: uppercase;
-            margin-bottom: 2px;
-        }
-
-        .vtree-name {
-            font-size: 1.05rem;
-            font-weight: 700;
-            color: var(--primary-dark);
-            line-height: 1.3;
-            white-space: normal;
-            word-break: break-word;
-        }
-
-        .vtree-meta {
-            font-size: 0.8rem;
-            color: #64748b;
-            margin-top: 3px;
-        }
-
-        .vtree-spouse {
-            font-size: 0.78rem;
-            color: #475569;
-            font-style: italic;
-            margin-top: 2px;
-        }
-
-        .vtree-btn-toggle {
-            min-width: 38px;
-            height: 38px;
-            border-radius: 8px;
-            background: #f1f5f9;
-            border: 1px solid #cbd5e1;
-            font-size: 0.85rem;
-            font-weight: bold;
-            color: var(--primary);
-            display: inline-flex;
-            align-items: center;
-            justify-content: center;
-            cursor: pointer;
-            flex-shrink: 0;
-        }
-
-        .vtree-btn-toggle:active {
-            background: var(--primary);
-            color: white;
-        }
-
-        .vtree-children {
-            list-style: none;
-            padding-left: 18px;
-            margin: 8px 0 0 10px;
-            border-left: 2px solid #cbd5e1;
-            transition: all 0.3s ease;
-        }
-
-        .vtree-item.collapsed > .vtree-children {
-            display: none !important;
-        }
-
-        /* Pill Tabs chọn nhánh trượt ngang */
-        .pill-bar {
-            display: flex;
-            gap: 8px;
-            overflow-x: auto;
-            padding-bottom: 6px;
-            scrollbar-width: none;
-            -webkit-overflow-scrolling: touch;
-        }
-
-        .pill-bar::-webkit-scrollbar {
-            display: none;
-        }
-
-        .pill-btn {
-            padding: 8px 16px;
-            border-radius: 20px;
-            background: #ffffff;
-            border: 1px solid var(--border);
-            font-size: 0.88rem;
-            font-weight: 600;
-            white-space: nowrap;
-            cursor: pointer;
-            transition: all 0.2s;
-            color: var(--text-main);
-            flex-shrink: 0;
-        }
-
-        .pill-btn.active {
-            background: var(--primary);
-            color: #ffffff;
-            border-color: var(--primary);
-            box-shadow: 0 2px 8px rgba(31,73,125,0.3);
-        }
-
-        /* Toàn màn hình cho Sơ đồ cây (Fullscreen Tree) */
-        .tree-viewport.is-fullscreen {
-            position: fixed !important;
-            top: 0 !important;
-            left: 0 !important;
-            width: 100vw !important;
-            height: 100vh !important;
-            max-height: 100vh !important;
-            z-index: 99999 !important;
-            border-radius: 0 !important;
-            border: none !important;
-        }
-
-        .fullscreen-exit-btn {
-            display: none;
-            position: fixed;
-            top: 15px;
-            right: 15px;
-            z-index: 100000;
-            background: #dc2626;
-            color: white;
-            border: none;
-            padding: 8px 16px;
-            border-radius: 20px;
-            font-weight: bold;
-            font-size: 0.9rem;
-            box-shadow: 0 4px 12px rgba(0,0,0,0.3);
-            cursor: pointer;
-        }
-
-        .tree-viewport.is-fullscreen + .fullscreen-exit-btn {
-            display: block;
-        }
-
-        /* Floating Touch Controls on Tree */
-        .tree-touch-controls {
-            display: none;
-            position: absolute;
-            bottom: 20px;
-            right: 20px;
-            z-index: 100;
-            flex-direction: column;
-            gap: 10px;
-        }
-
-        .touch-fab {
-            width: 44px;
-            height: 44px;
-            border-radius: 50%;
-            background: white;
-            color: var(--primary-dark);
-            border: 1px solid #cbd5e1;
-            font-size: 1.2rem;
-            font-weight: bold;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            box-shadow: 0 4px 12px rgba(0,0,0,0.2);
-            cursor: pointer;
-        }
-
-        .touch-fab:active {
-            background: var(--primary);
-            color: white;
-        }
-
-        /* Mobile Responsive Rules */
-        @media (max-width: 768px) {
-            header {
-                padding: 1.5rem 1rem;
-            }
-
-            header h1 {
-                font-size: 1.6rem;
-            }
-
-            header p {
-                font-size: 0.95rem;
-            }
-
-            .badge-bar {
-                gap: 6px;
-            }
-
-            .badge {
-                font-size: 0.75rem;
-                padding: 4px 10px;
-            }
-
-            .nav-tabs {
-                padding: 0 8px;
-            }
-
-            .tab-btn {
-                padding: 12px 14px;
-                font-size: 0.88rem;
-            }
-
-            main {
-                padding: 0 10px;
-                margin: 16px auto;
-            }
-
-            .card {
-                padding: 14px 12px;
-                border-radius: 8px;
-            }
-
-            .card-header h2 {
-                font-size: 1.2rem;
-            }
-
-            /* Ẩn các cột ít quan trọng trên mobile để bảng không bị tràn quá dài */
-            .col-hide-mobile {
-                display: none !important;
-            }
-
-            /* Thẻ cây đồ họa nhỏ gọn trên điện thoại */
-            .member-card {
-                width: 145px;
-                padding: 7px 8px;
-            }
-
-            .mc-name {
-                font-size: 0.86rem;
-            }
-
-            .mc-doi {
-                font-size: 0.68rem;
-            }
-
-            .mc-meta {
-                font-size: 0.72rem;
-            }
-
-            .vtree-children {
-                padding-left: 10px;
-                margin: 6px 0 0 4px;
-            }
-
-            .vtree-node {
-                padding: 9px 10px;
-                gap: 6px;
-            }
-
-            .vtree-name {
-                font-size: 0.95rem;
-            }
-
-            .vtree-btn-toggle {
-                padding: 5px 8px;
-                font-size: 0.78rem;
-                flex-shrink: 0;
-            }
-
-            .mc-spouse {
-                font-size: 0.68rem;
-            }
-
-            .genealogy-tree li {
-                padding: 18px 4px 0 4px;
-            }
-
-            .genealogy-tree ul {
-                padding-top: 18px;
-            }
-
-            .tree-viewport {
-                height: 480px;
-            }
-
-            .tree-touch-controls {
-                display: flex;
-            }
-
-            .tree-toolbar {
-                padding: 10px;
-            }
-
-            /* Modal Bottom-Sheet trên mobile */
-            .modal-content {
-                width: 100%;
-                max-width: 100%;
-                border-radius: 18px 18px 0 0;
-                position: fixed;
-                bottom: 0;
-                max-height: 85vh;
-                padding: 20px 16px 30px 16px;
-            }
-        }
-
-    </style>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Gia Phả Họ Bạch - Phú Điền, Hưng Phú, Hưng Nguyên</title>
+  <style>
+    :root {
+      --primary: #1f497d;
+      --primary-dark: #122b49;
+      --primary-light: #e8f0fe;
+      --secondary: #8c2d19;
+      --gold: #d4af37;
+      --gold-light: #fff9e6;
+      --text-main: #2c3e50;
+      --text-muted: #666;
+      --bg-light: #f7f9fa;
+      --card-bg: #ffffff;
+      --border: #e2e8f0;
+      --shadow: 0 4px 12px rgba(0, 0, 0, 0.06);
+      --can1-color: #2b6cb0;
+      --can2-color: #276749;
+      --can3-color: #9b2c2c;
+      --can4-color: #744210;
+    }
+
+    * {
+      box-sizing: border-box;
+      margin: 0;
+      padding: 0;
+    }
+
+    body {
+      font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
+      color: var(--text-main);
+      background-color: var(--bg-light);
+      line-height: 1.6;
+    }
+
+    header {
+      background: linear-gradient(135deg, var(--primary-dark), var(--primary));
+      color: #ffffff;
+      padding: 2.5rem 1rem;
+      text-align: center;
+      box-shadow: 0 4px 20px rgba(0, 0, 0, 0.15);
+      position: relative;
+    }
+
+    header h1 {
+      font-size: 2.2rem;
+      letter-spacing: 1px;
+      margin-bottom: 0.5rem;
+      font-family: "Palatino Linotype", "Book Antiqua", Palatino, serif;
+      color: #ffd700;
+      text-shadow: 1px 2px 4px rgba(0, 0, 0, 0.4);
+    }
+
+    header p {
+      font-size: 1.1rem;
+      opacity: 0.92;
+    }
+
+    .badge-bar {
+      margin-top: 15px;
+      display: flex;
+      justify-content: center;
+      gap: 12px;
+      flex-wrap: wrap;
+    }
+
+    .badge {
+      background: rgba(255, 255, 255, 0.15);
+      border: 1px solid rgba(255, 255, 255, 0.3);
+      padding: 5px 14px;
+      border-radius: 20px;
+      font-size: 0.85rem;
+      letter-spacing: 0.5px;
+    }
+
+    .nav-wrapper {
+      background: #ffffff;
+      border-bottom: 1px solid var(--border);
+      position: sticky;
+      top: 0;
+      z-index: 100;
+      box-shadow: 0 2px 6px rgba(0, 0, 0, 0.04);
+    }
+
+    .nav-tabs {
+      display: flex;
+      max-width: 1200px;
+      margin: 0 auto;
+      overflow-x: auto;
+    }
+
+    .tab-btn {
+      padding: 16px 22px;
+      background: none;
+      border: none;
+      border-bottom: 3px solid transparent;
+      font-size: 0.98rem;
+      font-weight: 600;
+      color: var(--text-muted);
+      cursor: pointer;
+      white-space: nowrap;
+      transition: all 0.2s ease;
+    }
+
+    .tab-btn:hover {
+      color: var(--primary);
+      background-color: var(--primary-light);
+    }
+
+    .tab-btn.active {
+      color: var(--primary);
+      border-bottom: 3px solid var(--primary);
+      background-color: #ffffff;
+    }
+
+    main {
+      max-width: 1200px;
+      margin: 24px auto;
+      padding: 0 16px;
+    }
+
+    .tab-content {
+      display: none;
+    }
+
+    .tab-content.active {
+      display: block;
+    }
+
+    .card {
+      background: var(--card-bg);
+      border-radius: 10px;
+      padding: 24px;
+      box-shadow: var(--shadow);
+      border: 1px solid var(--border);
+      margin-bottom: 24px;
+    }
+
+    .card-header {
+      border-bottom: 2px solid var(--primary-light);
+      padding-bottom: 12px;
+      margin-bottom: 18px;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      flex-wrap: wrap;
+      gap: 10px;
+    }
+
+    .card-header h2 {
+      color: var(--primary);
+      font-size: 1.4rem;
+    }
+
+    /* Search & Filter Controls */
+    .filter-box {
+      display: flex;
+      gap: 12px;
+      margin-bottom: 20px;
+      flex-wrap: wrap;
+    }
+
+    .search-input {
+      flex: 2;
+      min-width: 260px;
+      padding: 11px 16px;
+      border: 1px solid var(--border);
+      border-radius: 8px;
+      font-size: 0.95rem;
+      outline: none;
+    }
+
+    .search-input:focus {
+      border-color: var(--primary);
+      box-shadow: 0 0 0 3px rgba(31, 73, 125, 0.15);
+    }
+
+    .filter-select {
+      flex: 1;
+      min-width: 160px;
+      padding: 11px 14px;
+      border: 1px solid var(--border);
+      border-radius: 8px;
+      background: white;
+      font-size: 0.95rem;
+      cursor: pointer;
+    }
+
+    /* Table Design */
+    .table-responsive {
+      overflow-x: auto;
+    }
+
+    table {
+      width: 100%;
+      border-collapse: collapse;
+      font-size: 0.92rem;
+      text-align: left;
+    }
+
+    th,
+    td {
+      padding: 12px 14px;
+      border-bottom: 1px solid var(--border);
+      vertical-align: middle;
+    }
+
+    th {
+      background-color: var(--primary);
+      color: #ffffff;
+      font-weight: 600;
+      white-space: nowrap;
+    }
+
+    tr:nth-child(even) {
+      background-color: #fafbfc;
+    }
+
+    tr:hover {
+      background-color: #edf2f7;
+      cursor: pointer;
+    }
+
+    .tag {
+      display: inline-block;
+      padding: 3px 8px;
+      border-radius: 4px;
+      font-size: 0.78rem;
+      font-weight: bold;
+    }
+
+    .tag-can1 {
+      background: #ebf8ff;
+      color: #2b6cb0;
+      border: 1px solid #bee3f8;
+    }
+
+    .tag-can2 {
+      background: #f0fff4;
+      color: #276749;
+      border: 1px solid #c6f6d5;
+    }
+
+    .tag-can3 {
+      background: #fff5f5;
+      color: #9b2c2c;
+      border: 1px solid #fed7d7;
+    }
+
+    .tag-can4 {
+      background: #fffff0;
+      color: #744210;
+      border: 1px solid #fefcbf;
+    }
+
+    .tag-kp {
+      background: #f7fafc;
+      color: #4a5568;
+      border: 1px solid #e2e8f0;
+    }
+
+    /* Family Tree Layout */
+    .tree-container {
+      padding: 20px 0;
+      text-align: center;
+    }
+
+    .branch-block {
+      display: inline-block;
+      background: white;
+      border: 1px solid var(--border);
+      border-radius: 8px;
+      padding: 15px;
+      margin: 10px;
+      vertical-align: top;
+      width: 270px;
+      box-shadow: var(--shadow);
+      text-align: left;
+    }
+
+    .branch-header {
+      font-weight: bold;
+      font-size: 1.05rem;
+      padding-bottom: 8px;
+      margin-bottom: 10px;
+      border-bottom: 2px solid var(--primary);
+    }
+
+    .branch-header.root {
+      color: var(--primary);
+      border-color: var(--primary);
+    }
+
+    .branch-header.c1 {
+      color: var(--can1-color);
+      border-color: var(--can1-color);
+    }
+
+    .branch-header.c2 {
+      color: var(--can2-color);
+      border-color: var(--can2-color);
+    }
+
+    .branch-header.c3 {
+      color: var(--can3-color);
+      border-color: var(--can3-color);
+    }
+
+    .branch-header.c4 {
+      color: var(--can4-color);
+      border-color: var(--can4-color);
+    }
+
+    .branch-body {
+      font-size: 0.9rem;
+    }
+
+    .branch-person {
+      margin-bottom: 10px;
+      padding-bottom: 8px;
+      border-bottom: 1px dashed var(--border);
+    }
+
+    .branch-person:last-child {
+      margin-bottom: 0;
+      padding-bottom: 0;
+      border-bottom: none;
+    }
+
+    .person-name {
+      font-weight: 700;
+      color: var(--primary-dark);
+    }
+
+    .person-meta {
+      font-size: 0.82rem;
+      color: var(--text-muted);
+      margin-top: 2px;
+    }
+
+    /* Stats Grid */
+    .stats-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+      gap: 16px;
+      margin-bottom: 24px;
+    }
+
+    .stat-card {
+      background: white;
+      border-radius: 8px;
+      padding: 18px;
+      border-left: 4px solid var(--primary);
+      box-shadow: var(--shadow);
+    }
+
+    .stat-num {
+      font-size: 2rem;
+      font-weight: 800;
+      color: var(--primary);
+      line-height: 1.1;
+    }
+
+    .stat-label {
+      font-size: 0.88rem;
+      color: var(--text-muted);
+      margin-top: 4px;
+    }
+
+    /* Calendar Grid */
+    .calendar-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+      gap: 16px;
+    }
+
+    .cal-month {
+      background: white;
+      border: 1px solid var(--border);
+      border-radius: 8px;
+      overflow: hidden;
+      box-shadow: var(--shadow);
+    }
+
+    .cal-month-header {
+      background: var(--primary);
+      color: white;
+      padding: 8px 14px;
+      font-weight: bold;
+      font-size: 0.95rem;
+      display: flex;
+      justify-content: space-between;
+    }
+
+    .cal-item {
+      padding: 10px 14px;
+      border-bottom: 1px solid #edf2f7;
+      font-size: 0.88rem;
+    }
+
+    .cal-item:last-child {
+      border-bottom: none;
+    }
+
+    .cal-date {
+      font-weight: 700;
+      color: var(--secondary);
+      display: inline-block;
+      min-width: 85px;
+    }
+
+    /* Modal Dialog */
+    .modal {
+      display: none;
+      position: fixed;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
+      background: rgba(0, 0, 0, 0.5);
+      z-index: 1000;
+      justify-content: center;
+      align-items: center;
+      padding: 15px;
+    }
+
+    .modal.active {
+      display: flex;
+    }
+
+    .modal-content {
+      background: white;
+      border-radius: 10px;
+      max-width: 650px;
+      width: 100%;
+      max-height: 90vh;
+      overflow-y: auto;
+      padding: 24px;
+      position: relative;
+      box-shadow: 0 10px 30px rgba(0, 0, 0, 0.25);
+    }
+
+    .modal-close {
+      position: absolute;
+      top: 15px;
+      right: 18px;
+      font-size: 1.5rem;
+      cursor: pointer;
+      border: none;
+      background: none;
+      color: var(--text-muted);
+    }
+
+    /* Footer */
+    footer {
+      background: #1a202c;
+      color: #a0aec0;
+      text-align: center;
+      padding: 2rem 1rem;
+      font-size: 0.88rem;
+      margin-top: 40px;
+    }
+
+    footer p {
+      margin: 4px 0;
+    }
+
+    /* Responsive */
+    @media (max-width: 768px) {
+      header h1 {
+        font-size: 1.6rem;
+      }
+
+      .tab-btn {
+        padding: 12px 14px;
+        font-size: 0.9rem;
+      }
+
+      .card {
+        padding: 16px;
+      }
+    }
+
+    /* ========================================================= */
+    /* SƠ ĐỒ CÂY PHẢ HỆ TRỰC QUAN (INTERACTIVE FAMILY TREE CSS)  */
+    /* ========================================================= */
+    .tree-toolbar {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      flex-wrap: wrap;
+      gap: 12px;
+      background: rgba(248, 250, 252, 0.96);
+      backdrop-filter: blur(8px);
+      padding: 12px 16px;
+      border-radius: 8px;
+      border: 1px solid var(--border);
+      margin-bottom: 14px;
+    }
+
+    .tree-sticky-bar {
+      position: sticky;
+      top: 56px;
+      z-index: 90;
+      box-shadow: 0 4px 12px rgba(0, 0, 0, 0.08);
+    }
+
+    .vtree-sticky-bar {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      flex-wrap: wrap;
+      gap: 8px;
+      background: rgba(248, 250, 252, 0.96);
+      backdrop-filter: blur(8px);
+      padding: 10px 12px;
+      border-radius: 8px;
+      border: 1px solid var(--border);
+      margin-bottom: 12px;
+    }
+
+    .tree-search-box {
+      display: inline-flex;
+      align-items: center;
+      gap: 6px;
+      flex: 1;
+      min-width: 0;
+    }
+
+    .tree-search-input-wrap {
+      position: relative;
+      display: inline-flex;
+      align-items: center;
+      flex: 1;
+      min-width: 170px;
+    }
+
+    .tree-search-input-wrap .search-input {
+      width: 100%;
+      padding-right: 30px !important;
+    }
+
+    .tree-search-clear {
+      position: absolute;
+      right: 8px;
+      top: 50%;
+      transform: translateY(-50%);
+      background: #e2e8f0;
+      color: #475569;
+      border: none;
+      border-radius: 50%;
+      width: 20px;
+      height: 20px;
+      font-size: 12px;
+      line-height: 20px;
+      text-align: center;
+      cursor: pointer;
+      display: none;
+      padding: 0;
+    }
+
+    .tree-search-clear.visible {
+      display: inline-block;
+    }
+
+    .tree-search-box.is-collapsed {
+      flex: 0 0 auto;
+    }
+
+    .tree-search-box.is-collapsed .tree-search-input-wrap {
+      display: none;
+    }
+
+    .btn-search-toggle {
+      padding: 7px 12px;
+      background: white;
+      border: 1px solid var(--border);
+      border-radius: 6px;
+      font-size: 0.85rem;
+      font-weight: 600;
+      cursor: pointer;
+      color: var(--primary);
+      display: inline-flex;
+      align-items: center;
+      gap: 4px;
+      flex-shrink: 0;
+      transition: all 0.2s;
+    }
+
+    .btn-search-toggle:hover {
+      background: var(--primary-light);
+      border-color: var(--primary);
+    }
+
+    #treeViewGraph.is-graph-fullscreen .tree-toolbar {
+      position: fixed;
+      top: 12px;
+      left: 12px;
+      right: 210px;
+      z-index: 100001;
+      margin-bottom: 0;
+      box-shadow: 0 6px 20px rgba(0, 0, 0, 0.16);
+    }
+
+    .tree-controls-left,
+    .tree-controls-right {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      flex-wrap: wrap;
+    }
+
+    .btn-tree-tool {
+      padding: 8px 14px;
+      background: white;
+      border: 1px solid var(--border);
+      border-radius: 6px;
+      font-size: 0.88rem;
+      font-weight: 600;
+      cursor: pointer;
+      transition: all 0.2s;
+      color: var(--text-main);
+      display: inline-flex;
+      align-items: center;
+      gap: 4px;
+    }
+
+    .btn-tree-tool:hover {
+      background: var(--primary-light);
+      color: var(--primary);
+      border-color: var(--primary);
+    }
+
+    .tree-legend {
+      display: flex;
+      align-items: center;
+      gap: 16px;
+      font-size: 0.85rem;
+      margin-bottom: 14px;
+      flex-wrap: wrap;
+      background: white;
+      padding: 8px 14px;
+      border-radius: 6px;
+      border: 1px solid var(--border);
+    }
+
+    .legend-dot {
+      display: inline-block;
+      width: 12px;
+      height: 12px;
+      border-radius: 3px;
+      margin-right: 5px;
+      vertical-align: middle;
+    }
+
+    .dot-kp {
+      background: #1f497d;
+    }
+
+    .dot-can1 {
+      background: #2b6cb0;
+    }
+
+    .dot-can2 {
+      background: #276749;
+    }
+
+    .dot-can3 {
+      background: #9b2c2c;
+    }
+
+    .dot-can4 {
+      background: #744210;
+    }
+
+    .tree-viewport {
+      width: 100%;
+      height: 720px;
+      overflow: auto;
+      background: radial-gradient(circle, #f1f5f9 10%, #f8fafc 10%);
+      background-size: 20px 20px;
+      border: 1px solid var(--border);
+      border-radius: 8px;
+      position: relative;
+      cursor: grab;
+    }
+
+    .tree-viewport:active {
+      cursor: grabbing;
+    }
+
+    .tree-canvas {
+      display: inline-block;
+      padding: 40px 60px 80px 60px;
+      min-width: 100%;
+      transform-origin: top center;
+      transition: transform 0.15s ease-out;
+    }
+
+    /* Khung nối cây phả hệ (Genealogical CSS Tree Lines) */
+    .genealogy-tree ul {
+      padding-top: 26px;
+      position: relative;
+      transition: all 0.4s;
+      display: flex;
+      justify-content: center;
+      margin: 0 auto;
+      padding-left: 0;
+    }
+
+    .genealogy-tree li {
+      text-align: center;
+      list-style-type: none;
+      position: relative;
+      padding: 26px 8px 0 8px;
+      transition: all 0.4s;
+    }
+
+    .genealogy-tree li::before,
+    .genealogy-tree li::after {
+      content: '';
+      position: absolute;
+      top: 0;
+      right: 50%;
+      border-top: 2px solid #94a3b8;
+      width: 50%;
+      height: 26px;
+    }
+
+    .genealogy-tree li::after {
+      right: auto;
+      left: 50%;
+      border-left: 2px solid #94a3b8;
+    }
+
+    .genealogy-tree li:only-child::after,
+    .genealogy-tree li:only-child::before {
+      display: none;
+    }
+
+    .genealogy-tree li:only-child {
+      padding-top: 0;
+    }
+
+    .genealogy-tree li:first-child::before,
+    .genealogy-tree li:last-child::after {
+      border: 0 none;
+    }
+
+    .genealogy-tree li:last-child::before {
+      border-right: 2px solid #94a3b8;
+      border-radius: 0 8px 0 0;
+    }
+
+    .genealogy-tree li:first-child::after {
+      border-radius: 8px 0 0 0;
+    }
+
+    .genealogy-tree ul ul::before {
+      content: '';
+      position: absolute;
+      top: 0;
+      left: 50%;
+      border-left: 2px solid #94a3b8;
+      width: 0;
+      height: 26px;
+    }
+
+    /* Thẻ thành viên trên cây (Member Card) */
+    .member-card {
+      display: inline-block;
+      width: 185px;
+      background: white;
+      border: 1px solid #cbd5e1;
+      border-radius: 8px;
+      padding: 9px 10px 9px 10px;
+      box-shadow: 0 3px 8px rgba(0, 0, 0, 0.06);
+      position: relative;
+      cursor: pointer;
+      transition: all 0.2s ease;
+      text-align: left;
+      user-select: none;
+    }
+
+    .member-card:hover {
+      transform: translateY(-3px);
+      box-shadow: 0 8px 20px rgba(0, 0, 0, 0.15);
+      border-color: var(--primary);
+    }
+
+    .member-card.highlight {
+      outline: 3px solid #ff9800;
+      box-shadow: 0 0 16px rgba(255, 152, 0, 0.7);
+      background: #fffdf5;
+    }
+
+    .member-card.node-can1 {
+      border-top: 4px solid #2b6cb0;
+    }
+
+    .member-card.node-can2 {
+      border-top: 4px solid #276749;
+    }
+
+    .member-card.node-can3 {
+      border-top: 4px solid #9b2c2c;
+    }
+
+    .member-card.node-can4 {
+      border-top: 4px solid #744210;
+    }
+
+    .member-card.node-kp {
+      border-top: 4px solid #1f497d;
+    }
+
+    .mc-doi {
+      font-size: 0.72rem;
+      font-weight: 700;
+      text-transform: uppercase;
+      color: var(--text-muted);
+      margin-bottom: 2px;
+      display: flex;
+      justify-content: space-between;
+    }
+
+    .mc-name {
+      font-size: 0.95rem;
+      font-weight: 700;
+      color: var(--primary-dark);
+      line-height: 1.25;
+      margin-bottom: 2px;
+      white-space: normal;
+      word-break: break-word;
+    }
+
+    .mc-meta {
+      font-size: 0.78rem;
+      color: #64748b;
+      margin-bottom: 2px;
+      white-space: nowrap;
+      overflow: hidden;
+      text-overflow: ellipsis;
+    }
+
+    .mc-spouse {
+      font-size: 0.74rem;
+      color: #475569;
+      font-style: italic;
+      white-space: nowrap;
+      overflow: hidden;
+      text-overflow: ellipsis;
+      border-top: 1px dashed #e2e8f0;
+      padding-top: 3px;
+      margin-top: 3px;
+    }
+
+    .mc-toggle {
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      position: absolute;
+      bottom: -11px;
+      left: 50%;
+      transform: translateX(-50%);
+      width: 22px;
+      height: 22px;
+      background: #ffffff;
+      border: 1px solid #64748b;
+      border-radius: 50%;
+      font-size: 0.75rem;
+      font-weight: bold;
+      cursor: pointer;
+      box-shadow: 0 1px 4px rgba(0, 0, 0, 0.2);
+      z-index: 5;
+      color: #1e293b;
+      transition: all 0.2s;
+    }
+
+    .mc-toggle:hover {
+      background: var(--primary);
+      color: white;
+      border-color: var(--primary);
+      transform: translateX(-50%) scale(1.15);
+    }
+
+    li.node-collapsed>ul {
+      display: none !important;
+    }
+
+
+    /* ========================================================= */
+    /* TỐI ƯU HÓA CHUYÊN SÂU CHO MÀN HÌNH ĐIỆN THOẠI (MOBILE UI) */
+    /* ========================================================= */
+
+    /* Cây Phân Cấp Dọc (Vertical Mobile Tree) */
+    .mobile-vtree-container {
+      padding: 8px 0;
+    }
+
+    .vtree-list {
+      list-style: none;
+      padding-left: 0;
+      margin: 0;
+    }
+
+    .vtree-item {
+      position: relative;
+      margin-bottom: 10px;
+    }
+
+    .vtree-node {
+      background: #ffffff;
+      border: 1px solid var(--border);
+      border-radius: 10px;
+      padding: 12px 14px;
+      box-shadow: 0 2px 6px rgba(0, 0, 0, 0.05);
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 10px;
+      transition: all 0.2s ease;
+      position: relative;
+      cursor: pointer;
+    }
+
+    .vtree-node:active {
+      background: #f1f5f9;
+      transform: scale(0.99);
+    }
+
+    .vtree-node.node-can1 {
+      border-left: 5px solid #2b6cb0;
+    }
+
+    .vtree-node.node-can2 {
+      border-left: 5px solid #276749;
+    }
+
+    .vtree-node.node-can3 {
+      border-left: 5px solid #9b2c2c;
+    }
+
+    .vtree-node.node-can4 {
+      border-left: 5px solid #744210;
+    }
+
+    .vtree-node.node-kp {
+      border-left: 5px solid #1f497d;
+    }
+
+    .vtree-info {
+      flex: 1;
+      min-width: 0;
+    }
+
+    .vtree-badge {
+      font-size: 0.72rem;
+      font-weight: 700;
+      color: var(--text-muted);
+      text-transform: uppercase;
+      margin-bottom: 2px;
+    }
+
+    .vtree-name {
+      font-size: 1.05rem;
+      font-weight: 700;
+      color: var(--primary-dark);
+      line-height: 1.3;
+      white-space: normal;
+      word-break: break-word;
+    }
+
+    .vtree-meta {
+      font-size: 0.8rem;
+      color: #64748b;
+      margin-top: 3px;
+    }
+
+    .vtree-spouse {
+      font-size: 0.78rem;
+      color: #475569;
+      font-style: italic;
+      margin-top: 2px;
+    }
+
+    .vtree-btn-toggle {
+      min-width: 38px;
+      height: 38px;
+      border-radius: 8px;
+      background: #f1f5f9;
+      border: 1px solid #cbd5e1;
+      font-size: 0.85rem;
+      font-weight: bold;
+      color: var(--primary);
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      cursor: pointer;
+      flex-shrink: 0;
+    }
+
+    .vtree-btn-toggle:active {
+      background: var(--primary);
+      color: white;
+    }
+
+    .vtree-children {
+      list-style: none;
+      padding-left: 18px;
+      margin: 8px 0 0 10px;
+      border-left: 2px solid #cbd5e1;
+      transition: all 0.3s ease;
+    }
+
+    .vtree-item.collapsed>.vtree-children {
+      display: none !important;
+    }
+
+    /* Pill Tabs chọn nhánh trượt ngang */
+    .pill-bar {
+      display: flex;
+      gap: 8px;
+      overflow-x: auto;
+      padding-bottom: 6px;
+      scrollbar-width: none;
+      -webkit-overflow-scrolling: touch;
+    }
+
+    .pill-bar::-webkit-scrollbar {
+      display: none;
+    }
+
+    .pill-btn {
+      padding: 8px 16px;
+      border-radius: 20px;
+      background: #ffffff;
+      border: 1px solid var(--border);
+      font-size: 0.88rem;
+      font-weight: 600;
+      white-space: nowrap;
+      cursor: pointer;
+      transition: all 0.2s;
+      color: var(--text-main);
+      flex-shrink: 0;
+    }
+
+    .pill-btn.active {
+      background: var(--primary);
+      color: #ffffff;
+      border-color: var(--primary);
+      box-shadow: 0 2px 8px rgba(31, 73, 125, 0.3);
+    }
+
+    /* Toàn màn hình cho Sơ đồ cây (Fullscreen Tree) */
+    .tree-viewport.is-fullscreen {
+      position: fixed !important;
+      top: 0 !important;
+      left: 0 !important;
+      width: 100vw !important;
+      height: 100vh !important;
+      max-height: 100vh !important;
+      z-index: 99999 !important;
+      border-radius: 0 !important;
+      border: none !important;
+    }
+
+    .fullscreen-exit-btn {
+      display: none;
+      position: fixed;
+      top: 15px;
+      right: 15px;
+      z-index: 100000;
+      background: #dc2626;
+      color: white;
+      border: none;
+      padding: 8px 16px;
+      border-radius: 20px;
+      font-weight: bold;
+      font-size: 0.9rem;
+      box-shadow: 0 4px 12px rgba(0, 0, 0, 0.3);
+      cursor: pointer;
+    }
+
+    .tree-viewport.is-fullscreen+.fullscreen-exit-btn {
+      display: block;
+    }
+
+    /* Floating Touch Controls on Tree */
+    .tree-touch-controls {
+      display: none;
+      position: absolute;
+      bottom: 20px;
+      right: 20px;
+      z-index: 100;
+      flex-direction: column;
+      gap: 10px;
+    }
+
+    .touch-fab {
+      width: 44px;
+      height: 44px;
+      border-radius: 50%;
+      background: white;
+      color: var(--primary-dark);
+      border: 1px solid #cbd5e1;
+      font-size: 1.2rem;
+      font-weight: bold;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      box-shadow: 0 4px 12px rgba(0, 0, 0, 0.2);
+      cursor: pointer;
+    }
+
+    .touch-fab:active {
+      background: var(--primary);
+      color: white;
+    }
+
+    /* Mobile Responsive Rules */
+    @media (max-width: 768px) {
+      header {
+        padding: 1.5rem 1rem;
+      }
+
+      header h1 {
+        font-size: 1.6rem;
+      }
+
+      header p {
+        font-size: 0.95rem;
+      }
+
+      .badge-bar {
+        gap: 6px;
+      }
+
+      .badge {
+        font-size: 0.75rem;
+        padding: 4px 10px;
+      }
+
+      .nav-tabs {
+        padding: 0 8px;
+      }
+
+      .tab-btn {
+        padding: 12px 14px;
+        font-size: 0.88rem;
+      }
+
+      main {
+        padding: 0 10px;
+        margin: 16px auto;
+      }
+
+      .card {
+        padding: 14px 12px;
+        border-radius: 8px;
+      }
+
+      .card-header h2 {
+        font-size: 1.2rem;
+      }
+
+      /* Ẩn các cột ít quan trọng trên mobile để bảng không bị tràn quá dài */
+      .col-hide-mobile {
+        display: none !important;
+      }
+
+      /* Thẻ cây đồ họa nhỏ gọn trên điện thoại */
+      .member-card {
+        width: 145px;
+        padding: 7px 8px;
+      }
+
+      .mc-name {
+        font-size: 0.86rem;
+      }
+
+      .mc-doi {
+        font-size: 0.68rem;
+      }
+
+      .mc-meta {
+        font-size: 0.72rem;
+      }
+
+      .vtree-children {
+        padding-left: 10px;
+        margin: 6px 0 0 4px;
+      }
+
+      .vtree-node {
+        padding: 9px 10px;
+        gap: 6px;
+      }
+
+      .vtree-name {
+        font-size: 0.95rem;
+      }
+
+      .vtree-btn-toggle {
+        padding: 5px 8px;
+        font-size: 0.78rem;
+        flex-shrink: 0;
+      }
+
+      .mc-spouse {
+        font-size: 0.68rem;
+      }
+
+      .genealogy-tree li {
+        padding: 18px 4px 0 4px;
+      }
+
+      .genealogy-tree ul {
+        padding-top: 18px;
+      }
+
+      .tree-viewport {
+        height: 480px;
+      }
+
+      .tree-touch-controls {
+        display: flex;
+      }
+
+      .tree-toolbar {
+        padding: 10px;
+      }
+
+      .tree-sticky-bar {
+        top: 48px;
+      }
+
+      #treeViewGraph.is-graph-fullscreen .tree-toolbar {
+        top: 56px;
+        left: 10px;
+        right: 10px;
+        max-height: 45vh;
+        overflow-y: auto;
+      }
+
+      /* Modal Bottom-Sheet trên mobile */
+      .modal-content {
+        width: 100%;
+        max-width: 100%;
+        border-radius: 18px 18px 0 0;
+        position: fixed;
+        bottom: 0;
+        max-height: 85vh;
+        padding: 20px 16px 30px 16px;
+      }
+    }
+  </style>
 </head>
+
 <body>
 
-    <header>
-        <h1>BẠCH TỘC ĐẠI TÔN</h1>
-        <p><strong>TÔN ĐỒ TỰ PHẢ - TIỂU CHI 1 - TRUNG CHI 2</strong></p>
-        <p>Làng Phú Điền, Xã Hưng Phú, Huyện Hưng Nguyên, Tỉnh Nghệ An</p>
-        <div class="badge-bar">
-            <span class="badge">🏛️ Đền thờ Di tích Lịch sử (QĐ 1993)</span>
-            <span class="badge">📜 Khởi tổ Canh Tuất (1730)</span>
-            <span class="badge" id="badgeGenCount">🌳 9 Thế hệ tiếp nối</span>
-            <span class="badge">🛡️ Trạng nguyên Bạch Liêu (1236 - 1315)</span>
-        </div>
-    </header>
+  <header>
+    <h1>BẠCH TỘC ĐẠI TÔN</h1>
+    <p><strong>TÔN ĐỒ TỰ PHẢ - TIỂU CHI 1 - TRUNG CHI 2</strong></p>
+    <p>Làng Phú Điền, Xã Hưng Phú, Huyện Hưng Nguyên, Tỉnh Nghệ An</p>
+    <div class="badge-bar">
+      <span class="badge">🏛️ Đền thờ Di tích Lịch sử (QĐ 1993)</span>
+      <span class="badge">📜 Khởi tổ Canh Tuất (1730)</span>
+      <span class="badge" id="badgeGenCount">🌳 9 Thế hệ tiếp nối</span>
+      <span class="badge">🛡️ Trạng nguyên Bạch Liêu (1236 - 1315)</span>
+    </div>
+  </header>
 
-    <div class="nav-wrapper">
-        <div class="nav-tabs">
-            <button class="tab-btn active" onclick="switchTab('tab-tree')">🌳 Sơ đồ con cháu</button>
-            <button class="tab-btn" onclick="switchTab('tab-search')">🔍 Danh sách con cháu (126)</button>
-            <button class="tab-btn" onclick="switchTab('tab-calendar')">📅 Lịch Kỵ Giỗ Âm Lịch (86)</button>
-            <button class="tab-btn" onclick="switchTab('tab-history')">📖 Lời Tựa & Hiệu Đính</button>
-            <button class="tab-btn" onclick="switchTab('tab-stats')">📊 Thống Kê Dòng Tộc</button>
+  <div class="nav-wrapper">
+    <div class="nav-tabs">
+      <button class="tab-btn active" onclick="switchTab('tab-tree')">🌳 Sơ đồ con cháu</button>
+      <button class="tab-btn" onclick="switchTab('tab-search')">🔍 Danh sách con cháu (126)</button>
+      <button class="tab-btn" onclick="switchTab('tab-calendar')">📅 Lịch Kỵ Giỗ Âm Lịch (86)</button>
+      <button class="tab-btn" onclick="switchTab('tab-history')">📖 Lời Tựa & Hiệu Đính</button>
+      <button class="tab-btn" onclick="switchTab('tab-stats')">📊 Thống Kê Dòng Tộc</button>
+    </div>
+  </div>
+
+  <main>
+    <!-- TAB 1: TRA CỨU NHÂN ĐINH -->
+    <div id="tab-search" class="tab-content">
+      <div class="card">
+        <div class="card-header">
+          <h2>🔍 Tra Cứu Danh Bạ Nhân Đinh</h2>
+          <span id="record-count" style="font-weight: bold; color: var(--primary);">Đang tải dữ liệu...</span>
         </div>
+
+        <div class="filter-box">
+          <input type="text" id="searchInput" class="search-input"
+            placeholder="Nhập họ tên, tên húy, năm sinh, chức vụ, mộ phần, cha mẹ, từ khóa..."
+            oninput="filterRecords()">
+          <select id="canFilter" class="filter-select" onchange="filterRecords()">
+            <option value="ALL">-- Tất cả Can nhánh --</option>
+            <option value="Khởi phát">Khởi phát Trung Chi 2</option>
+            <option value="Tiểu Chi 1">Đời 1 & 2 Tiểu Chi 1</option>
+            <option value="Can 1">Can 1 (Tổ Cư)</option>
+            <option value="Can 2">Can 2 (Tổ Khâu)</option>
+            <option value="Can 3">Can 3 (Tổ Nghi)</option>
+            <option value="Can 4">Can 4 (Tổ Kế)</option>
+          </select>
+          <select id="doiFilter" class="filter-select" onchange="filterRecords()">
+            <option value="ALL">-- Tất cả Đời --</option>
+            <option value="Khởi phát">Khởi phát</option>
+            <option value="Đời 1">Đời 1</option>
+            <option value="Đời 2">Đời 2</option>
+            <option value="Đời 3">Đời 3</option>
+            <option value="Đời 4">Đời 4</option>
+            <option value="Đời 5">Đời 5</option>
+            <option value="Đời 6">Đời 6</option>
+            <option value="Đời 7">Đời 7</option>
+            <option value="Đời 8">Đời 8</option>
+            <option value="Đời 9">Đời 9</option>
+          </select>
+        </div>
+
+        <div class="table-responsive">
+          <table id="dataTable">
+            <thead>
+              <tr>
+                <th style="width: 50px; text-align: center;">STT</th>
+                <th style="width: 100px;">Nhánh / Đời</th>
+                <th style="min-width: 170px;">Họ và Tên</th>
+                <th style="min-width: 130px;">Tên húy / gọi khác</th>
+                <th style="min-width: 120px;">Năm sinh / mất</th>
+                <th style="min-width: 110px;">Ngày giỗ ÂL</th>
+                <th style="min-width: 180px;">Cha / Mẹ</th>
+                <th style="min-width: 180px;">Phối ngẫu</th>
+                <th style="min-width: 130px;">Mộ phần</th>
+                <th style="min-width: 220px;">Công trạng / Ghi chú (Theo văn bản)</th>
+              </tr>
+            </thead>
+            <tbody id="tableBody">
+              <!-- Rows injected by JavaScript -->
+            </tbody>
+          </table>
+        </div>
+      </div>
     </div>
 
-    <main>
-        <!-- TAB 1: TRA CỨU NHÂN ĐINH -->
-        <div id="tab-search" class="tab-content">
-            <div class="card">
-                <div class="card-header">
-                    <h2>🔍 Tra Cứu Danh Bạ Nhân Đinh</h2>
-                    <span id="record-count" style="font-weight: bold; color: var(--primary);">Đang tải dữ liệu...</span>
-                </div>
-
-                <div class="filter-box">
-                    <input type="text" id="searchInput" class="search-input" placeholder="Nhập họ tên, tên húy, năm sinh, chức vụ, mộ phần, cha mẹ, từ khóa..." oninput="filterRecords()">
-                    <select id="canFilter" class="filter-select" onchange="filterRecords()">
-                        <option value="ALL">-- Tất cả Can nhánh --</option>
-                        <option value="Khởi phát">Khởi phát Trung Chi 2</option>
-                        <option value="Tiểu Chi 1">Đời 1 & 2 Tiểu Chi 1</option>
-                        <option value="Can 1">Can 1 (Tổ Cư)</option>
-                        <option value="Can 2">Can 2 (Tổ Khâu)</option>
-                        <option value="Can 3">Can 3 (Tổ Nghi)</option>
-                        <option value="Can 4">Can 4 (Tổ Kế)</option>
-                    </select>
-                    <select id="doiFilter" class="filter-select" onchange="filterRecords()">
-                        <option value="ALL">-- Tất cả Đời --</option>
-                        <option value="Khởi phát">Khởi phát</option>
-                        <option value="Đời 1">Đời 1</option>
-                        <option value="Đời 2">Đời 2</option>
-                        <option value="Đời 3">Đời 3</option>
-                        <option value="Đời 4">Đời 4</option>
-                        <option value="Đời 5">Đời 5</option>
-                        <option value="Đời 6">Đời 6</option>
-                        <option value="Đời 7">Đời 7</option>
-                        <option value="Đời 8">Đời 8</option>
-                        <option value="Đời 9">Đời 9</option>
-                    </select>
-                </div>
-
-                <div class="table-responsive">
-                    <table id="dataTable">
-                        <thead>
-                            <tr>
-                                <th style="width: 50px; text-align: center;">STT</th>
-                                <th style="width: 100px;">Nhánh / Đời</th>
-                                <th style="min-width: 170px;">Họ và Tên</th>
-                                <th style="min-width: 130px;">Tên húy / gọi khác</th>
-                                <th style="min-width: 120px;">Năm sinh / mất</th>
-                                <th style="min-width: 110px;">Ngày giỗ ÂL</th>
-                                <th style="min-width: 180px;">Cha / Mẹ</th>
-                                <th style="min-width: 180px;">Phối ngẫu</th>
-                                <th style="min-width: 130px;">Mộ phần</th>
-                                <th style="min-width: 220px;">Công trạng / Ghi chú (Theo văn bản)</th>
-                            </tr>
-                        </thead>
-                        <tbody id="tableBody">
-                            <!-- Rows injected by JavaScript -->
-                        </tbody>
-                    </table>
-                </div>
+    <!-- TAB 2: SƠ ĐỒ PHẢ HỆ -->
+    <div id="tab-tree" class="tab-content active">
+      <div class="card" style="padding: 14px 16px;">
+        <div class="card-header" style="margin-bottom: 10px;">
+          <div>
+            <h2>🌳 Sơ Đồ Cây Phả Hệ Trực Quan</h2>
+            <div style="font-size: 0.85rem; color: var(--text-muted); margin-top: 2px;">
+              Hỗ trợ tối ưu trên cả Điện thoại & Máy tính • Chạm người bất kỳ để xem lý lịch chi tiết.
             </div>
+          </div>
         </div>
 
-                <!-- TAB 2: SƠ ĐỒ PHẢ HỆ -->
-        <div id="tab-tree" class="tab-content active">
-            <div class="card" style="padding: 14px 16px;">
-                <div class="card-header" style="margin-bottom: 10px;">
-                    <div>
-                        <h2>🌳 Sơ Đồ Cây Phả Hệ Trực Quan</h2>
-                        <div style="font-size: 0.85rem; color: var(--text-muted); margin-top: 2px;">
-                            Hỗ trợ tối ưu trên cả Điện thoại & Máy tính • Chạm người bất kỳ để xem lý lịch chi tiết.
-                        </div>
-                    </div>
-                </div>
-
-                <!-- THANH CHUYỂN CHẾ ĐỘ XEM TRÊN ĐIỆN THOẠI & MÁY TÍNH -->
-                <div style="display: flex; gap: 8px; margin-bottom: 12px; flex-wrap: wrap; align-items: center;">
-                    <div style="font-weight: bold; font-size: 0.88rem; color: var(--primary);">Chế độ xem:</div>
-                    <button class="pill-btn active" id="btnViewMobileTree" onclick="switchTreeViewMode('vtree')">📱 Cây Dọc (Thuận Tiện Cho Mobile)</button>
-                    <button class="pill-btn" id="btnViewGraphTree" onclick="switchTreeViewMode('graph')">🖥️ Sơ Đồ Đồ Họa (Cây Ngang Phóng To)</button>
-                    <button class="pill-btn" id="btnViewBlocksTree" onclick="switchTreeViewMode('blocks')">📋 Thẻ Tóm Tắt</button>
-                </div>
-
-                <!-- THANH CHỌN NHÁNH CAN (DẠNG TRƯỢT NGANG TRÊN MOBILE) -->
-                <div style="margin-bottom: 12px;">
-                    <div class="pill-bar">
-                        <button class="pill-btn" data-can="ALL" onclick="selectTreeCan('ALL', this)">🏛️ Toàn Tộc (Đại Tôn)</button>
-                        <button class="pill-btn" data-can="Can 1" onclick="selectTreeCan('Can 1', this)">🔷 Can 1: Nhánh Cụ Cư</button>
-                        <button class="pill-btn active" data-can="Can 2" onclick="selectTreeCan('Can 2', this)">🌿 Can 2: Nhánh Cụ Khâu</button>
-                        <button class="pill-btn" data-can="Can 3" onclick="selectTreeCan('Can 3', this)">🛑 Can 3: Nhánh Cụ Nghi</button>
-                        <button class="pill-btn" data-can="Can 4" onclick="selectTreeCan('Can 4', this)">🍂 Can 4: Nhánh Cụ Kế</button>
-                    </div>
-                </div>
-
-                <!-- 1. CHẾ ĐỘ: CÂY PHÂN CẤP DỌC (TỐI ƯU SỐ 1 CHO MOBILE) -->
-                <div id="treeViewVertical" class="mobile-vtree-container">
-                    <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 10px; gap: 8px;">
-                        <input type="text" id="vtreeSearchInput" placeholder="🔍 Tìm tên con cháu trên cây..." class="search-input" style="padding: 9px 14px; font-size: 0.9rem;" oninput="searchVerticalTree()">
-                        <button class="btn-tree-tool" onclick="toggleAllVerticalTree(true)" style="padding: 8px 12px; flex-shrink: 0;">➕ Mở hết</button>
-                        <button class="btn-tree-tool" onclick="toggleAllVerticalTree(false)" style="padding: 8px 12px; flex-shrink: 0;">➖ Thu bớt</button>
-                    </div>
-                    <div id="vtreeRoot">
-                        <!-- Rendered by JS -->
-                    </div>
-                </div>
-
-                <!-- 2. CHẾ ĐỘ: SƠ ĐỒ ĐỒ HỌA NGANG (GRAPH TREE) -->
-                <div id="treeViewGraph" style="display: none;">
-                    <div class="tree-toolbar">
-                        <div class="tree-controls-left">
-                            <input type="text" id="treeSearchInput" placeholder="Tìm tên trên cây đồ họa..." class="search-input" style="min-width: 170px; padding: 7px 12px;" oninput="searchInTree()">
-                        </div>
-                        <div class="tree-controls-right">
-                            <button class="btn-tree-tool" onclick="expandAllTreeNodes()">➕ Mở hết</button>
-                            <button class="btn-tree-tool" onclick="collapseTreeToDefault()">➖ Thu gọn</button>
-                            <button class="btn-tree-tool" onclick="zoomTree(1.15)">🔍 +</button>
-                            <button class="btn-tree-tool" onclick="zoomTree(0.85)">🔍 -</button>
-                            <button class="btn-tree-tool" onclick="resetTreeZoom()">⟲ 100%</button>
-                            <button class="btn-tree-tool" onclick="toggleFullscreenTree()" style="background: #eff6ff; color: var(--primary); font-weight: bold;">⛶ Toàn màn hình</button>
-                        </div>
-                    </div>
-
-                    <div class="tree-legend">
-                        <span><span class="legend-dot dot-kp"></span> Tiền đại</span>
-                        <span><span class="legend-dot dot-can1"></span> Can 1</span>
-                        <span><span class="legend-dot dot-can2"></span> Can 2</span>
-                        <span><span class="legend-dot dot-can3"></span> Can 3</span>
-                        <span><span class="legend-dot dot-can4"></span> Can 4</span>
-                        <span style="margin-left: auto; font-size: 0.8rem; color: var(--text-muted);">💡 Chạm vuốt để di chuyển cây</span>
-                    </div>
-
-                    <div id="treeViewport" class="tree-viewport">
-                        <div id="treeCanvas" class="tree-canvas">
-                            <div class="genealogy-tree" id="genealogyTreeRoot">
-                                <!-- Tree rendered by JS -->
-                            </div>
-                        </div>
-                        <!-- Nút nổi thao tác ngón cái trên mobile -->
-                        <div class="tree-touch-controls">
-                            <div class="touch-fab" onclick="zoomTree(1.2)" title="Phóng to">+</div>
-                            <div class="touch-fab" onclick="zoomTree(0.8)" title="Thu nhỏ">–</div>
-                            <div class="touch-fab" onclick="resetTreeZoom()" title="Vừa màn hình">⟲</div>
-                            <div class="touch-fab" onclick="toggleFullscreenTree()" title="Toàn màn hình">⛶</div>
-                        </div>
-                    </div>
-                    <button class="fullscreen-exit-btn" onclick="toggleFullscreenTree()">✕ Đóng toàn màn hình</button>
-                </div>
-
-                <!-- 3. CHẾ ĐỘ: THẺ TÓM TẮT TRUYỀN THỐNG -->
-                <div id="treeViewBlocks" style="display: none; padding-top: 10px;">
-                    <div class="tree-container">
-                        <div class="branch-block" style="border: 2px solid var(--primary); min-width: 300px; width: 100%; max-width: 360px;">
-                            <div class="branch-header root">TỔ KHỞI PHÁT & TIỀN ĐẠI</div>
-                            <div class="branch-body">
-                                <div class="branch-person">
-                                    <div class="person-name">Cụ BẠCH HƯNG HÓA (1730 - 1802)</div>
-                                    <div class="person-meta">Tổ Khởi phát Trung Chi 2 • Giỗ 14/4 ÂL • Mộ Cồn Xanh</div>
-                                </div>
-                                <div class="branch-person">
-                                    <div class="person-name">Cụ BẠCH TRẦN TẠO (1772 - 1801)</div>
-                                    <div class="person-meta">Khởi tổ Đời 1 Tiểu Chi 1 • Giỗ 28/9 ÂL • Mộ Tuần Tượng</div>
-                                </div>
-                                <div class="branch-person">
-                                    <div class="person-name">Cụ BẠCH HƯNG LƯU (1798 - 1873)</div>
-                                    <div class="person-meta">Đời 2 (húy Túc) • Thọ 76 • Giỗ 29/2 ÂL • Khởi sinh 4 Can</div>
-                                </div>
-                            </div>
-                        </div>
-
-                        <div style="font-size: 22px; margin: 15px 0; color: var(--primary);">⬇️ 4 NHÁNH CAN CHÍNH ⬇️</div>
-
-                        <div style="display: flex; flex-wrap: wrap; justify-content: center; gap: 14px;">
-                            <div class="branch-block" style="width: 100%; max-width: 340px;">
-                                <div class="branch-header c1">CAN 1: TỔ BẠCH HƯNG CƯ</div>
-                                <div class="branch-body">
-                                    <div class="branch-person">
-                                        <div class="person-name">Cụ Bạch Hưng Cư (húy Khuơ, 1819)</div>
-                                        <div class="person-meta">Tổ Can 1 • Giỗ 9/10 ÂL • Núi Khe xứ</div>
-                                    </div>
-                                    <div class="branch-person">
-                                        <div class="person-name">Đời 4: Tơn, Thiết, Ý, Ngân</div>
-                                        <div class="person-meta">Cụ Tơn sinh Chế (Tam), Em (Bâu), Cận</div>
-                                    </div>
-                                    <div class="branch-person">
-                                        <div class="person-name">Đời 5: Cụ Bạch Hưng Chế (Tam)</div>
-                                        <div class="person-meta">Vợ Nguyễn Thị Tứ sinh 5 anh em ruột: Cháu, Nhã, Mận, Mai, Nhỏ</div>
-                                    </div>
-                                </div>
-                            </div>
-
-                            <div class="branch-block" style="width: 100%; max-width: 340px;">
-                                <div class="branch-header c2">CAN 2: TỔ BẠCH HƯNG KHÂU</div>
-                                <div class="branch-body">
-                                    <div class="branch-person">
-                                        <div class="person-name">Cụ Bạch Hưng Khâu (1821-1897)</div>
-                                        <div class="person-meta">Tổ Can 2 • Thọ 77 • Giỗ 2/8 ÂL</div>
-                                    </div>
-                                    <div class="branch-person">
-                                        <div class="person-name">Đời 4: Thấu, Thưu, Xu, Phù (không vợ), Câu</div>
-                                        <div class="person-meta">Cụ Câu sinh: Phòng, Dĩ, Em (Con)</div>
-                                    </div>
-                                    <div class="branch-person">
-                                        <div class="person-name">Đời 5 & 6: Liệt sỹ Đình, Cường, Bốn, Lực, LS Xuân</div>
-                                        <div class="person-meta">Cụ Đình 5 trai; Cụ Bốn 6 trai; Cụ Lực 4 trai; Cụ Cường chỉ có 1 trai (Huy)</div>
-                                    </div>
-                                </div>
-                            </div>
-
-                            <div class="branch-block" style="width: 100%; max-width: 340px;">
-                                <div class="branch-header c3">CAN 3: TỔ BẠCH HƯNG NGHI</div>
-                                <div class="branch-body">
-                                    <div class="branch-person">
-                                        <div class="person-name">Cụ Bạch Hưng Nghi (1829, thọ 89)</div>
-                                        <div class="person-meta">Thủ chỉ xã Phú Điền • Giỗ 10/4 ÂL</div>
-                                    </div>
-                                    <div class="branch-person">
-                                        <div class="person-name">Đời 4 & 5: Lý trưởng Truyện; Cụ Nguyễn & Cai xã Khuyến</div>
-                                        <div class="person-meta">Cụ Kiểm Nhưng; Cụ Đầu phiên Hiến; TB 1/4 Liên; TB 2/4 Văn</div>
-                                    </div>
-                                </div>
-                            </div>
-
-                            <div class="branch-block" style="width: 100%; max-width: 340px;">
-                                <div class="branch-header c4">CAN 4: TỔ BẠCH HƯNG KẾ</div>
-                                <div class="branch-body">
-                                    <div class="branch-person">
-                                        <div class="person-name">Cụ Bạch Hưng Kế (húy Cơ, 1854)</div>
-                                        <div class="person-meta">Con thứ 4 Cụ Lưu • Mộ xứ Thồ Lô</div>
-                                    </div>
-                                    <div class="branch-person">
-                                        <div class="person-name">Vô tự - Chi họ phụng tự</div>
-                                        <div class="person-meta">Trước đây là Liệt sỹ Bạch Hưng Đình, nay là ông Bạch Hưng Phú tiếp nối</div>
-                                    </div>
-                                </div>
-                            </div>
-                        </div>
-                    </div>
-                </div>
-            </div>
+        <!-- THANH CHUYỂN CHẾ ĐỘ XEM TRÊN ĐIỆN THOẠI & MÁY TÍNH -->
+        <div style="display: flex; gap: 8px; margin-bottom: 12px; flex-wrap: wrap; align-items: center;">
+          <div style="font-weight: bold; font-size: 0.88rem; color: var(--primary);">Chế độ xem:</div>
+          <button class="pill-btn active" id="btnViewMobileTree" onclick="switchTreeViewMode('vtree')">📱 Cây Dọc (Thuận
+            Tiện Cho Mobile)</button>
+          <button class="pill-btn" id="btnViewGraphTree" onclick="switchTreeViewMode('graph')">🖥️ Sơ Đồ Đồ Họa (Cây
+            Ngang Phóng To)</button>
+          <button class="pill-btn" id="btnViewBlocksTree" onclick="switchTreeViewMode('blocks')">📋 Thẻ Tóm Tắt</button>
         </div>
 
-        <!-- TAB 3: LỊCH KỴ GIỖ ÂM LỊCH -->
-        <div id="tab-calendar" class="tab-content">
-            <div class="card">
-                <div class="card-header">
-                    <h2>📅 Lịch Kỵ Giỗ Tổ Tiên (Theo 12 Tháng Âm Lịch)</h2>
-                    <span style="color: var(--secondary); font-weight: bold;">Tổng cộng 86 Ngày Giỗ</span>
-                </div>
-                <p style="margin-bottom: 20px; color: var(--text-muted);">
-                    Bảng tra cứu ngày kỵ nhật (ngày giỗ Âm lịch) và nơi an táng của các bậc Tiền nhân để con cháu muôn đời nhớ ngày phụng tự, khói hương chu toàn:
-                </p>
-
-                <div class="calendar-grid" id="calendarGrid">
-                    <!-- Months generated by JS -->
-                </div>
-            </div>
+        <!-- THANH CHỌN NHÁNH CAN (DẠNG TRƯỢT NGANG TRÊN MOBILE) -->
+        <div style="margin-bottom: 12px;">
+          <div class="pill-bar">
+            <button class="pill-btn" data-can="ALL" onclick="selectTreeCan('ALL', this)">🏛️ Toàn Tộc (Đại Tôn)</button>
+            <button class="pill-btn" data-can="Can 1" onclick="selectTreeCan('Can 1', this)">🔷 Can 1: Nhánh Cụ
+              Cư</button>
+            <button class="pill-btn active" data-can="Can 2" onclick="selectTreeCan('Can 2', this)">🌿 Can 2: Nhánh Cụ
+              Khâu</button>
+            <button class="pill-btn" data-can="Can 3" onclick="selectTreeCan('Can 3', this)">🛑 Can 3: Nhánh Cụ
+              Nghi</button>
+            <button class="pill-btn" data-can="Can 4" onclick="selectTreeCan('Can 4', this)">🍂 Can 4: Nhánh Cụ
+              Kế</button>
+          </div>
         </div>
 
-        <!-- TAB 4: LỊCH SỬ & LỜI TỰA -->
-        <div id="tab-history" class="tab-content">
-            <div class="card">
-                <div class="card-header">
-                    <h2>📖 Lời Nói Đầu & Minh Chứng Hiệu Đính (1990 - 2014 - 2026)</h2>
-                </div>
-                <div style="line-height: 1.8; color: var(--text-main);">
-                    <blockquote style="border-left: 4px solid var(--primary); padding-left: 16px; margin: 15px 0; font-style: italic; color: #4a5568;">
-                        "Con người ta sinh ra ở đời ai cũng có Tổ, có Tông, như cây có cội, như sông có nguồn. Đó là đạo lý truyền thống ngàn đời của dân tộc Việt Nam ta."
-                    </blockquote>
-
-                    <h3 style="color: var(--primary); margin: 20px 0 10px 0;">1. Lịch sử biên soạn gia phả</h3>
-                    <p>Cuốn phả hệ này là Tôn Đồ Tự Phả của Tiểu Chi 1, Trung Chi 2 thuộc Bạch Tộc Đại Tôn, nguyên quán tại làng Phú Điền, xã Hưng Phú, huyện Hưng Nguyên, tỉnh Nghệ An.</p>
-                    <p>Vào những năm 1990, ông Bạch Hưng Thủng đã có công đầu sưu tầm từ các bản Hán văn cổ của dòng tộc, dịch thuật sang chữ Quốc ngữ. Đến năm 2014 (Giáp Ngọ), ban tộc biểu gồm các ông: Bạch Hưng Thái, Bạch Hưng Phú, Bạch Hưng Văn, Bạch Hưng Uyển, Bạch Hưng Tùng đã cùng nhau đối chiếu, chỉnh lý và in ấn thành tập sách gia phả hoàn chỉnh.</p>
-
-                    <h3 style="color: var(--secondary); margin: 20px 0 10px 0;">2. Điểm hiệu đính cốt lõi năm 2026</h3>
-                    <p>Trong tập sách in năm 2014, một số trang sơ đồ khối do người vẽ dồn cột giản lược nên đã xảy ra sự sai lệch rất lớn về quan hệ cha con giữa các nhánh:</p>
-                    <ul style="margin-left: 20px; margin-top: 8px;">
-                        <li><strong>Can 1:</strong> Sơ đồ vẽ lệch Đời 6 & 7 thành con của các cụ khác. Văn bản xác định rõ: <strong>Cụ Bạch Hưng Chế (Tam) và Cụ bà Nguyễn Thị Tứ sinh được 5 anh em ruột: (1) Bạch Hưng Cháu, (2) Bạch Hưng Nhã, (3) Bạch Hưng Mận, (4) Bạch Hưng Mai, (5) Bạch Hưng Nhỏ (Bạch Quốc Hưng).</strong> Toàn bộ con cháu Đời 7 nối theo đúng 5 cụ.</li>
-                        <li><strong>Can 2:</strong>
-                            <ul style="margin-left: 20px;">
-                                <li>Văn bản trang 38 ghi rõ Cụ Bạch Hưng Phù (Tư Lang) không lập gia thất, mất năm 51 tuổi. Cụ Bạch Hưng Câu mới là thân phụ sinh ra Cụ Phòng, Cụ Dĩ và Cụ Em (Con).</li>
-                                <li>Cụ Bạch Hưng Thưu là thân phụ sinh ra Cố Hòe (Bạch Sĩ Xum), không phải Cụ Xu.</li>
-                                <li>Liệt sỹ Bạch Hưng Đình sinh đủ 5 con trai: Thái, Phú, Dương, Tuyên, Trung (sơ đồ vẽ nhầm Tuyên và Trung sang ông Nậy).</li>
-                                <li>Cụ Bạch Hưng Cường chỉ sinh duy nhất 1 con trai là Bạch Hưng Huy và 7 con gái. Các ông Tâm, Long, Phương, Kiều là con của Cụ Bạch Hưng Công (con Cụ Hợi).</li>
-                                <li>Cụ Bạch Hưng Bốn (Uyển) sinh 6 con trai: Uyển, Triển, Lịch, Thịnh, Vĩnh, Viễn.</li>
-                                <li>Cụ Bạch Hưng Lực sinh 4 con trai: Mậu, Phượng, Trường, Lường.</li>
-                            </ul>
-                        </li>
-                    </ul>
-
-                    <h3 style="color: var(--primary); margin: 20px 0 10px 0;">3. Thủy tổ Trạng nguyên Bạch Liêu & Di tích Lịch sử</h3>
-                    <p>Dòng họ Bạch Việt Nam tự hào có Cụ Thủy tổ là Trạng nguyên Bạch Liêu (1236 - 1315), Môn khách danh dự của Thượng phụ Chiêu Minh Đại vương Trần Quang Khải, có công lớn trong hai cuộc kháng chiến chống Nguyên - Mông và soạn thảo "Biến pháp tam chương". Đền thờ họ Bạch tại xã Hưng Phú đã được Nhà nước xếp hạng Di tích Lịch sử - Văn hóa cấp Tỉnh từ năm 1993.</p>
-                </div>
+        <!-- 1. CHẾ ĐỘ: CÂY PHÂN CẤP DỌC (TỐI ƯU SỐ 1 CHO MOBILE) -->
+        <div id="treeViewVertical" class="mobile-vtree-container">
+          <div class="tree-sticky-bar vtree-sticky-bar">
+            <div class="tree-search-box" id="vtreeSearchBox">
+              <button type="button" class="btn-search-toggle" id="vtreeSearchToggleBtn" onclick="toggleTreeSearchBox('vtreeSearchBox', 'vtreeSearchInput', 'vtreeSearchToggleBtn')" title="Ẩn/hiện ô tìm kiếm">🔍 Ẩn tìm</button>
+              <div class="tree-search-input-wrap">
+                <input type="text" id="vtreeSearchInput" placeholder="🔍 Tìm tên con cháu trên cây..." class="search-input"
+                  style="padding: 9px 14px; font-size: 0.9rem;" oninput="updateSearchClearBtn(this, 'vtreeSearchClear'); searchVerticalTree()">
+                <button type="button" class="tree-search-clear" id="vtreeSearchClear" onclick="clearTreeSearch('vtreeSearchInput', 'vtreeSearchClear', searchVerticalTree)" title="Xóa tìm kiếm">✕</button>
+              </div>
             </div>
+            <div style="display: flex; align-items: center; gap: 6px; flex-shrink: 0;">
+              <button class="btn-tree-tool" onclick="toggleAllVerticalTree(true)"
+                style="padding: 8px 12px; flex-shrink: 0;">➕ Mở hết</button>
+              <button class="btn-tree-tool" onclick="toggleAllVerticalTree(false)"
+                style="padding: 8px 12px; flex-shrink: 0;">➖ Thu bớt</button>
+            </div>
+          </div>
+          <div id="vtreeRoot">
+            <!-- Rendered by JS -->
+          </div>
         </div>
 
-        <!-- TAB 5: THỐNG KÊ -->
-        <div id="tab-stats" class="tab-content">
-            <div class="card">
-                <div class="card-header">
-                    <h2>📊 Thống Kê Tổng Quan Dòng Tộc</h2>
+        <!-- 2. CHẾ ĐỘ: SƠ ĐỒ ĐỒ HỌA NGANG (GRAPH TREE) -->
+        <div id="treeViewGraph" style="display: none;">
+          <div class="tree-toolbar tree-sticky-bar">
+            <div class="tree-controls-left">
+              <div class="tree-search-box" id="treeSearchBox">
+                <button type="button" class="btn-search-toggle" id="treeSearchToggleBtn" onclick="toggleTreeSearchBox('treeSearchBox', 'treeSearchInput', 'treeSearchToggleBtn')" title="Ẩn/hiện ô tìm kiếm">🔍 Ẩn tìm</button>
+                <div class="tree-search-input-wrap">
+                  <input type="text" id="treeSearchInput" placeholder="Tìm tên trên cây đồ họa..." class="search-input"
+                    style="min-width: 170px; padding: 7px 12px;" oninput="updateSearchClearBtn(this, 'treeSearchClear'); searchInTree()">
+                  <button type="button" class="tree-search-clear" id="treeSearchClear" onclick="clearTreeSearch('treeSearchInput', 'treeSearchClear', searchInTree)" title="Xóa tìm kiếm">✕</button>
                 </div>
+              </div>
+            </div>
+            <div class="tree-controls-right">
+              <button class="btn-tree-tool" onclick="expandAllTreeNodes()">➕ Mở hết</button>
+              <button class="btn-tree-tool" onclick="collapseTreeToDefault()">➖ Thu gọn</button>
+              <button class="btn-tree-tool" onclick="zoomTree(1.15)">🔍 +</button>
+              <button class="btn-tree-tool" onclick="zoomTree(0.85)">🔍 -</button>
+              <button class="btn-tree-tool" onclick="resetTreeZoom()">⟲ 100%</button>
+              <button class="btn-tree-tool" onclick="toggleFullscreenTree()"
+                style="background: #eff6ff; color: var(--primary); font-weight: bold;">⛶ Toàn màn hình</button>
+            </div>
+          </div>
 
-                <div class="stats-grid">
-                    <div class="stat-card">
-                        <div class="stat-num">126</div>
-                        <div class="stat-label">Tổng số Nhân đinh đã số hóa</div>
-                    </div>
-                    <div class="stat-card" style="border-left-color: #2b6cb0;">
-                        <div class="stat-num">33</div>
-                        <div class="stat-label">Nhân đinh Can 1 (Tổ Cư)</div>
-                    </div>
-                    <div class="stat-card" style="border-left-color: #276749;">
-                        <div class="stat-num">73</div>
-                        <div class="stat-label">Nhân đinh Can 2 (Tổ Khâu)</div>
-                    </div>
-                    <div class="stat-card" style="border-left-color: #9b2c2c;">
-                        <div class="stat-num">15</div>
-                        <div class="stat-label">Nhân đinh Can 3 & Can 4</div>
-                    </div>
-                    <div class="stat-card" style="border-left-color: var(--secondary);">
-                        <div class="stat-num">86</div>
-                        <div class="stat-label">Ngày Kỵ giỗ trong năm</div>
-                    </div>
-                    <div class="stat-card" style="border-left-color: #d4af37;">
-                        <div class="stat-num">9</div>
-                        <div class="stat-label">Thế hệ kế tiếp (1730 - 2026)</div>
-                    </div>
+          <div class="tree-legend">
+            <span><span class="legend-dot dot-kp"></span> Tiền đại</span>
+            <span><span class="legend-dot dot-can1"></span> Can 1</span>
+            <span><span class="legend-dot dot-can2"></span> Can 2</span>
+            <span><span class="legend-dot dot-can3"></span> Can 3</span>
+            <span><span class="legend-dot dot-can4"></span> Can 4</span>
+            <span style="margin-left: auto; font-size: 0.8rem; color: var(--text-muted);">💡 Chạm vuốt để di chuyển
+              cây</span>
+          </div>
+
+          <div id="treeViewport" class="tree-viewport">
+            <div id="treeCanvas" class="tree-canvas">
+              <div class="genealogy-tree" id="genealogyTreeRoot">
+                <!-- Tree rendered by JS -->
+              </div>
+            </div>
+            <!-- Nút nổi thao tác ngón cái trên mobile -->
+            <div class="tree-touch-controls">
+              <div class="touch-fab" onclick="zoomTree(1.2)" title="Phóng to">+</div>
+              <div class="touch-fab" onclick="zoomTree(0.8)" title="Thu nhỏ">–</div>
+              <div class="touch-fab" onclick="resetTreeZoom()" title="Vừa màn hình">⟲</div>
+              <div class="touch-fab" onclick="toggleFullscreenTree()" title="Toàn màn hình">⛶</div>
+            </div>
+          </div>
+          <button class="fullscreen-exit-btn" onclick="toggleFullscreenTree()">✕ Đóng toàn màn hình</button>
+        </div>
+
+        <!-- 3. CHẾ ĐỘ: THẺ TÓM TẮT TRUYỀN THỐNG -->
+        <div id="treeViewBlocks" style="display: none; padding-top: 10px;">
+          <div class="tree-container">
+            <div class="branch-block"
+              style="border: 2px solid var(--primary); min-width: 300px; width: 100%; max-width: 360px;">
+              <div class="branch-header root">TỔ KHỞI PHÁT & TIỀN ĐẠI</div>
+              <div class="branch-body">
+                <div class="branch-person">
+                  <div class="person-name">Cụ BẠCH HƯNG HÓA (1730 - 1802)</div>
+                  <div class="person-meta">Tổ Khởi phát Trung Chi 2 • Giỗ 14/4 ÂL • Mộ Cồn Xanh</div>
                 </div>
+                <div class="branch-person">
+                  <div class="person-name">Cụ BẠCH TRẦN TẠO (1772 - 1801)</div>
+                  <div class="person-meta">Khởi tổ Đời 1 Tiểu Chi 1 • Giỗ 28/9 ÂL • Mộ Tuần Tượng</div>
+                </div>
+                <div class="branch-person">
+                  <div class="person-name">Cụ BẠCH HƯNG LƯU (1798 - 1873)</div>
+                  <div class="person-meta">Đời 2 (húy Túc) • Thọ 76 • Giỗ 29/2 ÂL • Khởi sinh 4 Can</div>
+                </div>
+              </div>
             </div>
-        </div>
-    </main>
 
-    <!-- MODAL CHI TIẾT -->
-    <div id="personModal" class="modal" onclick="closeModal(event)">
-        <div class="modal-content" onclick="event.stopPropagation()">
-            <button class="modal-close" onclick="closeModalDirect()">&times;</button>
-            <div id="modalBody">
-                <!-- Injected by JS -->
+            <div style="font-size: 22px; margin: 15px 0; color: var(--primary);">⬇️ 4 NHÁNH CAN CHÍNH ⬇️</div>
+
+            <div style="display: flex; flex-wrap: wrap; justify-content: center; gap: 14px;">
+              <div class="branch-block" style="width: 100%; max-width: 340px;">
+                <div class="branch-header c1">CAN 1: TỔ BẠCH HƯNG CƯ</div>
+                <div class="branch-body">
+                  <div class="branch-person">
+                    <div class="person-name">Cụ Bạch Hưng Cư (húy Khuơ, 1819)</div>
+                    <div class="person-meta">Tổ Can 1 • Giỗ 9/10 ÂL • Núi Khe xứ</div>
+                  </div>
+                  <div class="branch-person">
+                    <div class="person-name">Đời 4: Tơn, Thiết, Ý, Ngân</div>
+                    <div class="person-meta">Cụ Tơn sinh Chế (Tam), Em (Bâu), Cận</div>
+                  </div>
+                  <div class="branch-person">
+                    <div class="person-name">Đời 5: Cụ Bạch Hưng Chế (Tam)</div>
+                    <div class="person-meta">Vợ Nguyễn Thị Tứ sinh 5 anh em ruột: Cháu, Nhã, Mận, Mai, Nhỏ</div>
+                  </div>
+                </div>
+              </div>
+
+              <div class="branch-block" style="width: 100%; max-width: 340px;">
+                <div class="branch-header c2">CAN 2: TỔ BẠCH HƯNG KHÂU</div>
+                <div class="branch-body">
+                  <div class="branch-person">
+                    <div class="person-name">Cụ Bạch Hưng Khâu (1821-1897)</div>
+                    <div class="person-meta">Tổ Can 2 • Thọ 77 • Giỗ 2/8 ÂL</div>
+                  </div>
+                  <div class="branch-person">
+                    <div class="person-name">Đời 4: Thấu, Thưu, Xu, Phù (không vợ), Câu</div>
+                    <div class="person-meta">Cụ Câu sinh: Phòng, Dĩ, Em (Con)</div>
+                  </div>
+                  <div class="branch-person">
+                    <div class="person-name">Đời 5 & 6: Liệt sỹ Đình, Cường, Bốn, Lực, LS Xuân</div>
+                    <div class="person-meta">Cụ Đình 5 trai; Cụ Bốn 6 trai; Cụ Lực 4 trai; Cụ Cường chỉ có 1 trai (Huy)
+                    </div>
+                  </div>
+                </div>
+              </div>
+
+              <div class="branch-block" style="width: 100%; max-width: 340px;">
+                <div class="branch-header c3">CAN 3: TỔ BẠCH HƯNG NGHI</div>
+                <div class="branch-body">
+                  <div class="branch-person">
+                    <div class="person-name">Cụ Bạch Hưng Nghi (1829, thọ 89)</div>
+                    <div class="person-meta">Thủ chỉ xã Phú Điền • Giỗ 10/4 ÂL</div>
+                  </div>
+                  <div class="branch-person">
+                    <div class="person-name">Đời 4 & 5: Lý trưởng Truyện; Cụ Nguyễn & Cai xã Khuyến</div>
+                    <div class="person-meta">Cụ Kiểm Nhưng; Cụ Đầu phiên Hiến; TB 1/4 Liên; TB 2/4 Văn</div>
+                  </div>
+                </div>
+              </div>
+
+              <div class="branch-block" style="width: 100%; max-width: 340px;">
+                <div class="branch-header c4">CAN 4: TỔ BẠCH HƯNG KẾ</div>
+                <div class="branch-body">
+                  <div class="branch-person">
+                    <div class="person-name">Cụ Bạch Hưng Kế (húy Cơ, 1854)</div>
+                    <div class="person-meta">Con thứ 4 Cụ Lưu • Mộ xứ Thồ Lô</div>
+                  </div>
+                  <div class="branch-person">
+                    <div class="person-name">Vô tự - Chi họ phụng tự</div>
+                    <div class="person-meta">Trước đây là Liệt sỹ Bạch Hưng Đình, nay là ông Bạch Hưng Phú tiếp nối
+                    </div>
+                  </div>
+                </div>
+              </div>
             </div>
+          </div>
         </div>
+      </div>
     </div>
 
-    <footer>
-        <p><strong>GIA PHẢ TIỂU CHI 1 - TRUNG CHI 2 - BẠCH TỘC ĐẠI TÔN</strong></p>
-        <p>Làng Phú Điền, Xã Hưng Phú, Huyện Hưng Nguyên, Tỉnh Nghệ An</p>
-        <p style="margin-top: 6px; font-size: 0.85rem; color: #f6e05e;">Thông tin dựa trên cuốn Gia phả họ Bạch do bác Bạch Hưng Phú biên soạn.</p>
-        <p style="margin-top: 8px; font-size: 0.8rem; opacity: 0.8;">Bản quyền số hóa và lưu trữ điện tử © 2026. Phân tích chuẩn xác 100% theo văn bản để con cháu muôn đời phụng tự.</p>
-    </footer>
+    <!-- TAB 3: LỊCH KỴ GIỖ ÂM LỊCH -->
+    <div id="tab-calendar" class="tab-content">
+      <div class="card">
+        <div class="card-header">
+          <h2>📅 Lịch Kỵ Giỗ Tổ Tiên (Theo 12 Tháng Âm Lịch)</h2>
+          <span style="color: var(--secondary); font-weight: bold;">Tổng cộng 86 Ngày Giỗ</span>
+        </div>
+        <p style="margin-bottom: 20px; color: var(--text-muted);">
+          Bảng tra cứu ngày kỵ nhật (ngày giỗ Âm lịch) và nơi an táng của các bậc Tiền nhân để con cháu muôn đời nhớ
+          ngày phụng tự, khói hương chu toàn:
+        </p>
 
-    <script>
-        const people = [
+        <div class="calendar-grid" id="calendarGrid">
+          <!-- Months generated by JS -->
+        </div>
+      </div>
+    </div>
+
+    <!-- TAB 4: LỊCH SỬ & LỜI TỰA -->
+    <div id="tab-history" class="tab-content">
+      <div class="card">
+        <div class="card-header">
+          <h2>📖 Lời Nói Đầu & Minh Chứng Hiệu Đính (1990 - 2014 - 2026)</h2>
+        </div>
+        <div style="line-height: 1.8; color: var(--text-main);">
+          <blockquote
+            style="border-left: 4px solid var(--primary); padding-left: 16px; margin: 15px 0; font-style: italic; color: #4a5568;">
+            "Con người ta sinh ra ở đời ai cũng có Tổ, có Tông, như cây có cội, như sông có nguồn. Đó là đạo lý truyền
+            thống ngàn đời của dân tộc Việt Nam ta."
+          </blockquote>
+
+          <h3 style="color: var(--primary); margin: 20px 0 10px 0;">1. Lịch sử biên soạn gia phả</h3>
+          <p>Cuốn phả hệ này là Tôn Đồ Tự Phả của Tiểu Chi 1, Trung Chi 2 thuộc Bạch Tộc Đại Tôn, nguyên quán tại làng
+            Phú Điền, xã Hưng Phú, huyện Hưng Nguyên, tỉnh Nghệ An.</p>
+          <p>Vào những năm 1990, ông Bạch Hưng Thủng đã có công đầu sưu tầm từ các bản Hán văn cổ của dòng tộc, dịch
+            thuật sang chữ Quốc ngữ. Đến năm 2014 (Giáp Ngọ), ban tộc biểu gồm các ông: Bạch Hưng Thái, Bạch Hưng Phú,
+            Bạch Hưng Văn, Bạch Hưng Uyển, Bạch Hưng Tùng đã cùng nhau đối chiếu, chỉnh lý và in ấn thành tập sách gia
+            phả hoàn chỉnh.</p>
+
+          <h3 style="color: var(--secondary); margin: 20px 0 10px 0;">2. Điểm hiệu đính cốt lõi năm 2026</h3>
+          <p>Trong tập sách in năm 2014, một số trang sơ đồ khối do người vẽ dồn cột giản lược nên đã xảy ra sự sai lệch
+            rất lớn về quan hệ cha con giữa các nhánh:</p>
+          <ul style="margin-left: 20px; margin-top: 8px;">
+            <li><strong>Can 1:</strong> Sơ đồ vẽ lệch Đời 6 & 7 thành con của các cụ khác. Văn bản xác định rõ:
+              <strong>Cụ Bạch Hưng Chế (Tam) và Cụ bà Nguyễn Thị Tứ sinh được 5 anh em ruột: (1) Bạch Hưng Cháu, (2)
+                Bạch Hưng Nhã, (3) Bạch Hưng Mận, (4) Bạch Hưng Mai, (5) Bạch Hưng Nhỏ (Bạch Quốc Hưng).</strong> Toàn
+              bộ con cháu Đời 7 nối theo đúng 5 cụ.</li>
+            <li><strong>Can 2:</strong>
+              <ul style="margin-left: 20px;">
+                <li>Văn bản trang 38 ghi rõ Cụ Bạch Hưng Phù (Tư Lang) không lập gia thất, mất năm 51 tuổi. Cụ Bạch Hưng
+                  Câu mới là thân phụ sinh ra Cụ Phòng, Cụ Dĩ và Cụ Em (Con).</li>
+                <li>Cụ Bạch Hưng Thưu là thân phụ sinh ra Cố Hòe (Bạch Sĩ Xum), không phải Cụ Xu.</li>
+                <li>Liệt sỹ Bạch Hưng Đình sinh đủ 5 con trai: Thái, Phú, Dương, Tuyên, Trung (sơ đồ vẽ nhầm Tuyên và
+                  Trung sang ông Nậy).</li>
+                <li>Cụ Bạch Hưng Cường chỉ sinh duy nhất 1 con trai là Bạch Hưng Huy và 7 con gái. Các ông Tâm, Long,
+                  Phương, Kiều là con của Cụ Bạch Hưng Công (con Cụ Hợi).</li>
+                <li>Cụ Bạch Hưng Bốn (Uyển) sinh 6 con trai: Uyển, Triển, Lịch, Thịnh, Vĩnh, Viễn.</li>
+                <li>Cụ Bạch Hưng Lực sinh 4 con trai: Mậu, Phượng, Trường, Lường.</li>
+              </ul>
+            </li>
+          </ul>
+
+          <h3 style="color: var(--primary); margin: 20px 0 10px 0;">3. Thủy tổ Trạng nguyên Bạch Liêu & Di tích Lịch sử
+          </h3>
+          <p>Dòng họ Bạch Việt Nam tự hào có Cụ Thủy tổ là Trạng nguyên Bạch Liêu (1236 - 1315), Môn khách danh dự của
+            Thượng phụ Chiêu Minh Đại vương Trần Quang Khải, có công lớn trong hai cuộc kháng chiến chống Nguyên - Mông
+            và soạn thảo "Biến pháp tam chương". Đền thờ họ Bạch tại xã Hưng Phú đã được Nhà nước xếp hạng Di tích Lịch
+            sử - Văn hóa cấp Tỉnh từ năm 1993.</p>
+        </div>
+      </div>
+    </div>
+
+    <!-- TAB 5: THỐNG KÊ -->
+    <div id="tab-stats" class="tab-content">
+      <div class="card">
+        <div class="card-header">
+          <h2>📊 Thống Kê Tổng Quan Dòng Tộc</h2>
+        </div>
+
+        <div class="stats-grid">
+          <div class="stat-card">
+            <div class="stat-num">126</div>
+            <div class="stat-label">Tổng số Nhân đinh đã số hóa</div>
+          </div>
+          <div class="stat-card" style="border-left-color: #2b6cb0;">
+            <div class="stat-num">33</div>
+            <div class="stat-label">Nhân đinh Can 1 (Tổ Cư)</div>
+          </div>
+          <div class="stat-card" style="border-left-color: #276749;">
+            <div class="stat-num">73</div>
+            <div class="stat-label">Nhân đinh Can 2 (Tổ Khâu)</div>
+          </div>
+          <div class="stat-card" style="border-left-color: #9b2c2c;">
+            <div class="stat-num">15</div>
+            <div class="stat-label">Nhân đinh Can 3 & Can 4</div>
+          </div>
+          <div class="stat-card" style="border-left-color: var(--secondary);">
+            <div class="stat-num">86</div>
+            <div class="stat-label">Ngày Kỵ giỗ trong năm</div>
+          </div>
+          <div class="stat-card" style="border-left-color: #d4af37;">
+            <div class="stat-num">9</div>
+            <div class="stat-label">Thế hệ kế tiếp (1730 - 2026)</div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </main>
+
+  <!-- MODAL CHI TIẾT -->
+  <div id="personModal" class="modal" onclick="closeModal(event)">
+    <div class="modal-content" onclick="event.stopPropagation()">
+      <button class="modal-close" onclick="closeModalDirect()">&times;</button>
+      <div id="modalBody">
+        <!-- Injected by JS -->
+      </div>
+    </div>
+  </div>
+
+  <footer>
+    <p><strong>GIA PHẢ TIỂU CHI 1 - TRUNG CHI 2 - BẠCH TỘC ĐẠI TÔN</strong></p>
+    <p>Làng Phú Điền, Xã Hưng Phú, Huyện Hưng Nguyên, Tỉnh Nghệ An</p>
+    <p style="margin-top: 6px; font-size: 0.85rem; color: #f6e05e;">Thông tin dựa trên cuốn Gia phả họ Bạch do bác Bạch
+      Hưng Phú biên soạn.</p>
+    <p style="margin-top: 8px; font-size: 0.8rem; opacity: 0.8;">Bản quyền số hóa và lưu trữ điện tử © 2026. Phân tích
+      chuẩn xác 100% theo văn bản để con cháu muôn đời phụng tự.</p>
+  </footer>
+
+  <script>
+    const people = [
   {
     "stt": 1,
     "ma": "KP-01",
@@ -4437,7 +4709,7 @@
     "thu_tu": ""
   }
 ];
-        const deathDays = [
+    const deathDays = [
   {
     "thang": 1,
     "ngay": "04",
@@ -5300,28 +5572,28 @@
   }
 ];
 
-        // RENDER DANH SÁCH BẢNG
-        function renderTable(list) {
-            const tbody = document.getElementById("tableBody");
-            tbody.innerHTML = "";
-            document.getElementById("record-count").textContent = `Tìm thấy ${list.length} người`;
+    // RENDER DANH SÁCH BẢNG
+    function renderTable(list) {
+      const tbody = document.getElementById("tableBody");
+      tbody.innerHTML = "";
+      document.getElementById("record-count").textContent = `Tìm thấy ${list.length} người`;
 
-            list.forEach((p, index) => {
-                let tagClass = "tag-can1";
-                if (p.can === "Can 2") tagClass = "tag-can2";
-                else if (p.can === "Can 3") tagClass = "tag-can3";
-                else if (p.can === "Can 4") tagClass = "tag-can4";
-                else if (p.can.includes("Khởi phát") || p.can.includes("Tiểu Chi")) tagClass = "tag-kp";
+      list.forEach((p, index) => {
+        let tagClass = "tag-can1";
+        if (p.can === "Can 2") tagClass = "tag-can2";
+        else if (p.can === "Can 3") tagClass = "tag-can3";
+        else if (p.can === "Can 4") tagClass = "tag-can4";
+        else if (p.can.includes("Khởi phát") || p.can.includes("Tiểu Chi")) tagClass = "tag-kp";
 
-                const fbUrl = safeUrl(p.facebook);
-                let contactHtml = "";
-                if (p.sdt) contactHtml += `<a href="tel:${escapeHtml(p.sdt)}" onclick="event.stopPropagation()" style="display:inline-block; font-size:0.75rem; background:#ebf8ff; color:#2b6cb0; padding:2px 6px; border-radius:4px; margin:2px 4px 0 0; text-decoration:none; font-weight:600;">📞 ${escapeHtml(p.sdt)}</a>`;
-                if (fbUrl) contactHtml += `<a href="${escapeHtml(fbUrl)}" target="_blank" rel="noopener noreferrer" onclick="event.stopPropagation()" style="display:inline-block; font-size:0.75rem; background:#ebf8ff; color:#2b6cb0; padding:2px 6px; border-radius:4px; margin:2px 4px 0 0; text-decoration:none; font-weight:600;">🌐 Facebook ↗</a>`;
-                if (p.dia_chi) contactHtml += `<div style="font-size:0.76rem; color:#4a5568; font-weight:normal; margin-top:2px;">📍 ${escapeHtml(p.dia_chi)}</div>`;
+        const fbUrl = safeUrl(p.facebook);
+        let contactHtml = "";
+        if (p.sdt) contactHtml += `<a href="tel:${escapeHtml(p.sdt)}" onclick="event.stopPropagation()" style="display:inline-block; font-size:0.75rem; background:#ebf8ff; color:#2b6cb0; padding:2px 6px; border-radius:4px; margin:2px 4px 0 0; text-decoration:none; font-weight:600;">📞 ${escapeHtml(p.sdt)}</a>`;
+        if (fbUrl) contactHtml += `<a href="${escapeHtml(fbUrl)}" target="_blank" rel="noopener noreferrer" onclick="event.stopPropagation()" style="display:inline-block; font-size:0.75rem; background:#ebf8ff; color:#2b6cb0; padding:2px 6px; border-radius:4px; margin:2px 4px 0 0; text-decoration:none; font-weight:600;">🌐 Facebook ↗</a>`;
+        if (p.dia_chi) contactHtml += `<div style="font-size:0.76rem; color:#4a5568; font-weight:normal; margin-top:2px;">📍 ${escapeHtml(p.dia_chi)}</div>`;
 
-                const tr = document.createElement("tr");
-                tr.onclick = () => openModal(p);
-                tr.innerHTML = `
+        const tr = document.createElement("tr");
+        tr.onclick = () => openModal(p);
+        tr.innerHTML = `
                     <td style="text-align: center; color: var(--text-muted); font-size: 0.85rem;">${index + 1}</td>
                     <td><span class="tag ${tagClass}">${p.can} • ${p.doi}</span></td>
                     <td style="font-weight: 700; color: var(--primary);">${escapeHtml(p.ten)}${contactHtml ? `<div style="margin-top:3px;">${contactHtml}</div>` : ""}</td>
@@ -5333,71 +5605,71 @@
                     <td style="font-size: 0.85rem;">${p.mo_phan || "—"}</td>
                     <td style="font-size: 0.85rem;">${p.ghi_chu || "—"}</td>
                 `;
-                tbody.appendChild(tr);
-            });
-        }
+        tbody.appendChild(tr);
+      });
+    }
 
-        // LỌC DỮ LIỆU
-        function filterRecords() {
-            const q = document.getElementById("searchInput").value.toLowerCase().trim();
-            const can = document.getElementById("canFilter").value;
-            const doi = document.getElementById("doiFilter").value;
+    // LỌC DỮ LIỆU
+    function filterRecords() {
+      const q = document.getElementById("searchInput").value.toLowerCase().trim();
+      const can = document.getElementById("canFilter").value;
+      const doi = document.getElementById("doiFilter").value;
 
-            const filtered = people.filter(p => {
-                const matchCan = (can === "ALL") || (p.can === can);
-                const matchDoi = (doi === "ALL") || (p.doi === doi);
-                
-                const searchStr = `${p.ten} ${p.huy} ${p.nam_sinh} ${p.nam_mat} ${p.ngay_mat || ""} ${p.ngay_gio} ${p.cha} ${p.me} ${p.phoi_ngau} ${p.mo_phan} ${p.ghi_chu} ${p.sdt || ""} ${p.dia_chi || ""} ${p.nghe_nghiep || ""}`.toLowerCase();
-                const matchQuery = !q || searchStr.includes(q);
+      const filtered = people.filter(p => {
+        const matchCan = (can === "ALL") || (p.can === can);
+        const matchDoi = (doi === "ALL") || (p.doi === doi);
 
-                return matchCan && matchDoi && matchQuery;
-            });
+        const searchStr = `${p.ten} ${p.huy} ${p.nam_sinh} ${p.nam_mat} ${p.ngay_mat || ""} ${p.ngay_gio} ${p.cha} ${p.me} ${p.phoi_ngau} ${p.mo_phan} ${p.ghi_chu} ${p.sdt || ""} ${p.dia_chi || ""} ${p.nghe_nghiep || ""}`.toLowerCase();
+        const matchQuery = !q || searchStr.includes(q);
 
-            renderTable(filtered);
-        }
+        return matchCan && matchDoi && matchQuery;
+      });
 
-        // CHUYỂN TAB
-        function switchTab(tabId) {
-            document.querySelectorAll(".tab-content").forEach(el => el.classList.remove("active"));
-            document.querySelectorAll(".tab-btn").forEach(el => el.classList.remove("active"));
+      renderTable(filtered);
+    }
 
-            const target = document.getElementById(tabId);
-            if (target) target.classList.add("active");
-            if (event && event.currentTarget) event.currentTarget.classList.add("active");
+    // CHUYỂN TAB
+    function switchTab(tabId) {
+      document.querySelectorAll(".tab-content").forEach(el => el.classList.remove("active"));
+      document.querySelectorAll(".tab-btn").forEach(el => el.classList.remove("active"));
 
-            // Kích hoạt vẽ lại và điều chỉnh kích thước cây khi chuyển sang tab Sơ đồ cây
-            if (tabId === "tab-tree") {
-                setTimeout(() => {
-                    if (typeof currentViewMode !== "undefined" && typeof switchTreeViewMode === "function") {
-                        switchTreeViewMode(currentViewMode);
-                    }
-                }, 50);
-            }
-        }
+      const target = document.getElementById(tabId);
+      if (target) target.classList.add("active");
+      if (event && event.currentTarget) event.currentTarget.classList.add("active");
 
-        // RENDER LỊCH KỴ GIỖ
-        function renderCalendar() {
-            const grid = document.getElementById("calendarGrid");
-            grid.innerHTML = "";
+      // Kích hoạt vẽ lại và điều chỉnh kích thước cây khi chuyển sang tab Sơ đồ cây
+      if (tabId === "tab-tree") {
+        setTimeout(() => {
+          if (typeof currentViewMode !== "undefined" && typeof switchTreeViewMode === "function") {
+            switchTreeViewMode(currentViewMode);
+          }
+        }, 50);
+      }
+    }
 
-            const monthNames = [
-                "Tháng Giêng (1)", "Tháng Hai (2)", "Tháng Ba (3)", "Tháng Tư (4)",
-                "Tháng Năm (5)", "Tháng Sáu (6)", "Tháng Bảy (7)", "Tháng Tám (8)",
-                "Tháng Chín (9)", "Tháng Mười (10)", "Tháng Mười Một (11)", "Tháng Chạp (12)"
-            ];
+    // RENDER LỊCH KỴ GIỖ
+    function renderCalendar() {
+      const grid = document.getElementById("calendarGrid");
+      grid.innerHTML = "";
 
-            for (let m = 1; m <= 12; m++) {
-                const items = deathDays.filter(d => d.thang === m);
-                if (items.length === 0) continue;
+      const monthNames = [
+        "Tháng Giêng (1)", "Tháng Hai (2)", "Tháng Ba (3)", "Tháng Tư (4)",
+        "Tháng Năm (5)", "Tháng Sáu (6)", "Tháng Bảy (7)", "Tháng Tám (8)",
+        "Tháng Chín (9)", "Tháng Mười (10)", "Tháng Mười Một (11)", "Tháng Chạp (12)"
+      ];
 
-                const card = document.createElement("div");
-                card.className = "cal-month";
-                
-                let listHtml = "";
-                items.forEach(it => {
-                    const gioTxt = it.ngay_gio || `${it.ngay}/${String(it.thang).padStart(2, '0')} ÂL`;
-                    const matTxt = it.ngay_mat || it.nam_mat || "";
-                    listHtml += `
+      for (let m = 1; m <= 12; m++) {
+        const items = deathDays.filter(d => d.thang === m);
+        if (items.length === 0) continue;
+
+        const card = document.createElement("div");
+        card.className = "cal-month";
+
+        let listHtml = "";
+        items.forEach(it => {
+          const gioTxt = it.ngay_gio || `${it.ngay}/${String(it.thang).padStart(2, '0')} ÂL`;
+          const matTxt = it.ngay_mat || it.nam_mat || "";
+          listHtml += `
                         <div class="cal-item">
                             <div><span class="cal-date">Ngày ${escapeHtml(it.ngay)} ÂL:</span> <strong>${escapeHtml(it.ten)}</strong></div>
                             <div style="font-size: 0.8rem; color: var(--primary); margin-top: 3px; font-weight: 600;">
@@ -5406,43 +5678,43 @@
                             <div style="font-size: 0.8rem; color: var(--text-muted); margin-top: 2px;">${escapeHtml(it.can)} • ${escapeHtml(it.ghi)}</div>
                         </div>
                     `;
-                });
+        });
 
-                card.innerHTML = `
+        card.innerHTML = `
                     <div class="cal-month-header">
-                        <span>${monthNames[m-1]}</span>
+                        <span>${monthNames[m - 1]}</span>
                         <span style="font-size: 0.8rem; font-weight: normal; opacity: 0.9;">${items.length} ngày giỗ</span>
                     </div>
                     <div>${listHtml}</div>
                 `;
-                grid.appendChild(card);
-            }
-        }
+        grid.appendChild(card);
+      }
+    }
 
-        function escapeHtml(str) {
-            if (!str) return "";
-            return String(str)
-                .replace(/&/g, "&amp;")
-                .replace(/</g, "&lt;")
-                .replace(/>/g, "&gt;")
-                .replace(/"/g, "&quot;")
-                .replace(/'/g, "&#39;");
-        }
+    function escapeHtml(str) {
+      if (!str) return "";
+      return String(str)
+        .replace(/&/g, "&amp;")
+        .replace(/</g, "&lt;")
+        .replace(/>/g, "&gt;")
+        .replace(/"/g, "&quot;")
+        .replace(/'/g, "&#39;");
+    }
 
-        function safeUrl(url) {
-            if (!url) return "";
-            const s = String(url).trim();
-            if (/^https?:\/\//i.test(s)) return s;
-            if (/^(www\.)?(facebook\.com|fb\.com)/i.test(s)) return "https://" + s;
-            return "";
-        }
+    function safeUrl(url) {
+      if (!url) return "";
+      const s = String(url).trim();
+      if (/^https?:\/\//i.test(s)) return s;
+      if (/^(www\.)?(facebook\.com|fb\.com)/i.test(s)) return "https://" + s;
+      return "";
+    }
 
-        // MODAL
-        function openModal(p) {
-            const body = document.getElementById("modalBody");
-            const fbUrl = safeUrl(p.facebook);
-            const hasContact = p.sdt || p.facebook || p.dia_chi || p.nghe_nghiep;
-            body.innerHTML = `
+    // MODAL
+    function openModal(p) {
+      const body = document.getElementById("modalBody");
+      const fbUrl = safeUrl(p.facebook);
+      const hasContact = p.sdt || p.facebook || p.dia_chi || p.nghe_nghiep;
+      body.innerHTML = `
                 <div style="border-bottom: 2px solid var(--primary-light); padding-bottom: 12px; margin-bottom: 16px;">
                     <span class="tag tag-can1" style="margin-bottom: 8px;">${escapeHtml(p.can)} • ${escapeHtml(p.doi)}</span>
                     <h2 style="color: var(--primary); font-size: 1.6rem; margin-top: 6px;">${escapeHtml(p.ten)}</h2>
@@ -5481,158 +5753,158 @@
                     </div>
                 </div>
             `;
-            document.getElementById("personModal").classList.add("active");
+      document.getElementById("personModal").classList.add("active");
+    }
+
+    function closeModal(e) {
+      if (e.target.id === "personModal") {
+        document.getElementById("personModal").classList.remove("active");
+      }
+    }
+
+    function closeModalDirect() {
+      document.getElementById("personModal").classList.remove("active");
+    }
+
+    // KHỞI CHẠY TRANG
+
+    // =========================================================
+    // THUẬT TOÁN DỰNG VÀ ĐIỀU KHIỂN CÂY PHẢ HỆ TRỰC QUAN
+    // =========================================================
+    let currentZoom = 1.0;
+    let isPanning = false;
+    let startX, startY, scrollLeft, scrollTop;
+
+    function normalizeFather(fName, p) {
+      if (!fName) return "";
+      let s = fName.trim();
+      // Xử lý chuẩn xác 3 cụ trùng tên Bạch Hưng Nậy (Can 2 - Đời 6)
+      if (s.includes("Bạch Hưng Nậy") || s === "Nậy") {
+        if (s.includes("(Hợi)") || (p && p.me && p.me.includes("Mai")) || (p && p.ghi_chu && p.ghi_chu.includes("Hợi"))) {
+          return "C2-D6-02"; // Cụ Nậy con Cụ Hợi (Cha của Vinh, Quang, Trung)
+        }
+        if (s.includes("(Yêm)") || (p && p.ghi_chu && p.ghi_chu.includes("Yêm"))) {
+          return "C2-D6-06"; // Cụ Nậy con Cụ Yêm
+        }
+        if (s.includes("(Dĩ)") || s.includes("(Dị)") || (p && p.ghi_chu && (p.ghi_chu.includes("Dĩ") || p.ghi_chu.includes("Dị")))) {
+          return "C2-D6-08"; // Cụ Nậy con Cụ Dĩ
+        }
+      }
+      if (s.includes("Bạch Hưng Em (Bâu)")) return "C1-D5-02";
+      if (s.includes("Bạch Hưng Em (Con)")) return "C2-D5-07";
+      if (s.includes("Bạch Hưng Chế (Tam)")) return "C1-D5-03";
+      if (s.includes("Bạch Hưng Bốn (Uyển)") || s === "Bạch Hưng Bốn") return "C2-D6-10";
+      if (s.includes("Bạch Hưng Hai (Kiểm Nhưng)")) return "C3-D6-01";
+      return s;
+    }
+
+    function buildTreeHierarchy() {
+      const codeMap = {};
+      const sttMap = {};
+      const nameMap = {};
+
+      people.forEach(p => {
+        codeMap[p.ma] = p;
+        if (p.stt !== undefined && p.stt !== null) {
+          sttMap[p.stt] = p;
+          sttMap[String(p.stt)] = p;
+        }
+        p._children = [];
+        // Tránh ghi đè nhầm lẫn giữa các vị trùng tên
+        if (p.ten.trim() !== "Bạch Hưng Nậy") {
+          nameMap[p.can + "::" + p.ten.trim()] = p;
+          nameMap[p.ten.trim()] = p;
+        }
+      });
+
+      // Map rõ ràng định danh 3 cụ Nậy theo bí danh phân biệt
+      nameMap["C2-D6-02"] = codeMap["C2-D6-02"];
+      nameMap["C2-D6-06"] = codeMap["C2-D6-06"];
+      nameMap["C2-D6-08"] = codeMap["C2-D6-08"];
+      nameMap["Bạch Hưng Nậy (Hợi)"] = codeMap["C2-D6-02"];
+      nameMap["Bạch Hưng Nậy (Yêm)"] = codeMap["C2-D6-06"];
+      nameMap["Bạch Hưng Nậy (Dĩ)"] = codeMap["C2-D6-08"];
+      nameMap["Bạch Hưng Nậy (Dị)"] = codeMap["C2-D6-08"];
+
+      people.forEach((p, idx) => {
+        p._origIdx = idx;
+        let parent = null;
+
+        // 1. ƯU TIÊN SỐ 1: Nối chuẩn xác qua ID_CHA (Số STT hoặc Mã ĐD của Cha từ Cột 16 Excel)
+        if (p.id_cha && p.id_cha !== 0 && p.id_cha !== "0") {
+          parent = sttMap[p.id_cha] || sttMap[String(p.id_cha)] || codeMap[p.id_cha];
         }
 
-        function closeModal(e) {
-            if (e.target.id === "personModal") {
-                document.getElementById("personModal").classList.remove("active");
-            }
+        // 2. DỰ PHÒNG: Nếu ID_CHA chưa có, nối qua tên Cha (chuẩn hóa định danh)
+        if (!parent && p.cha) {
+          let norm = normalizeFather(p.cha, p);
+          parent = codeMap[norm] || nameMap[p.can + "::" + norm] || nameMap[norm];
+
+          if (!parent) {
+            parent = people.find(x => (x.can === p.can || x.can.includes("Tiểu Chi") || x.can.includes("Khởi phát")) && (p.cha.includes(x.ten) || x.ten.includes(p.cha)));
+          }
         }
 
-        function closeModalDirect() {
-            document.getElementById("personModal").classList.remove("active");
+        // 3. DỰ PHÒNG CẤP 2: Nếu p.cha để trống nhưng có p.me (truy vết chồng của mẹ)
+        if (!parent && p.me) {
+          let meClean = p.me.trim();
+          parent = people.find(x => x.phoi_ngau && x.phoi_ngau.includes(meClean));
         }
 
-        // KHỞI CHẠY TRANG
-        
-        // =========================================================
-        // THUẬT TOÁN DỰNG VÀ ĐIỀU KHIỂN CÂY PHẢ HỆ TRỰC QUAN
-        // =========================================================
-        let currentZoom = 1.0;
-        let isPanning = false;
-        let startX, startY, scrollLeft, scrollTop;
-
-        function normalizeFather(fName, p) {
-            if (!fName) return "";
-            let s = fName.trim();
-            // Xử lý chuẩn xác 3 cụ trùng tên Bạch Hưng Nậy (Can 2 - Đời 6)
-            if (s.includes("Bạch Hưng Nậy") || s === "Nậy") {
-                if (s.includes("(Hợi)") || (p && p.me && p.me.includes("Mai")) || (p && p.ghi_chu && p.ghi_chu.includes("Hợi"))) {
-                    return "C2-D6-02"; // Cụ Nậy con Cụ Hợi (Cha của Vinh, Quang, Trung)
-                }
-                if (s.includes("(Yêm)") || (p && p.ghi_chu && p.ghi_chu.includes("Yêm"))) {
-                    return "C2-D6-06"; // Cụ Nậy con Cụ Yêm
-                }
-                if (s.includes("(Dĩ)") || s.includes("(Dị)") || (p && p.ghi_chu && (p.ghi_chu.includes("Dĩ") || p.ghi_chu.includes("Dị")))) {
-                    return "C2-D6-08"; // Cụ Nậy con Cụ Dĩ
-                }
-            }
-            if (s.includes("Bạch Hưng Em (Bâu)")) return "C1-D5-02";
-            if (s.includes("Bạch Hưng Em (Con)")) return "C2-D5-07";
-            if (s.includes("Bạch Hưng Chế (Tam)")) return "C1-D5-03";
-            if (s.includes("Bạch Hưng Bốn (Uyển)") || s === "Bạch Hưng Bốn") return "C2-D6-10";
-            if (s.includes("Bạch Hưng Hai (Kiểm Nhưng)")) return "C3-D6-01";
-            return s;
+        if (parent && parent !== p) {
+          if (!parent._children.includes(p)) {
+            parent._children.push(p);
+          }
         }
+      });
 
-        function buildTreeHierarchy() {
-            const codeMap = {};
-            const sttMap = {};
-            const nameMap = {};
-
-            people.forEach(p => {
-                codeMap[p.ma] = p;
-                if (p.stt !== undefined && p.stt !== null) {
-                    sttMap[p.stt] = p;
-                    sttMap[String(p.stt)] = p;
-                }
-                p._children = [];
-                // Tránh ghi đè nhầm lẫn giữa các vị trùng tên
-                if (p.ten.trim() !== "Bạch Hưng Nậy") {
-                    nameMap[p.can + "::" + p.ten.trim()] = p;
-                    nameMap[p.ten.trim()] = p;
-                }
-            });
-
-            // Map rõ ràng định danh 3 cụ Nậy theo bí danh phân biệt
-            nameMap["C2-D6-02"] = codeMap["C2-D6-02"];
-            nameMap["C2-D6-06"] = codeMap["C2-D6-06"];
-            nameMap["C2-D6-08"] = codeMap["C2-D6-08"];
-            nameMap["Bạch Hưng Nậy (Hợi)"] = codeMap["C2-D6-02"];
-            nameMap["Bạch Hưng Nậy (Yêm)"] = codeMap["C2-D6-06"];
-            nameMap["Bạch Hưng Nậy (Dĩ)"] = codeMap["C2-D6-08"];
-            nameMap["Bạch Hưng Nậy (Dị)"] = codeMap["C2-D6-08"];
-
-            people.forEach((p, idx) => {
-                p._origIdx = idx;
-                let parent = null;
-
-                // 1. ƯU TIÊN SỐ 1: Nối chuẩn xác qua ID_CHA (Số STT hoặc Mã ĐD của Cha từ Cột 16 Excel)
-                if (p.id_cha && p.id_cha !== 0 && p.id_cha !== "0") {
-                    parent = sttMap[p.id_cha] || sttMap[String(p.id_cha)] || codeMap[p.id_cha];
-                }
-
-                // 2. DỰ PHÒNG: Nếu ID_CHA chưa có, nối qua tên Cha (chuẩn hóa định danh)
-                if (!parent && p.cha) {
-                    let norm = normalizeFather(p.cha, p);
-                    parent = codeMap[norm] || nameMap[p.can + "::" + norm] || nameMap[norm];
-
-                    if (!parent) {
-                        parent = people.find(x => (x.can === p.can || x.can.includes("Tiểu Chi") || x.can.includes("Khởi phát")) && (p.cha.includes(x.ten) || x.ten.includes(p.cha)));
-                    }
-                }
-
-                // 3. DỰ PHÒNG CẤP 2: Nếu p.cha để trống nhưng có p.me (truy vết chồng của mẹ)
-                if (!parent && p.me) {
-                    let meClean = p.me.trim();
-                    parent = people.find(x => x.phoi_ngau && x.phoi_ngau.includes(meClean));
-                }
-
-                if (parent && parent !== p) {
-                    if (!parent._children.includes(p)) {
-                        parent._children.push(p);
-                    }
-                }
-            });
-
-            // Sắp xếp anh chị em theo cột Thứ tự con (nếu có), giữ nguyên thứ tự bảng cho người chưa nhập
-            people.forEach(p => {
-                if (p._children && p._children.length > 1) {
-                    p._children.sort((a, b) => {
-                        const oa = parseInt(a.thu_tu, 10);
-                        const ob = parseInt(b.thu_tu, 10);
-                        const ka = !isNaN(oa) && oa > 0 ? oa : (100000 + (a._origIdx || 0));
-                        const kb = !isNaN(ob) && ob > 0 ? ob : (100000 + (b._origIdx || 0));
-                        return ka - kb;
-                    });
-                }
-            });
-
-            return codeMap;
+      // Sắp xếp anh chị em theo cột Thứ tự con (nếu có), giữ nguyên thứ tự bảng cho người chưa nhập
+      people.forEach(p => {
+        if (p._children && p._children.length > 1) {
+          p._children.sort((a, b) => {
+            const oa = parseInt(a.thu_tu, 10);
+            const ob = parseInt(b.thu_tu, 10);
+            const ka = !isNaN(oa) && oa > 0 ? oa : (100000 + (a._origIdx || 0));
+            const kb = !isNaN(ob) && ob > 0 ? ob : (100000 + (b._origIdx || 0));
+            return ka - kb;
+          });
         }
+      });
 
-        function renderNodeToHtml(p) {
-            let canClass = "node-kp";
-            if (p.can === "Can 1") canClass = "node-can1";
-            else if (p.can === "Can 2") canClass = "node-can2";
-            else if (p.can === "Can 3") canClass = "node-can3";
-            else if (p.can === "Can 4") canClass = "node-can4";
+      return codeMap;
+    }
 
-            let years = "";
-            if (p.nam_sinh || p.nam_mat) {
-                let ns = p.nam_sinh ? p.nam_sinh.split(" ")[0] : "?";
-                let nm = p.nam_mat ? p.nam_mat.split(" ")[0] : "";
-                years = `${ns} - ${nm}`;
-            }
+    function renderNodeToHtml(p) {
+      let canClass = "node-kp";
+      if (p.can === "Can 1") canClass = "node-can1";
+      else if (p.can === "Can 2") canClass = "node-can2";
+      else if (p.can === "Can 3") canClass = "node-can3";
+      else if (p.can === "Can 4") canClass = "node-can4";
 
-            let hasKids = p._children && p._children.length > 0;
-            let toggleBtn = hasKids ? `<button class="mc-toggle" onclick="toggleNodeCollapse(event, this)">–</button>` : "";
+      let years = "";
+      if (p.nam_sinh || p.nam_mat) {
+        let ns = p.nam_sinh ? p.nam_sinh.split(" ")[0] : "?";
+        let nm = p.nam_mat ? p.nam_mat.split(" ")[0] : "";
+        years = `${ns} - ${nm}`;
+      }
 
-            let spouseHtml = "";
-            if (p.phoi_ngau) {
-                const isFemale = (p.gioi_tinh || "").trim().toLowerCase() === "nữ";
-                const spouseLabel = isFemale ? "Chồng" : "Vợ";
-                const spList = p.phoi_ngau.split(";").map(part => {
-                    let s = part.split("(")[0].trim().replace(/^(Chồng|Vợ|Ông|Bà\s*\d*|Bà\s+cả|Bà\s+hai|Bà\s+ba|Bà\s+tư)\s*:\s*/i, "").trim();
-                    return (!s || /chưa|không/i.test(s)) ? "" : s;
-                }).filter(Boolean);
-                if (spList.length > 0) {
-                    spouseHtml = `<div class="mc-spouse" title="${escapeHtml(p.phoi_ngau)}">${spouseLabel}: ${escapeHtml(spList.join("; "))}</div>`;
-                }
-            }
+      let hasKids = p._children && p._children.length > 0;
+      let toggleBtn = hasKids ? `<button class="mc-toggle" onclick="toggleNodeCollapse(event, this)">–</button>` : "";
 
-            let html = `
+      let spouseHtml = "";
+      if (p.phoi_ngau) {
+        const isFemale = (p.gioi_tinh || "").trim().toLowerCase() === "nữ";
+        const spouseLabel = isFemale ? "Chồng" : "Vợ";
+        const spList = p.phoi_ngau.split(";").map(part => {
+          let s = part.split("(")[0].trim().replace(/^(Chồng|Vợ|Ông|Bà\s*\d*|Bà\s+cả|Bà\s+hai|Bà\s+ba|Bà\s+tư)\s*:\s*/i, "").trim();
+          return (!s || /chưa|không/i.test(s)) ? "" : s;
+        }).filter(Boolean);
+        if (spList.length > 0) {
+          spouseHtml = `<div class="mc-spouse" title="${escapeHtml(p.phoi_ngau)}">${spouseLabel}: ${escapeHtml(spList.join("; "))}</div>`;
+        }
+      }
+
+      let html = `
                 <div class="member-card ${canClass}" id="node-${p.ma}" onclick="openModalByMa('${p.ma}')">
                     <div class="mc-doi">
                         <span>${p.doi}</span>
@@ -5645,331 +5917,331 @@
                 </div>
             `;
 
-            if (hasKids) {
-                html += `<ul>`;
-                p._children.forEach(c => {
-                    html += `<li>${renderNodeToHtml(c)}</li>`;
-                });
-                html += `</ul>`;
+      if (hasKids) {
+        html += `<ul>`;
+        p._children.forEach(c => {
+          html += `<li>${renderNodeToHtml(c)}</li>`;
+        });
+        html += `</ul>`;
+      }
+
+      return html;
+    }
+
+    function renderFamilyTree(branch) {
+      const codeMap = buildTreeHierarchy();
+      const rootContainer = document.getElementById("genealogyTreeRoot");
+      rootContainer.innerHTML = "";
+
+      let rootPerson = null;
+      if (branch === "ALL") {
+        rootPerson = codeMap["KP-01"];
+      } else if (branch === "Can 1") {
+        rootPerson = codeMap["C1-D3-01"];
+      } else if (branch === "Can 2") {
+        rootPerson = codeMap["C2-D3-01"];
+      } else if (branch === "Can 3") {
+        rootPerson = codeMap["C3-D3-01"];
+      } else if (branch === "Can 4") {
+        rootPerson = codeMap["C4-D3-01"];
+      }
+
+      if (!rootPerson) {
+        rootPerson = codeMap["KP-01"];
+      }
+
+      const treeHtml = `<ul><li>${renderNodeToHtml(rootPerson)}</li></ul>`;
+      rootContainer.innerHTML = treeHtml;
+
+      // Mặc định: Nếu là Toàn Tộc hoặc Can 2, thu gọn từ Đời 6 để cây thoáng đẹp
+      if (branch === "ALL") {
+        collapseTreeToDoiLevel(["Đời 4", "Đời 5", "Đời 6"]);
+      } else if (branch === "Can 2") {
+        collapseTreeToDoiLevel(["Đời 6"]);
+      }
+
+      resetTreeZoom();
+    }
+
+    function toggleNodeCollapse(e, btn) {
+      e.stopPropagation();
+      const li = btn.closest("li");
+      if (!li) return;
+
+      if (li.classList.contains("node-collapsed")) {
+        li.classList.remove("node-collapsed");
+        btn.textContent = "–";
+      } else {
+        li.classList.add("node-collapsed");
+        btn.textContent = "+";
+      }
+    }
+
+    function expandAllTreeNodes() {
+      document.querySelectorAll("#genealogyTreeRoot li.node-collapsed").forEach(li => {
+        li.classList.remove("node-collapsed");
+        const btn = li.querySelector(".mc-toggle");
+        if (btn) btn.textContent = "–";
+      });
+    }
+
+    function collapseTreeToDefault() {
+      collapseTreeToDoiLevel(["Đời 6", "Đời 7"]);
+    }
+
+    function collapseTreeToDoiLevel(dois) {
+      document.querySelectorAll("#genealogyTreeRoot li").forEach(li => {
+        const card = li.querySelector(".member-card");
+        if (!card) return;
+        const doiText = card.querySelector(".mc-doi") ? card.querySelector(".mc-doi").textContent : "";
+
+        let shouldCollapse = dois.some(d => doiText.includes(d));
+        if (shouldCollapse && li.querySelector("ul")) {
+          li.classList.add("node-collapsed");
+          const btn = card.querySelector(".mc-toggle");
+          if (btn) btn.textContent = "+";
+        }
+      });
+    }
+
+    function changeTreeBranch() {
+      const b = document.getElementById("treeBranchSelect").value;
+      renderFamilyTree(b);
+    }
+
+    function zoomTree(factor) {
+      currentZoom *= factor;
+      if (currentZoom < 0.3) currentZoom = 0.3;
+      if (currentZoom > 2.0) currentZoom = 2.0;
+      document.getElementById("treeCanvas").style.transform = `scale(${currentZoom})`;
+    }
+
+    function resetTreeZoom() {
+      currentZoom = 1.0;
+      const canvas = document.getElementById("treeCanvas");
+      canvas.style.transform = `scale(1)`;
+      const vp = document.getElementById("treeViewport");
+      vp.scrollLeft = (canvas.scrollWidth - vp.clientWidth) / 2;
+      vp.scrollTop = 0;
+    }
+
+    function searchInTree() {
+      const q = document.getElementById("treeSearchInput").value.toLowerCase().trim();
+      document.querySelectorAll(".member-card").forEach(c => c.classList.remove("highlight"));
+
+      if (!q) return;
+
+      let firstMatch = null;
+      people.forEach(p => {
+        if (p.ten.toLowerCase().includes(q) || (p.huy && p.huy.toLowerCase().includes(q))) {
+          const el = document.getElementById(`node-${p.ma}`);
+          if (el) {
+            // Mở rộng tất cả các nhánh cha phía trên
+            let parentLi = el.closest("li");
+            while (parentLi) {
+              parentLi.classList.remove("node-collapsed");
+              const btn = parentLi.querySelector(":scope > .member-card .mc-toggle");
+              if (btn) btn.textContent = "–";
+              parentLi = parentLi.parentElement.closest("li");
             }
 
-            return html;
+            el.classList.add("highlight");
+            if (!firstMatch) firstMatch = el;
+          }
         }
+      });
 
-        function renderFamilyTree(branch) {
-            const codeMap = buildTreeHierarchy();
-            const rootContainer = document.getElementById("genealogyTreeRoot");
-            rootContainer.innerHTML = "";
+      if (firstMatch) {
+        firstMatch.scrollIntoView({ behavior: "smooth", block: "center", inline: "center" });
+      }
+    }
 
-            let rootPerson = null;
-            if (branch === "ALL") {
-                rootPerson = codeMap["KP-01"];
-            } else if (branch === "Can 1") {
-                rootPerson = codeMap["C1-D3-01"];
-            } else if (branch === "Can 2") {
-                rootPerson = codeMap["C2-D3-01"];
-            } else if (branch === "Can 3") {
-                rootPerson = codeMap["C3-D3-01"];
-            } else if (branch === "Can 4") {
-                rootPerson = codeMap["C4-D3-01"];
-            }
+    function openModalByMa(ma) {
+      const p = people.find(x => x.ma === ma);
+      if (p) openModal(p);
+    }
 
-            if (!rootPerson) {
-                rootPerson = codeMap["KP-01"];
-            }
+    function toggleTreeMode(mode) {
+      const interactiveDiv = document.getElementById("treeInteractiveContainer");
+      const blocksDiv = document.getElementById("treeBlocksContainer");
+      const btnInt = document.getElementById("btnModeInteractive");
+      const btnBlk = document.getElementById("btnModeBlocks");
 
-            const treeHtml = `<ul><li>${renderNodeToHtml(rootPerson)}</li></ul>`;
-            rootContainer.innerHTML = treeHtml;
+      if (mode === "interactive") {
+        interactiveDiv.style.display = "block";
+        blocksDiv.style.display = "none";
+        btnInt.style.background = "var(--primary-light)";
+        btnInt.style.color = "var(--primary)";
+        btnInt.style.borderColor = "var(--primary)";
+        btnBlk.style.background = "white";
+        btnBlk.style.color = "var(--text-main)";
+        btnBlk.style.borderColor = "var(--border)";
+      } else {
+        interactiveDiv.style.display = "none";
+        blocksDiv.style.display = "block";
+        btnBlk.style.background = "var(--primary-light)";
+        btnBlk.style.color = "var(--primary)";
+        btnBlk.style.borderColor = "var(--primary)";
+        btnInt.style.background = "white";
+        btnInt.style.color = "var(--text-main)";
+        btnInt.style.borderColor = "var(--border)";
+      }
+    }
 
-            // Mặc định: Nếu là Toàn Tộc hoặc Can 2, thu gọn từ Đời 6 để cây thoáng đẹp
-            if (branch === "ALL") {
-                collapseTreeToDoiLevel(["Đời 4", "Đời 5", "Đời 6"]);
-            } else if (branch === "Can 2") {
-                collapseTreeToDoiLevel(["Đời 6"]);
-            }
+    // Bổ sung sự kiện kéo thả chuột (Pan) cho Viewport
+    function initTreePan() {
+      const vp = document.getElementById("treeViewport");
+      if (!vp) return;
 
-            resetTreeZoom();
+      vp.addEventListener("mousedown", (e) => {
+        if (e.target.closest(".member-card") || e.target.closest("button")) return;
+        isPanning = true;
+        startX = e.pageX - vp.offsetLeft;
+        startY = e.pageY - vp.offsetTop;
+        scrollLeft = vp.scrollLeft;
+        scrollTop = vp.scrollTop;
+      });
+
+      vp.addEventListener("mouseleave", () => { isPanning = false; });
+      vp.addEventListener("mouseup", () => { isPanning = false; });
+
+      vp.addEventListener("mousemove", (e) => {
+        if (!isPanning) return;
+        e.preventDefault();
+        const x = e.pageX - vp.offsetLeft;
+        const y = e.pageY - vp.offsetTop;
+        const walkX = (x - startX) * 1.5;
+        const walkY = (y - startY) * 1.5;
+        vp.scrollLeft = scrollLeft - walkX;
+        vp.scrollTop = scrollTop - walkY;
+      });
+    }
+
+
+    // =========================================================
+    // JAVASCRIPT HỖ TRỢ MOBILE: CÂY DỌC & TOUCH GESTURES
+    // =========================================================
+    let currentSelectedCan = "Can 2";
+    let currentViewMode = (window.innerWidth <= 768) ? "vtree" : "graph";
+
+    // Chuyển đổi giữa 3 chế độ xem: Cây Dọc, Cây Đồ Họa, Thẻ Tóm Tắt
+    function switchTreeViewMode(mode) {
+      currentViewMode = mode;
+      const divV = document.getElementById("treeViewVertical");
+      const divG = document.getElementById("treeViewGraph");
+      const divB = document.getElementById("treeViewBlocks");
+
+      const btnV = document.getElementById("btnViewMobileTree");
+      const btnG = document.getElementById("btnViewGraphTree");
+      const btnB = document.getElementById("btnViewBlocksTree");
+
+      [btnV, btnG, btnB].forEach(b => {
+        b.classList.remove("active");
+        b.style.background = "white";
+        b.style.color = "var(--text-main)";
+      });
+
+      divV.style.display = "none";
+      divG.style.display = "none";
+      divB.style.display = "none";
+
+      if (mode === "vtree") {
+        divV.style.display = "block";
+        btnV.classList.add("active");
+        btnV.style.background = "var(--primary)";
+        btnV.style.color = "white";
+        renderVerticalTree(currentSelectedCan);
+      } else if (mode === "graph") {
+        divG.style.display = "block";
+        btnG.classList.add("active");
+        btnG.style.background = "var(--primary)";
+        btnG.style.color = "white";
+        renderFamilyTree(currentSelectedCan);
+      } else {
+        divB.style.display = "block";
+        btnB.classList.add("active");
+        btnB.style.background = "var(--primary)";
+        btnB.style.color = "white";
+      }
+    }
+
+    // Chọn Can nhánh
+    function selectTreeCan(can, btnEl) {
+      currentSelectedCan = can;
+      document.querySelectorAll(".pill-bar .pill-btn").forEach(b => b.classList.remove("active"));
+      if (btnEl) btnEl.classList.add("active");
+
+      if (currentViewMode === "vtree") {
+        renderVerticalTree(can);
+      } else if (currentViewMode === "graph") {
+        renderFamilyTree(can);
+      }
+    }
+
+    // DỰNG CÂY PHÂN CẤP DỌC (VERTICAL TREE CHO MOBILE)
+    function renderVerticalTree(branch) {
+      const codeMap = buildTreeHierarchy();
+      const rootEl = document.getElementById("vtreeRoot");
+      if (!rootEl) return;
+      rootEl.innerHTML = "";
+
+      let rootPerson = null;
+      if (branch === "ALL") rootPerson = codeMap["KP-01"];
+      else if (branch === "Can 1") rootPerson = codeMap["C1-D3-01"];
+      else if (branch === "Can 2") rootPerson = codeMap["C2-D3-01"];
+      else if (branch === "Can 3") rootPerson = codeMap["C3-D3-01"];
+      else if (branch === "Can 4") rootPerson = codeMap["C4-D3-01"];
+
+      if (!rootPerson) rootPerson = codeMap["KP-01"];
+
+      const ul = document.createElement("ul");
+      ul.className = "vtree-list";
+      ul.appendChild(renderVTreeNode(rootPerson));
+      rootEl.appendChild(ul);
+    }
+
+    function renderVTreeNode(p) {
+      const li = document.createElement("li");
+      li.className = "vtree-item";
+      li.id = `vnode-${p.ma}`;
+
+      let canClass = "node-kp";
+      if (p.can === "Can 1") canClass = "node-can1";
+      else if (p.can === "Can 2") canClass = "node-can2";
+      else if (p.can === "Can 3") canClass = "node-can3";
+      else if (p.can === "Can 4") canClass = "node-can4";
+
+      let years = "";
+      if (p.nam_sinh || p.nam_mat) {
+        let ns = p.nam_sinh ? p.nam_sinh.split(" ")[0] : "?";
+        let nm = p.nam_mat ? p.nam_mat.split(" ")[0] : "";
+        years = `${ns} - ${nm}`;
+      }
+
+      let hasKids = p._children && p._children.length > 0;
+      let countBadge = hasKids ? `<span style="font-size:0.75rem; opacity:0.85; margin-left:4px;">(${p._children.length} con)</span>` : "";
+
+      let spouseText = "";
+      if (p.phoi_ngau) {
+        const isFemale = (p.gioi_tinh || "").trim().toLowerCase() === "nữ";
+        const spouseLabel = isFemale ? "Chồng" : "Vợ";
+        const spList = p.phoi_ngau.split(";").map(part => {
+          let s = part.split("(")[0].trim().replace(/^(Chồng|Vợ|Ông|Bà\s*\d*|Bà\s+cả|Bà\s+hai|Bà\s+ba|Bà\s+tư)\s*:\s*/i, "").trim();
+          return (!s || /chưa|không/i.test(s)) ? "" : s;
+        }).filter(Boolean);
+        if (spList.length > 0) {
+          spouseText = `<div class="vtree-spouse">${spouseLabel}: ${escapeHtml(spList.join("; "))}</div>`;
         }
+      }
 
-        function toggleNodeCollapse(e, btn) {
-            e.stopPropagation();
-            const li = btn.closest("li");
-            if (!li) return;
+      const nodeDiv = document.createElement("div");
+      nodeDiv.className = `vtree-node ${canClass}`;
+      nodeDiv.onclick = (e) => {
+        if (e.target.closest(".vtree-btn-toggle")) return;
+        openModal(p);
+      };
 
-            if (li.classList.contains("node-collapsed")) {
-                li.classList.remove("node-collapsed");
-                btn.textContent = "–";
-            } else {
-                li.classList.add("node-collapsed");
-                btn.textContent = "+";
-            }
-        }
-
-        function expandAllTreeNodes() {
-            document.querySelectorAll("#genealogyTreeRoot li.node-collapsed").forEach(li => {
-                li.classList.remove("node-collapsed");
-                const btn = li.querySelector(".mc-toggle");
-                if (btn) btn.textContent = "–";
-            });
-        }
-
-        function collapseTreeToDefault() {
-            collapseTreeToDoiLevel(["Đời 6", "Đời 7"]);
-        }
-
-        function collapseTreeToDoiLevel(dois) {
-            document.querySelectorAll("#genealogyTreeRoot li").forEach(li => {
-                const card = li.querySelector(".member-card");
-                if (!card) return;
-                const doiText = card.querySelector(".mc-doi") ? card.querySelector(".mc-doi").textContent : "";
-                
-                let shouldCollapse = dois.some(d => doiText.includes(d));
-                if (shouldCollapse && li.querySelector("ul")) {
-                    li.classList.add("node-collapsed");
-                    const btn = card.querySelector(".mc-toggle");
-                    if (btn) btn.textContent = "+";
-                }
-            });
-        }
-
-        function changeTreeBranch() {
-            const b = document.getElementById("treeBranchSelect").value;
-            renderFamilyTree(b);
-        }
-
-        function zoomTree(factor) {
-            currentZoom *= factor;
-            if (currentZoom < 0.3) currentZoom = 0.3;
-            if (currentZoom > 2.0) currentZoom = 2.0;
-            document.getElementById("treeCanvas").style.transform = `scale(${currentZoom})`;
-        }
-
-        function resetTreeZoom() {
-            currentZoom = 1.0;
-            const canvas = document.getElementById("treeCanvas");
-            canvas.style.transform = `scale(1)`;
-            const vp = document.getElementById("treeViewport");
-            vp.scrollLeft = (canvas.scrollWidth - vp.clientWidth) / 2;
-            vp.scrollTop = 0;
-        }
-
-        function searchInTree() {
-            const q = document.getElementById("treeSearchInput").value.toLowerCase().trim();
-            document.querySelectorAll(".member-card").forEach(c => c.classList.remove("highlight"));
-
-            if (!q) return;
-
-            let firstMatch = null;
-            people.forEach(p => {
-                if (p.ten.toLowerCase().includes(q) || (p.huy && p.huy.toLowerCase().includes(q))) {
-                    const el = document.getElementById(`node-${p.ma}`);
-                    if (el) {
-                        // Mở rộng tất cả các nhánh cha phía trên
-                        let parentLi = el.closest("li");
-                        while (parentLi) {
-                            parentLi.classList.remove("node-collapsed");
-                            const btn = parentLi.querySelector(":scope > .member-card .mc-toggle");
-                            if (btn) btn.textContent = "–";
-                            parentLi = parentLi.parentElement.closest("li");
-                        }
-
-                        el.classList.add("highlight");
-                        if (!firstMatch) firstMatch = el;
-                    }
-                }
-            });
-
-            if (firstMatch) {
-                firstMatch.scrollIntoView({ behavior: "smooth", block: "center", inline: "center" });
-            }
-        }
-
-        function openModalByMa(ma) {
-            const p = people.find(x => x.ma === ma);
-            if (p) openModal(p);
-        }
-
-        function toggleTreeMode(mode) {
-            const interactiveDiv = document.getElementById("treeInteractiveContainer");
-            const blocksDiv = document.getElementById("treeBlocksContainer");
-            const btnInt = document.getElementById("btnModeInteractive");
-            const btnBlk = document.getElementById("btnModeBlocks");
-
-            if (mode === "interactive") {
-                interactiveDiv.style.display = "block";
-                blocksDiv.style.display = "none";
-                btnInt.style.background = "var(--primary-light)";
-                btnInt.style.color = "var(--primary)";
-                btnInt.style.borderColor = "var(--primary)";
-                btnBlk.style.background = "white";
-                btnBlk.style.color = "var(--text-main)";
-                btnBlk.style.borderColor = "var(--border)";
-            } else {
-                interactiveDiv.style.display = "none";
-                blocksDiv.style.display = "block";
-                btnBlk.style.background = "var(--primary-light)";
-                btnBlk.style.color = "var(--primary)";
-                btnBlk.style.borderColor = "var(--primary)";
-                btnInt.style.background = "white";
-                btnInt.style.color = "var(--text-main)";
-                btnInt.style.borderColor = "var(--border)";
-            }
-        }
-
-        // Bổ sung sự kiện kéo thả chuột (Pan) cho Viewport
-        function initTreePan() {
-            const vp = document.getElementById("treeViewport");
-            if (!vp) return;
-
-            vp.addEventListener("mousedown", (e) => {
-                if (e.target.closest(".member-card") || e.target.closest("button")) return;
-                isPanning = true;
-                startX = e.pageX - vp.offsetLeft;
-                startY = e.pageY - vp.offsetTop;
-                scrollLeft = vp.scrollLeft;
-                scrollTop = vp.scrollTop;
-            });
-
-            vp.addEventListener("mouseleave", () => { isPanning = false; });
-            vp.addEventListener("mouseup", () => { isPanning = false; });
-
-            vp.addEventListener("mousemove", (e) => {
-                if (!isPanning) return;
-                e.preventDefault();
-                const x = e.pageX - vp.offsetLeft;
-                const y = e.pageY - vp.offsetTop;
-                const walkX = (x - startX) * 1.5;
-                const walkY = (y - startY) * 1.5;
-                vp.scrollLeft = scrollLeft - walkX;
-                vp.scrollTop = scrollTop - walkY;
-            });
-        }
-
-        
-        // =========================================================
-        // JAVASCRIPT HỖ TRỢ MOBILE: CÂY DỌC & TOUCH GESTURES
-        // =========================================================
-        let currentSelectedCan = "Can 2";
-        let currentViewMode = (window.innerWidth <= 768) ? "vtree" : "graph";
-
-        // Chuyển đổi giữa 3 chế độ xem: Cây Dọc, Cây Đồ Họa, Thẻ Tóm Tắt
-        function switchTreeViewMode(mode) {
-            currentViewMode = mode;
-            const divV = document.getElementById("treeViewVertical");
-            const divG = document.getElementById("treeViewGraph");
-            const divB = document.getElementById("treeViewBlocks");
-
-            const btnV = document.getElementById("btnViewMobileTree");
-            const btnG = document.getElementById("btnViewGraphTree");
-            const btnB = document.getElementById("btnViewBlocksTree");
-
-            [btnV, btnG, btnB].forEach(b => {
-                b.classList.remove("active");
-                b.style.background = "white";
-                b.style.color = "var(--text-main)";
-            });
-
-            divV.style.display = "none";
-            divG.style.display = "none";
-            divB.style.display = "none";
-
-            if (mode === "vtree") {
-                divV.style.display = "block";
-                btnV.classList.add("active");
-                btnV.style.background = "var(--primary)";
-                btnV.style.color = "white";
-                renderVerticalTree(currentSelectedCan);
-            } else if (mode === "graph") {
-                divG.style.display = "block";
-                btnG.classList.add("active");
-                btnG.style.background = "var(--primary)";
-                btnG.style.color = "white";
-                renderFamilyTree(currentSelectedCan);
-            } else {
-                divB.style.display = "block";
-                btnB.classList.add("active");
-                btnB.style.background = "var(--primary)";
-                btnB.style.color = "white";
-            }
-        }
-
-        // Chọn Can nhánh
-        function selectTreeCan(can, btnEl) {
-            currentSelectedCan = can;
-            document.querySelectorAll(".pill-bar .pill-btn").forEach(b => b.classList.remove("active"));
-            if (btnEl) btnEl.classList.add("active");
-
-            if (currentViewMode === "vtree") {
-                renderVerticalTree(can);
-            } else if (currentViewMode === "graph") {
-                renderFamilyTree(can);
-            }
-        }
-
-        // DỰNG CÂY PHÂN CẤP DỌC (VERTICAL TREE CHO MOBILE)
-        function renderVerticalTree(branch) {
-            const codeMap = buildTreeHierarchy();
-            const rootEl = document.getElementById("vtreeRoot");
-            if (!rootEl) return;
-            rootEl.innerHTML = "";
-
-            let rootPerson = null;
-            if (branch === "ALL") rootPerson = codeMap["KP-01"];
-            else if (branch === "Can 1") rootPerson = codeMap["C1-D3-01"];
-            else if (branch === "Can 2") rootPerson = codeMap["C2-D3-01"];
-            else if (branch === "Can 3") rootPerson = codeMap["C3-D3-01"];
-            else if (branch === "Can 4") rootPerson = codeMap["C4-D3-01"];
-
-            if (!rootPerson) rootPerson = codeMap["KP-01"];
-
-            const ul = document.createElement("ul");
-            ul.className = "vtree-list";
-            ul.appendChild(renderVTreeNode(rootPerson));
-            rootEl.appendChild(ul);
-        }
-
-        function renderVTreeNode(p) {
-            const li = document.createElement("li");
-            li.className = "vtree-item";
-            li.id = `vnode-${p.ma}`;
-
-            let canClass = "node-kp";
-            if (p.can === "Can 1") canClass = "node-can1";
-            else if (p.can === "Can 2") canClass = "node-can2";
-            else if (p.can === "Can 3") canClass = "node-can3";
-            else if (p.can === "Can 4") canClass = "node-can4";
-
-            let years = "";
-            if (p.nam_sinh || p.nam_mat) {
-                let ns = p.nam_sinh ? p.nam_sinh.split(" ")[0] : "?";
-                let nm = p.nam_mat ? p.nam_mat.split(" ")[0] : "";
-                years = `${ns} - ${nm}`;
-            }
-
-            let hasKids = p._children && p._children.length > 0;
-            let countBadge = hasKids ? `<span style="font-size:0.75rem; opacity:0.85; margin-left:4px;">(${p._children.length} con)</span>` : "";
-
-            let spouseText = "";
-            if (p.phoi_ngau) {
-                const isFemale = (p.gioi_tinh || "").trim().toLowerCase() === "nữ";
-                const spouseLabel = isFemale ? "Chồng" : "Vợ";
-                const spList = p.phoi_ngau.split(";").map(part => {
-                    let s = part.split("(")[0].trim().replace(/^(Chồng|Vợ|Ông|Bà\s*\d*|Bà\s+cả|Bà\s+hai|Bà\s+ba|Bà\s+tư)\s*:\s*/i, "").trim();
-                    return (!s || /chưa|không/i.test(s)) ? "" : s;
-                }).filter(Boolean);
-                if (spList.length > 0) {
-                    spouseText = `<div class="vtree-spouse">${spouseLabel}: ${escapeHtml(spList.join("; "))}</div>`;
-                }
-            }
-
-            const nodeDiv = document.createElement("div");
-            nodeDiv.className = `vtree-node ${canClass}`;
-            nodeDiv.onclick = (e) => {
-                if (e.target.closest(".vtree-btn-toggle")) return;
-                openModal(p);
-            };
-
-            nodeDiv.innerHTML = `
+      nodeDiv.innerHTML = `
                 <div class="vtree-info">
                     <div class="vtree-badge">${p.doi} • ${p.can}</div>
                     <div class="vtree-name">${p.ten}</div>
@@ -5979,198 +6251,229 @@
                 ${hasKids ? `<button class="vtree-btn-toggle" onclick="toggleVTreeItem(event, this)">–${countBadge}</button>` : ""}
             `;
 
-            li.appendChild(nodeDiv);
+      li.appendChild(nodeDiv);
 
-            if (hasKids) {
-                const childUl = document.createElement("ul");
-                childUl.className = "vtree-children";
-                p._children.forEach(c => {
-                    childUl.appendChild(renderVTreeNode(c));
-                });
-                li.appendChild(childUl);
+      if (hasKids) {
+        const childUl = document.createElement("ul");
+        childUl.className = "vtree-children";
+        p._children.forEach(c => {
+          childUl.appendChild(renderVTreeNode(c));
+        });
+        li.appendChild(childUl);
 
-                // Mặc định thu gọn các đời sâu (từ Đời 6) trên mobile để màn hình gọn gàng
-                if (p.doi && (p.doi.includes("Đời 6") || p.doi.includes("Đời 7"))) {
-                    li.classList.add("collapsed");
-                    const tBtn = nodeDiv.querySelector(".vtree-btn-toggle");
-                    if (tBtn) tBtn.innerHTML = `+${countBadge}`;
-                }
+        // Mặc định thu gọn các đời sâu (từ Đời 6) trên mobile để màn hình gọn gàng
+        if (p.doi && (p.doi.includes("Đời 6") || p.doi.includes("Đời 7"))) {
+          li.classList.add("collapsed");
+          const tBtn = nodeDiv.querySelector(".vtree-btn-toggle");
+          if (tBtn) tBtn.innerHTML = `+${countBadge}`;
+        }
+      }
+
+      return li;
+    }
+
+    function toggleVTreeItem(e, btn) {
+      e.stopPropagation();
+      const li = btn.closest(".vtree-item");
+      if (!li) return;
+
+      const isCollapsed = li.classList.contains("collapsed");
+      const countText = btn.textContent.replace("+", "").replace("–", "").replace("-", "");
+
+      if (isCollapsed) {
+        li.classList.remove("collapsed");
+        btn.innerHTML = `–<span style="font-size:0.75rem; opacity:0.85; margin-left:4px;">${countText}</span>`;
+      } else {
+        li.classList.add("collapsed");
+        btn.innerHTML = `+<span style="font-size:0.75rem; opacity:0.85; margin-left:4px;">${countText}</span>`;
+      }
+    }
+
+    function toggleAllVerticalTree(expand) {
+      document.querySelectorAll(".vtree-item").forEach(li => {
+        const btn = li.querySelector(":scope > .vtree-node .vtree-btn-toggle");
+        if (li.querySelector(".vtree-children")) {
+          const countText = btn ? btn.textContent.replace("+", "").replace("–", "").replace("-", "") : "";
+          if (expand) {
+            li.classList.remove("collapsed");
+            if (btn) btn.innerHTML = `–<span style="font-size:0.75rem; opacity:0.85; margin-left:4px;">${countText}</span>`;
+          } else {
+            li.classList.add("collapsed");
+            if (btn) btn.innerHTML = `+<span style="font-size:0.75rem; opacity:0.85; margin-left:4px;">${countText}</span>`;
+          }
+        }
+      });
+    }
+
+    function searchVerticalTree() {
+      const q = document.getElementById("vtreeSearchInput").value.toLowerCase().trim();
+      document.querySelectorAll(".vtree-node").forEach(n => n.style.background = "");
+
+      if (!q) return;
+
+      let firstMatch = null;
+      people.forEach(p => {
+        if (p.ten.toLowerCase().includes(q) || (p.huy && p.huy.toLowerCase().includes(q))) {
+          const item = document.getElementById(`vnode-${p.ma}`);
+          if (item) {
+            // Mở các nhánh cha
+            let parent = item.parentElement.closest(".vtree-item");
+            while (parent) {
+              parent.classList.remove("collapsed");
+              const pBtn = parent.querySelector(":scope > .vtree-node .vtree-btn-toggle");
+              if (pBtn) {
+                const cText = pBtn.textContent.replace("+", "").replace("–", "").replace("-", "");
+                pBtn.innerHTML = `–<span style="font-size:0.75rem; opacity:0.85; margin-left:4px;">${cText}</span>`;
+              }
+              parent = parent.parentElement.closest(".vtree-item");
             }
 
-            return li;
-        }
-
-        function toggleVTreeItem(e, btn) {
-            e.stopPropagation();
-            const li = btn.closest(".vtree-item");
-            if (!li) return;
-
-            const isCollapsed = li.classList.contains("collapsed");
-            const countText = btn.textContent.replace("+", "").replace("–", "").replace("-", "");
-
-            if (isCollapsed) {
-                li.classList.remove("collapsed");
-                btn.innerHTML = `–<span style="font-size:0.75rem; opacity:0.85; margin-left:4px;">${countText}</span>`;
-            } else {
-                li.classList.add("collapsed");
-                btn.innerHTML = `+<span style="font-size:0.75rem; opacity:0.85; margin-left:4px;">${countText}</span>`;
+            const nodeDiv = item.querySelector(".vtree-node");
+            if (nodeDiv) {
+              nodeDiv.style.background = "#fff7ed";
+              nodeDiv.style.borderColor = "#f97316";
+              if (!firstMatch) firstMatch = nodeDiv;
             }
+          }
         }
+      });
 
-        function toggleAllVerticalTree(expand) {
-            document.querySelectorAll(".vtree-item").forEach(li => {
-                const btn = li.querySelector(":scope > .vtree-node .vtree-btn-toggle");
-                if (li.querySelector(".vtree-children")) {
-                    const countText = btn ? btn.textContent.replace("+", "").replace("–", "").replace("-", "") : "";
-                    if (expand) {
-                        li.classList.remove("collapsed");
-                        if (btn) btn.innerHTML = `–<span style="font-size:0.75rem; opacity:0.85; margin-left:4px;">${countText}</span>`;
-                    } else {
-                        li.classList.add("collapsed");
-                        if (btn) btn.innerHTML = `+<span style="font-size:0.75rem; opacity:0.85; margin-left:4px;">${countText}</span>`;
-                    }
-                }
-            });
+      if (firstMatch) {
+        firstMatch.scrollIntoView({ behavior: "smooth", block: "center" });
+      }
+    }
+
+    // LINH ĐỘNG ẨN/HIỆN & XÓA NHANH Ô TÌM KIẾM TRÊN CÂY
+    function toggleTreeSearchBox(boxId, inputId, btnId) {
+      const box = document.getElementById(boxId);
+      const btn = document.getElementById(btnId);
+      const input = document.getElementById(inputId);
+      if (!box || !btn) return;
+      const collapsed = box.classList.toggle("is-collapsed");
+      btn.textContent = collapsed ? "🔍 Tìm tên" : "🔍 Ẩn tìm";
+      if (!collapsed && input) {
+        setTimeout(() => input.focus(), 50);
+      }
+    }
+
+    function updateSearchClearBtn(input, clearId) {
+      const clearBtn = document.getElementById(clearId);
+      if (!clearBtn || !input) return;
+      clearBtn.classList.toggle("visible", input.value.trim().length > 0);
+    }
+
+    function clearTreeSearch(inputId, clearId, callback) {
+      const input = document.getElementById(inputId);
+      if (!input) return;
+      input.value = "";
+      updateSearchClearBtn(input, clearId);
+      if (typeof callback === "function") callback();
+      input.focus();
+    }
+
+    // TOÀN MÀN HÌNH CHO SƠ ĐỒ ĐỒ HỌA
+    function toggleFullscreenTree() {
+      const vp = document.getElementById("treeViewport");
+      const graphWrap = document.getElementById("treeViewGraph");
+      if (!vp) return;
+      const isFs = vp.classList.toggle("is-fullscreen");
+      if (graphWrap) graphWrap.classList.toggle("is-graph-fullscreen", isFs);
+      resetTreeZoom();
+    }
+
+    // HỖ TRỢ CẢM ỨNG VUỐT CHẠM (TOUCH SWIPE / PAN) TRÊN MOBILE
+    function initTouchPan() {
+      const vp = document.getElementById("treeViewport");
+      if (!vp) return;
+
+      let touchStartX, touchStartY, touchScrollLeft, touchScrollTop;
+
+      vp.addEventListener("touchstart", (e) => {
+        if (e.touches.length === 1) {
+          if (e.target.closest(".member-card") || e.target.closest("button")) return;
+          touchStartX = e.touches[0].pageX - vp.offsetLeft;
+          touchStartY = e.touches[0].pageY - vp.offsetTop;
+          touchScrollLeft = vp.scrollLeft;
+          touchScrollTop = vp.scrollTop;
         }
+      }, { passive: true });
 
-        function searchVerticalTree() {
-            const q = document.getElementById("vtreeSearchInput").value.toLowerCase().trim();
-            document.querySelectorAll(".vtree-node").forEach(n => n.style.background = "");
-
-            if (!q) return;
-
-            let firstMatch = null;
-            people.forEach(p => {
-                if (p.ten.toLowerCase().includes(q) || (p.huy && p.huy.toLowerCase().includes(q))) {
-                    const item = document.getElementById(`vnode-${p.ma}`);
-                    if (item) {
-                        // Mở các nhánh cha
-                        let parent = item.parentElement.closest(".vtree-item");
-                        while (parent) {
-                            parent.classList.remove("collapsed");
-                            const pBtn = parent.querySelector(":scope > .vtree-node .vtree-btn-toggle");
-                            if (pBtn) {
-                                const cText = pBtn.textContent.replace("+", "").replace("–", "").replace("-", "");
-                                pBtn.innerHTML = `–<span style="font-size:0.75rem; opacity:0.85; margin-left:4px;">${cText}</span>`;
-                            }
-                            parent = parent.parentElement.closest(".vtree-item");
-                        }
-
-                        const nodeDiv = item.querySelector(".vtree-node");
-                        if (nodeDiv) {
-                            nodeDiv.style.background = "#fff7ed";
-                            nodeDiv.style.borderColor = "#f97316";
-                            if (!firstMatch) firstMatch = nodeDiv;
-                        }
-                    }
-                }
-            });
-
-            if (firstMatch) {
-                firstMatch.scrollIntoView({ behavior: "smooth", block: "center" });
-            }
+      vp.addEventListener("touchmove", (e) => {
+        if (e.touches.length === 1 && touchStartX !== undefined) {
+          const x = e.touches[0].pageX - vp.offsetLeft;
+          const y = e.touches[0].pageY - vp.offsetTop;
+          const walkX = (x - touchStartX) * 1.4;
+          const walkY = (y - touchStartY) * 1.4;
+          vp.scrollLeft = touchScrollLeft - walkX;
+          vp.scrollTop = touchScrollTop - walkY;
         }
+      }, { passive: true });
 
-        // TOÀN MÀN HÌNH CHO SƠ ĐỒ ĐỒ HỌA
-        function toggleFullscreenTree() {
-            const vp = document.getElementById("treeViewport");
-            if (!vp) return;
-            vp.classList.toggle("is-fullscreen");
-            resetTreeZoom();
-        }
+      vp.addEventListener("touchend", () => {
+        touchStartX = undefined;
+      });
+    }
 
-        // HỖ TRỢ CẢM ỨNG VUỐT CHẠM (TOUCH SWIPE / PAN) TRÊN MOBILE
-        function initTouchPan() {
-            const vp = document.getElementById("treeViewport");
-            if (!vp) return;
+    function updateDynamicStats() {
+      const btnSearch = document.querySelector("button[onclick*='tab-search']");
+      if (btnSearch) btnSearch.innerHTML = `🔍 Danh sách con cháu (${people.length})`;
+      const btnCal = document.querySelector("button[onclick*='tab-calendar']");
+      if (btnCal) btnCal.innerHTML = `📅 Lịch Kỵ Giỗ Âm Lịch (${deathDays.length})`;
 
-            let touchStartX, touchStartY, touchScrollLeft, touchScrollTop;
+      let maxGen = 0;
+      const doiSet = new Set();
+      people.forEach(p => {
+        if (p.doi) doiSet.add(p.doi);
+        const m = String(p.doi || "").match(/\d+/);
+        if (m) maxGen = Math.max(maxGen, parseInt(m[0], 10));
+      });
+      const genCount = maxGen || 9;
 
-            vp.addEventListener("touchstart", (e) => {
-                if (e.touches.length === 1) {
-                    if (e.target.closest(".member-card") || e.target.closest("button")) return;
-                    touchStartX = e.touches[0].pageX - vp.offsetLeft;
-                    touchStartY = e.touches[0].pageY - vp.offsetTop;
-                    touchScrollLeft = vp.scrollLeft;
-                    touchScrollTop = vp.scrollTop;
-                }
-            }, { passive: true });
+      const badgeGen = document.getElementById("badgeGenCount");
+      if (badgeGen) badgeGen.textContent = `🌳 ${genCount} Thế hệ tiếp nối`;
 
-            vp.addEventListener("touchmove", (e) => {
-                if (e.touches.length === 1 && touchStartX !== undefined) {
-                    const x = e.touches[0].pageX - vp.offsetLeft;
-                    const y = e.touches[0].pageY - vp.offsetTop;
-                    const walkX = (x - touchStartX) * 1.4;
-                    const walkY = (y - touchStartY) * 1.4;
-                    vp.scrollLeft = touchScrollLeft - walkX;
-                    vp.scrollTop = touchScrollTop - walkY;
-                }
-            }, { passive: true });
+      const doiSelect = document.getElementById("doiFilter");
+      if (doiSelect) {
+        const existing = new Set(Array.from(doiSelect.options).map(o => o.value));
+        Array.from(doiSet).sort((a, b) => {
+          const na = parseInt((a.match(/\d+/) || [0])[0], 10);
+          const nb = parseInt((b.match(/\d+/) || [0])[0], 10);
+          return na - nb;
+        }).forEach(d => {
+          if (!existing.has(d)) {
+            const opt = document.createElement("option");
+            opt.value = d;
+            opt.textContent = d;
+            doiSelect.appendChild(opt);
+          }
+        });
+      }
 
-            vp.addEventListener("touchend", () => {
-                touchStartX = undefined;
-            });
-        }
+      const c1 = people.filter(p => p.can === "Can 1").length;
+      const c2 = people.filter(p => p.can === "Can 2").length;
+      const c34 = people.filter(p => p.can === "Can 3" || p.can === "Can 4").length;
 
-        function updateDynamicStats() {
-            const btnSearch = document.querySelector("button[onclick*='tab-search']");
-            if (btnSearch) btnSearch.innerHTML = `🔍 Danh sách con cháu (${people.length})`;
-            const btnCal = document.querySelector("button[onclick*='tab-calendar']");
-            if (btnCal) btnCal.innerHTML = `📅 Lịch Kỵ Giỗ Âm Lịch (${deathDays.length})`;
+      const statNums = document.querySelectorAll("#tab-stats .stat-card .stat-num");
+      if (statNums.length >= 6) {
+        statNums[0].textContent = people.length;
+        statNums[1].textContent = c1;
+        statNums[2].textContent = c2;
+        statNums[3].textContent = c34;
+        statNums[4].textContent = deathDays.length;
+        statNums[5].textContent = String(genCount);
+      }
+    }
 
-            let maxGen = 0;
-            const doiSet = new Set();
-            people.forEach(p => {
-                if (p.doi) doiSet.add(p.doi);
-                const m = String(p.doi || "").match(/\d+/);
-                if (m) maxGen = Math.max(maxGen, parseInt(m[0], 10));
-            });
-            const genCount = maxGen || 9;
-
-            const badgeGen = document.getElementById("badgeGenCount");
-            if (badgeGen) badgeGen.textContent = `🌳 ${genCount} Thế hệ tiếp nối`;
-
-            const doiSelect = document.getElementById("doiFilter");
-            if (doiSelect) {
-                const existing = new Set(Array.from(doiSelect.options).map(o => o.value));
-                Array.from(doiSet).sort((a, b) => {
-                    const na = parseInt((a.match(/\d+/) || [0])[0], 10);
-                    const nb = parseInt((b.match(/\d+/) || [0])[0], 10);
-                    return na - nb;
-                }).forEach(d => {
-                    if (!existing.has(d)) {
-                        const opt = document.createElement("option");
-                        opt.value = d;
-                        opt.textContent = d;
-                        doiSelect.appendChild(opt);
-                    }
-                });
-            }
-
-            const c1 = people.filter(p => p.can === "Can 1").length;
-            const c2 = people.filter(p => p.can === "Can 2").length;
-            const c34 = people.filter(p => p.can === "Can 3" || p.can === "Can 4").length;
-            
-            const statNums = document.querySelectorAll("#tab-stats .stat-card .stat-num");
-            if (statNums.length >= 6) {
-                statNums[0].textContent = people.length;
-                statNums[1].textContent = c1;
-                statNums[2].textContent = c2;
-                statNums[3].textContent = c34;
-                statNums[4].textContent = deathDays.length;
-                statNums[5].textContent = String(genCount);
-            }
-        }
-
-        window.onload = function() {
-            updateDynamicStats();
-            switchTreeViewMode(window.innerWidth <= 768 ? 'vtree' : 'graph');
-            initTouchPan();
-            renderFamilyTree('Can 2');
-            initTreePan();
-            renderTable(people);
-            renderCalendar();
-        };
-    </script>
+    window.onload = function () {
+      updateDynamicStats();
+      switchTreeViewMode(window.innerWidth <= 768 ? 'vtree' : 'graph');
+      initTouchPan();
+      renderFamilyTree('Can 2');
+      initTreePan();
+      renderTable(people);
+      renderCalendar();
+    };
+  </script>
 </body>
+
 </html>
