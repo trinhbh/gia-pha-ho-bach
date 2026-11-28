@@ -1058,8 +1058,8 @@
 
     <div class="nav-wrapper">
         <div class="nav-tabs">
-            <button class="tab-btn active" onclick="switchTab('tab-search')">🔍 Tra Cứu Nhân Đinh (126)</button>
-            <button class="tab-btn" onclick="switchTab('tab-tree')">🌳 Sơ Đồ Phả Hệ Chuẩn Xác</button>
+            <button class="tab-btn active" onclick="switchTab('tab-tree')">🌳 Sơ đồ con cháu</button>
+            <button class="tab-btn" onclick="switchTab('tab-search')">🔍 Danh sách con cháu (126)</button>
             <button class="tab-btn" onclick="switchTab('tab-calendar')">📅 Lịch Kỵ Giỗ Âm Lịch (86)</button>
             <button class="tab-btn" onclick="switchTab('tab-history')">📖 Lời Tựa & Hiệu Đính</button>
             <button class="tab-btn" onclick="switchTab('tab-stats')">📊 Thống Kê Dòng Tộc</button>
@@ -1068,7 +1068,7 @@
 
     <main>
         <!-- TAB 1: TRA CỨU NHÂN ĐINH -->
-        <div id="tab-search" class="tab-content active">
+        <div id="tab-search" class="tab-content">
             <div class="card">
                 <div class="card-header">
                     <h2>🔍 Tra Cứu Danh Bạ Nhân Đinh</h2>
@@ -1126,7 +1126,7 @@
         </div>
 
                 <!-- TAB 2: SƠ ĐỒ PHẢ HỆ -->
-        <div id="tab-tree" class="tab-content">
+        <div id="tab-tree" class="tab-content active">
             <div class="card" style="padding: 14px 16px;">
                 <div class="card-header" style="margin-bottom: 10px;">
                     <div>
@@ -6115,7 +6115,7 @@
 
         function updateDynamicStats() {
             const btnSearch = document.querySelector("button[onclick*='tab-search']");
-            if (btnSearch) btnSearch.innerHTML = `🔍 Tra Cứu Nhân Đinh (${people.length})`;
+            if (btnSearch) btnSearch.innerHTML = `🔍 Danh sách con cháu (${people.length})`;
             const btnCal = document.querySelector("button[onclick*='tab-calendar']");
             if (btnCal) btnCal.innerHTML = `📅 Lịch Kỵ Giỗ Âm Lịch (${deathDays.length})`;
 

@@ -621,7 +621,7 @@ if os.path.exists(HTML_PATH):
     # Cập nhật hiển thị số lượng ngày giỗ và nhân đinh trên HTML
     html_content = re.sub(r'Tổng cộng \d+ Ngày Giỗ', f'Tổng cộng {len(js_deaths)} Ngày Giỗ', html_content)
     html_content = re.sub(r'Lịch Kỵ Giỗ Âm Lịch \(\d+\)', f'Lịch Kỵ Giỗ Âm Lịch ({len(js_deaths)})', html_content)
-    html_content = re.sub(r'Tra Cứu Nhân Đinh \(\d+\)', f'Tra Cứu Nhân Đinh ({len(js_records)})', html_content)
+    html_content = re.sub(r'(?:Tra Cứu Nhân Đinh|Danh sách con cháu) \(\d+\)', f'Danh sách con cháu ({len(js_records)})', html_content)
     html_content = re.sub(r'(<div class="stat-num">)\d+(</div>\s*<div class="stat-label">Tổng số [^<]*</div>)',
                           rf'\g<1>{len(js_records)}\g<2>', html_content)
     
