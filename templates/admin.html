@@ -288,6 +288,93 @@
             flex-wrap: wrap;
             gap: 8px;
         }
+        .view-switch {
+            display: inline-flex;
+            border: 1px solid var(--border);
+            border-radius: 6px;
+            overflow: hidden;
+            background: #f9fafb;
+        }
+        .view-switch button {
+            border: none;
+            background: transparent;
+            padding: 7px 12px;
+            font-size: 0.85rem;
+            font-weight: 600;
+            color: var(--muted);
+            cursor: pointer;
+        }
+        .view-switch button.active {
+            background: var(--primary);
+            color: #fff;
+        }
+        .atree-toolbar {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 8px;
+            align-items: center;
+            justify-content: space-between;
+            margin-bottom: 12px;
+            padding: 10px 12px;
+            background: #faf8f5;
+            border: 1px solid var(--border);
+            border-radius: 8px;
+        }
+        .atree-pills { display: flex; flex-wrap: wrap; gap: 6px; }
+        .atree-pill {
+            padding: 5px 11px;
+            border-radius: 16px;
+            border: 1px solid var(--border);
+            background: #fff;
+            font-size: 0.82rem;
+            font-weight: 600;
+            cursor: pointer;
+            color: var(--text);
+        }
+        .atree-pill.active { background: var(--primary); color: #fff; border-color: var(--primary); }
+        .atree-list, .atree-children { list-style: none; }
+        .atree-children {
+            padding-left: 20px;
+            margin: 6px 0 0 10px;
+            border-left: 2px solid #cbd5e1;
+        }
+        .atree-item { margin-bottom: 6px; }
+        .atree-item.collapsed > .atree-children { display: none; }
+        .atree-node {
+            background: #fff;
+            border: 1px solid var(--border);
+            border-left: 4px solid var(--primary);
+            border-radius: 8px;
+            padding: 9px 12px;
+            display: flex;
+            flex-wrap: wrap;
+            justify-content: space-between;
+            align-items: center;
+            gap: 8px;
+            box-shadow: 0 1px 3px rgba(0,0,0,0.04);
+        }
+        .atree-node.node-can1 { border-left-color: #2563eb; }
+        .atree-node.node-can2 { border-left-color: #15803d; }
+        .atree-node.node-can3 { border-left-color: #b91c1c; }
+        .atree-node.node-can4 { border-left-color: #92400e; }
+        .atree-node.highlight { background: #fffbeb; border-color: #f59e0b; box-shadow: 0 0 0 2px rgba(245,158,11,0.25); }
+        .atree-info { flex: 1; min-width: 220px; }
+        .atree-meta { font-size: 0.78rem; color: var(--muted); margin-top: 2px; }
+        .atree-actions { display: flex; flex-wrap: wrap; gap: 6px; align-items: center; }
+        .atree-toggle {
+            background: #f3f4f6;
+            border: 1px solid #d1d5db;
+            border-radius: 6px;
+            padding: 4px 9px;
+            font-size: 0.78rem;
+            font-weight: 600;
+            cursor: pointer;
+            color: #374151;
+        }
+        @media (max-width: 768px) {
+            .atree-children { padding-left: 10px; margin-left: 4px; }
+            .atree-node { padding: 8px 10px; }
+        }
     </style>
 </head>
 <body>
@@ -343,10 +430,16 @@
                             <option value="Đời 9">Đời 9</option>
                         </select>
                     </div>
-                    <button class="btn btn-primary auth-only" onclick="openPersonModal()">➕ Thêm Nhân Đinh</button>
+                    <div style="display:flex; gap:8px; align-items:center; flex-wrap:wrap;">
+                        <div class="view-switch">
+                            <button type="button" id="btnViewTable" class="active" onclick="setPeopleView('table')">📋 Dạng Bảng</button>
+                            <button type="button" id="btnViewTree" onclick="setPeopleView('tree')">🌳 Dạng Cây</button>
+                        </div>
+                        <button class="btn btn-primary auth-only" onclick="openPersonModal()">➕ Thêm Nhân Đinh</button>
+                    </div>
                 </div>
 
-                <div class="table-wrap">
+                <div id="peopleTableContainer" class="table-wrap">
                     <table>
                         <thead>
                             <tr>
@@ -361,6 +454,24 @@
                         </thead>
                         <tbody id="peopleBody"></tbody>
                     </table>
+                </div>
+
+                <div id="peopleTreeContainer" style="display: none;">
+                    <div class="atree-toolbar">
+                        <div class="atree-pills">
+                            <button type="button" class="atree-pill" onclick="setTreeBranch('ALL', this)">Toàn Tộc</button>
+                            <button type="button" class="atree-pill" onclick="setTreeBranch('Can 1', this)">Can 1 (Tổ Cư)</button>
+                            <button type="button" class="atree-pill active" onclick="setTreeBranch('Can 2', this)">Can 2 (Tổ Khâu)</button>
+                            <button type="button" class="atree-pill" onclick="setTreeBranch('Can 3', this)">Can 3 (Tổ Nghi)</button>
+                            <button type="button" class="atree-pill" onclick="setTreeBranch('Can 4', this)">Can 4 (Tổ Kế)</button>
+                        </div>
+                        <div style="display:flex; gap:6px; flex-wrap:wrap; align-items:center;">
+                            <input type="text" id="treeSearchInput" placeholder="🔍 Tìm nhanh trên cây..." oninput="searchAdminTree()" style="min-width:200px;">
+                            <button type="button" class="btn btn-light btn-sm" onclick="toggleAllAdminTree(true)">➕ Mở hết</button>
+                            <button type="button" class="btn btn-light btn-sm" onclick="toggleAllAdminTree(false)">➖ Thu gọn</button>
+                        </div>
+                    </div>
+                    <ul id="adminTreeRoot" class="atree-list"></ul>
                 </div>
             </div>
         </div>
@@ -758,7 +869,218 @@
                 `Thừa kế chuẩn xác ${appData.people.length} nhân đinh • ${appData.deaths.length} ngày kỵ giỗ (Nguồn: Danh_Sach_Nhan_Dinh_Ho_Bach.xlsx)`;
             populateFatherDropdown();
             renderPeople();
+            if (currentPeopleView === "tree") renderAdminTree();
             renderDeaths();
+        }
+
+        let currentPeopleView = "table";
+        let currentTreeBranch = "Can 2";
+        let expandedTreeStts = null;
+
+        function setPeopleView(mode) {
+            currentPeopleView = mode;
+            document.getElementById("btnViewTable").classList.toggle("active", mode === "table");
+            document.getElementById("btnViewTree").classList.toggle("active", mode === "tree");
+            document.getElementById("peopleTableContainer").style.display = mode === "table" ? "block" : "none";
+            document.getElementById("peopleTreeContainer").style.display = mode === "tree" ? "block" : "none";
+            if (mode === "tree") {
+                renderAdminTree();
+            }
+        }
+
+        function setTreeBranch(branch, btn) {
+            currentTreeBranch = branch;
+            document.querySelectorAll(".atree-pill").forEach(b => b.classList.remove("active"));
+            if (btn) btn.classList.add("active");
+            renderAdminTree();
+        }
+
+        function buildAdminTreeHierarchy() {
+            const byStt = {};
+            const byMa = {};
+            const clones = appData.people.map((p, idx) => {
+                const c = { ...p, _origIdx: idx, _children: [] };
+                byStt[c.stt] = c;
+                if (c.ma) byMa[c.ma] = c;
+                return c;
+            });
+
+            clones.forEach(p => {
+                let parent = null;
+                if (p.id_cha && p.id_cha !== 0 && p.id_cha !== "0") {
+                    parent = byStt[p.id_cha] || byMa[p.id_cha];
+                }
+                if (parent && parent !== p && !parent._children.includes(p)) {
+                    parent._children.push(p);
+                }
+            });
+
+            clones.forEach(p => {
+                if (p._children.length > 1) {
+                    p._children.sort((a, b) => {
+                        const oa = parseInt(a.thu_tu, 10);
+                        const ob = parseInt(b.thu_tu, 10);
+                        const ka = !isNaN(oa) && oa > 0 ? oa : (100000 + a._origIdx);
+                        const kb = !isNaN(ob) && ob > 0 ? ob : (100000 + b._origIdx);
+                        return ka - kb;
+                    });
+                }
+            });
+
+            if (expandedTreeStts === null) {
+                expandedTreeStts = new Set();
+                clones.forEach(p => {
+                    if (/khởi\s*phát|đời\s*[1-5]\b/i.test(p.doi || "")) {
+                        expandedTreeStts.add(p.stt);
+                    }
+                });
+            }
+            return { clones, byStt, byMa };
+        }
+
+        function renderAdminTree() {
+            const rootUl = document.getElementById("adminTreeRoot");
+            if (!rootUl) return;
+            const { clones, byStt, byMa } = buildAdminTreeHierarchy();
+
+            let roots = [];
+            if (currentTreeBranch === "ALL") {
+                roots = clones.filter(p => !p.id_cha || p.id_cha === 0 || (!byStt[p.id_cha] && !byMa[p.id_cha]));
+            } else {
+                const targetNameMap = {
+                    "Can 1": "Bạch Hưng Cư",
+                    "Can 2": "Bạch Hưng Khâu",
+                    "Can 3": "Bạch Hưng Nghi",
+                    "Can 4": "Bạch Hưng Kế",
+                };
+                const targetName = targetNameMap[currentTreeBranch];
+                const found = clones.find(p => p.can === currentTreeBranch && p.ho_ten === targetName)
+                           || clones.find(p => p.can === currentTreeBranch);
+                if (found) roots = [found];
+            }
+
+            rootUl.innerHTML = "";
+            if (roots.length === 0) {
+                rootUl.innerHTML = `<li style="padding:16px; color:var(--muted);">Không có dữ liệu nhánh này.</li>`;
+                return;
+            }
+            roots.forEach(r => rootUl.appendChild(createAdminTreeItem(r)));
+            const q = document.getElementById("treeSearchInput")?.value.trim();
+            if (q) searchAdminTree();
+        }
+
+        function createAdminTreeItem(node) {
+            const li = document.createElement("li");
+            const hasKids = node._children && node._children.length > 0;
+            const isExpanded = expandedTreeStts && expandedTreeStts.has(node.stt);
+            li.className = `atree-item${hasKids && !isExpanded ? " collapsed" : ""}`;
+            li.id = `atree-item-${node.stt}`;
+
+            let canClass = "";
+            if (node.can === "Can 1") canClass = "node-can1";
+            else if (node.can === "Can 2") canClass = "node-can2";
+            else if (node.can === "Can 3") canClass = "node-can3";
+            else if (node.can === "Can 4") canClass = "node-can4";
+
+            const isFemale = (node.gioi_tinh || "").trim().toLowerCase() === "nữ";
+            const spouseName = extractSpouseName(node.phoi_ngau);
+            const spouseTxt = spouseName ? `${isFemale ? "Chồng" : "Vợ"}: ${escapeHtml(spouseName)}` : "";
+            const years = (node.nam_sinh || node.nam_mat) ? `${escapeHtml(node.nam_sinh || "?")} – ${escapeHtml(node.nam_mat || "nay")}` : "";
+            const orderBadge = node.thu_tu ? `<span class="badge" style="background:#e0f2fe; color:#0369a1;">Con thứ ${escapeHtml(node.thu_tu)}</span>` : "";
+
+            const card = document.createElement("div");
+            card.className = `atree-node ${canClass}`;
+            card.id = `atree-node-${node.stt}`;
+            card.innerHTML = `
+                <div class="atree-info">
+                    <div style="display:flex; flex-wrap:wrap; gap:6px; align-items:center;">
+                        <span class="badge">${escapeHtml(node.can)} • ${escapeHtml(node.doi)}</span>
+                        <span style="font-size:0.75rem; color:var(--muted);">#${node.stt} (${escapeHtml(node.ma)})</span>
+                        ${orderBadge}
+                    </div>
+                    <div style="margin-top:4px;">
+                        <strong style="color:var(--primary); font-size:0.98rem;">${escapeHtml(node.ho_ten)}</strong>
+                        ${node.huy ? `<span style="font-size:0.82rem; color:var(--muted);"> (Húy: ${escapeHtml(node.huy)})</span>` : ""}
+                    </div>
+                    <div class="atree-meta">
+                        ${[years, spouseTxt, node.ngay_gio ? `Giỗ: ${escapeHtml(node.ngay_gio)}` : "", node.sdt ? `📞 ${escapeHtml(node.sdt)}` : ""].filter(Boolean).join(" &nbsp;•&nbsp; ") || escapeHtml(node.gioi_tinh || "Nam")}
+                    </div>
+                </div>
+                <div class="atree-actions">
+                    ${hasKids ? `<button type="button" class="atree-toggle" onclick="toggleAdminTreeNode(${node.stt})">${isExpanded ? "–" : "+"} (${node._children.length} con)</button>` : ""}
+                    <button type="button" class="btn btn-green btn-sm auth-only" onclick="openQuickChildModal(${node.stt})">➕ Con</button>
+                    <button type="button" class="btn btn-blue btn-sm auth-only" onclick="openPersonModal(${node.stt})">✏️ Sửa</button>
+                    <button type="button" class="btn btn-danger btn-sm auth-only" onclick="deletePerson(${node.stt}, '${escapeHtml(node.ho_ten)}')">🗑️</button>
+                </div>
+            `;
+            li.appendChild(card);
+
+            if (hasKids) {
+                const ul = document.createElement("ul");
+                ul.className = "atree-children";
+                node._children.forEach(ch => ul.appendChild(createAdminTreeItem(ch)));
+                li.appendChild(ul);
+            }
+            return li;
+        }
+
+        function toggleAdminTreeNode(stt) {
+            const li = document.getElementById(`atree-item-${stt}`);
+            if (!li) return;
+            const collapsed = li.classList.toggle("collapsed");
+            if (collapsed) expandedTreeStts.delete(stt);
+            else expandedTreeStts.add(stt);
+            const btn = li.querySelector(":scope > .atree-node .atree-toggle");
+            if (btn) {
+                const countMatch = btn.textContent.match(/\(\d+ con\)/);
+                btn.textContent = `${collapsed ? "+" : "–"} ${countMatch ? countMatch[0] : ""}`;
+            }
+        }
+
+        function toggleAllAdminTree(expand) {
+            document.querySelectorAll("#adminTreeRoot .atree-item").forEach(li => {
+                const stt = parseInt(li.id.replace("atree-item-", ""), 10);
+                if (!li.querySelector(":scope > .atree-children")) return;
+                li.classList.toggle("collapsed", !expand);
+                if (expand) expandedTreeStts.add(stt);
+                else expandedTreeStts.delete(stt);
+                const btn = li.querySelector(":scope > .atree-node .atree-toggle");
+                if (btn) {
+                    const countMatch = btn.textContent.match(/\(\d+ con\)/);
+                    btn.textContent = `${expand ? "–" : "+"} ${countMatch ? countMatch[0] : ""}`;
+                }
+            });
+        }
+
+        function searchAdminTree() {
+            const q = stripAccents(document.getElementById("treeSearchInput").value.trim());
+            document.querySelectorAll("#adminTreeRoot .atree-node").forEach(n => n.classList.remove("highlight"));
+            if (!q) return;
+
+            let firstEl = null;
+            appData.people.forEach(p => {
+                const hay = stripAccents(`${p.ho_ten} ${p.huy} ${p.ma} ${p.sdt} ${p.phoi_ngau}`);
+                if (hay.includes(q)) {
+                    const nodeEl = document.getElementById(`atree-node-${p.stt}`);
+                    if (nodeEl) {
+                        nodeEl.classList.add("highlight");
+                        if (!firstEl) firstEl = nodeEl;
+                        let parentLi = nodeEl.closest(".atree-item")?.parentElement?.closest(".atree-item");
+                        while (parentLi) {
+                            const pStt = parseInt(parentLi.id.replace("atree-item-", ""), 10);
+                            parentLi.classList.remove("collapsed");
+                            expandedTreeStts.add(pStt);
+                            const btn = parentLi.querySelector(":scope > .atree-node .atree-toggle");
+                            if (btn) {
+                                const m = btn.textContent.match(/\(\d+ con\)/);
+                                btn.textContent = `– ${m ? m[0] : ""}`;
+                            }
+                            parentLi = parentLi.parentElement?.closest(".atree-item");
+                        }
+                    }
+                }
+            });
+            if (firstEl) firstEl.scrollIntoView({ behavior: "smooth", block: "center" });
         }
 
         let fatherTreeNodes = [];
@@ -1047,6 +1369,7 @@
                 return;
             }
             showToast(data.message, "success");
+            if (expandedTreeStts) expandedTreeStts.add(parentStt);
             await loadData();
 
             if (keepOpen) {
