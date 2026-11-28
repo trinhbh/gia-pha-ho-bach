@@ -99,14 +99,19 @@ Hệ thống đã được nâng cấp lên Web Python (FastAPI) chạy trực t
 
 1. **Truy cập & Tra cứu công khai:**
    - Mở địa chỉ: **https://gia-pha-ho-bach.onrender.com/** (chờ ~20–40 giây nếu server gói miễn phí Render vừa thức dậy).
-   - Mọi người đều có thể xem danh bạ, tìm kiếm theo tên/SĐT/địa chỉ/ngày giỗ và bấm **🌳 Xem Cây Phả Hệ** để xem sơ đồ cây + lịch kỵ giỗ 12 tháng Âm lịch.
+   - Có 2 chế độ xem ngay trên tab Quản lý Nhân đinh: **📋 Dạng Bảng** và **🌳 Dạng Cây** (lọc theo Can, tìm kiếm không dấu, mở/thu gọn từng nhánh).
+   - Bấm **🌳 Xem Cây Phả Hệ** để xem giao diện cây đồ họa, cây dọc điện thoại (hiển thị đủ họ tên), lịch kỵ giỗ 12 tháng Âm lịch và thống kê 9 thế hệ.
 2. **Đăng nhập Google để mở khóa Thêm / Sửa / Xóa:**
    - Bấm nút **Đăng nhập bằng Google** ở góc trên bên phải.
    - Tài khoản Gmail đăng nhập bắt buộc phải nằm trong sheet **`nguoi_dung`** (trạng thái `Hoạt động`). Nếu chưa có trong danh sách, hệ thống chỉ cho phép xem.
-3. **Các trường thông tin mới được bổ sung:**
+3. **Thao tác nhanh & Các trường thông tin mới:**
+   - **➕ Thêm Nhanh Con (trên bảng và trực tiếp trên cây):** Bấm nút **➕ Con** tại node Cha/Mẹ để tự động gắn `ID_CHA`, kế thừa *Can*, tăng *Đời + 1*, điền đúng *Cha/Mẹ* theo giới tính và hỗ trợ **💾 Lưu & Thêm tiếp** liên tục.
+   - **Sắp xếp anh chị em (`Thứ tự con`):** Nhập `1, 2, 3...` để sắp xếp đúng thứ tự anh chị em trên cây.
+   - **Nhiều Phối ngẫu & Node Nữ:** Ngăn cách nhiều vợ/chồng bằng dấu `;`. Hệ thống hiển thị đủ tên trên cây, tự động hiện nhãn `Chồng:` cho node Nữ, suy luận đúng *Thân phụ (Cha)* của con từ chồng của node Nữ, và cho phép chọn Bà 1 / Bà 2 khi thêm nhanh con.
    - **Tách biệt Ngày mất & Ngày giỗ:** `Năm mất / Thọ`, `Ngày mất cụ thể (DL/ÂL)`, và `Ngày giỗ Âm lịch` được tách riêng biệt rõ ràng.
    - **Thông tin liên hệ hiện đại:** `Số điện thoại`, `Link Facebook`, `Nơi ở hiện tại`, `Nghề nghiệp / Học vấn`.
-   - **Chọn Thân phụ theo cây:** Khi Thêm/Sửa nhân đinh, ô chọn Cha sắp xếp theo cây phả hệ và hỗ trợ tìm kiếm tiếng Việt không dấu để tự động gắn đúng `ID_CHA`.
-4. **Xuất bản Web Tĩnh (`index.html`):**
-   - Tại tab **🌐 Xuất Bản Lên Internet**, có tùy chọn **Ẩn thông tin riêng tư (SĐT, Link Facebook, Nơi ở)** trước khi tải về file `index.html` để đưa lên GitHub Pages / Netlify.
+   - **Chọn Thân phụ theo cây:** Ô chọn Cha/Mẹ sắp xếp theo cây phả hệ và hỗ trợ tìm kiếm tiếng Việt không dấu để tự động gắn đúng `ID_CHA`.
+4. **Xuất bản & Đồng bộ tự động sang GitHub Pages (`https://trinhbh.github.io/gia-pha-ho-bach/`):**
+   - GitHub Actions tự động kéo `index.html` mới nhất từ Render sang GitHub Pages lúc **08:00 sáng hàng ngày**, hoặc có thể bấm **Run workflow** trong tab **Actions** trên GitHub để đồng bộ ngay lập tức.
+   - Tại tab **🌐 Xuất Bản Lên Internet**, có tùy chọn **Ẩn thông tin riêng tư (SĐT, Link Facebook, Nơi ở)** trước khi tải về file `index.html`.
 
