@@ -629,7 +629,7 @@
                         </select>
                     </div>
                     <div class="form-group">
-                        <label>Can / Chi *</label>
+                        <label>Can / Chi * <span id="canAutoTag" style="display:none; font-size:0.75rem; color:var(--primary); font-weight:normal;">(theo Thân phụ)</span></label>
                         <select id="f_can">
                             <option value="Trung Chi 2">Trung Chi 2</option>
                             <option value="Tiểu Chi 1">Tiểu Chi 1</option>
@@ -640,7 +640,7 @@
                         </select>
                     </div>
                     <div class="form-group">
-                        <label>Đời *</label>
+                        <label>Đời * <span id="doiAutoTag" style="display:none; font-size:0.75rem; color:var(--primary); font-weight:normal;">(theo Thân phụ)</span></label>
                         <input type="text" id="f_doi" value="Đời 8" required placeholder="VD: Đời 8">
                     </div>
                     <div class="form-group">
@@ -1236,6 +1236,25 @@
             return extractAllSpouseNames(phoiNgau)[0] || "";
         }
 
+        function syncCanDoiLockState(locked) {
+            const canEl = document.getElementById("f_can");
+            const doiEl = document.getElementById("f_doi");
+            const canTag = document.getElementById("canAutoTag");
+            const doiTag = document.getElementById("doiAutoTag");
+            if (canEl) {
+                canEl.disabled = locked;
+                canEl.style.backgroundColor = locked ? "#f3f4f6" : "";
+                canEl.style.cursor = locked ? "not-allowed" : "";
+            }
+            if (doiEl) {
+                doiEl.readOnly = locked;
+                doiEl.style.backgroundColor = locked ? "#f3f4f6" : "";
+                doiEl.style.cursor = locked ? "not-allowed" : "";
+            }
+            if (canTag) canTag.style.display = locked ? "inline" : "none";
+            if (doiTag) doiTag.style.display = locked ? "inline" : "none";
+        }
+
         function selectFather(stt, isInitialLoad = false) {
             const idVal = parseInt(stt || "0", 10);
             document.getElementById("f_id_cha").value = idVal;
@@ -1246,6 +1265,7 @@
                 searchInput.value = "";
                 if (!isInitialLoad) document.getElementById("f_cha").value = "";
                 hint.textContent = "Đang chọn: Không có Cha / Mẹ trên cây (ID_CHA = 0)";
+                syncCanDoiLockState(false);
             } else {
                 const node = fatherTreeNodes.find(x => x.person.stt === idVal) ||
                              { person: appData.people.find(p => p.stt === idVal), parentName: "" };
@@ -1253,6 +1273,16 @@
                 if (father) {
                     const isFemale = (father.gioi_tinh || "").trim().toLowerCase() === "nữ";
                     searchInput.value = `${father.ho_ten} (${father.can} - ${father.doi})`;
+                    if (!isInitialLoad) {
+                        const canEl = document.getElementById("f_can");
+                        if (canEl && father.can && Array.from(canEl.options).some(o => o.value === father.can)) {
+                            canEl.value = father.can;
+                        }
+                        const doiEl = document.getElementById("f_doi");
+                        if (doiEl) {
+                            doiEl.value = computeNextDoi(father.doi);
+                        }
+                    }
                     if (isFemale) {
                         const husband = extractSpouseName(father.phoi_ngau);
                         if (!isInitialLoad || !document.getElementById("f_me").value.trim()) {
@@ -1264,8 +1294,11 @@
                     } else if (!isInitialLoad) {
                         document.getElementById("f_cha").value = father.ho_ten;
                     }
+                    syncCanDoiLockState(true);
                     const parentCtx = node.parentName ? ` • Con cụ ${node.parentName}` : "";
                     hint.textContent = `Đã gắn ID_CHA = ${father.stt} (${father.ho_ten}${isFemale ? " - Mẹ" : ""}${parentCtx})`;
+                } else {
+                    syncCanDoiLockState(false);
                 }
             }
             document.getElementById("fatherDropdown").classList.remove("open");
