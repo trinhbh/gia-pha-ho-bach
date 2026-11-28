@@ -435,7 +435,7 @@
                             <button type="button" id="btnViewTable" class="active" onclick="setPeopleView('table')">📋 Dạng Bảng</button>
                             <button type="button" id="btnViewTree" onclick="setPeopleView('tree')">🌳 Dạng Cây</button>
                         </div>
-                        <button class="btn btn-primary auth-only" onclick="openPersonModal()">➕ Thêm Nhân Đinh</button>
+                        <button class="btn btn-primary auth-only" onclick="openPersonModal()">➕ Thêm Con Cháu</button>
                     </div>
                 </div>
 
@@ -606,7 +606,7 @@
     <div id="personModal" class="modal">
         <div class="modal-box">
             <div class="modal-header">
-                <h2 id="personModalTitle">Thêm Nhân Đinh Mới</h2>
+                <h2 id="personModalTitle">Thêm Con Cháu Mới</h2>
                 <button class="close-btn" onclick="closeModal('personModal')">&times;</button>
             </div>
             <form id="personForm" onsubmit="savePerson(event)">
@@ -1512,7 +1512,7 @@
                 document.getElementById("f_thu_tu").value = p.thu_tu || "";
                 document.getElementById("f_ghi_chu").value = p.ghi_chu;
             } else {
-                document.getElementById("personModalTitle").textContent = "Thêm Nhân Đinh Mới";
+                document.getElementById("personModalTitle").textContent = "Thêm Con Cháu Mới";
                 document.getElementById("f_stt").value = "";
                 selectFather(0, true);
             }
