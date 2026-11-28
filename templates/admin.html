@@ -813,9 +813,21 @@
                     </div>
                     <div class="form-group">
                         <label>Năm sinh (tùy chọn)</label>
-                        <input type="text" id="qc_nam_sinh" placeholder="VD: 2010 (Canh Dần)">
+                        <input type="text" id="qc_nam_sinh" placeholder="VD: 1920 (Canh Thân)">
                     </div>
                     <div class="form-group">
+                        <label>Năm mất / Thọ (tùy chọn)</label>
+                        <input type="text" id="qc_nam_mat" placeholder="VD: 1995 - Thọ 76">
+                    </div>
+                    <div class="form-group">
+                        <label>Ngày mất cụ thể (tùy chọn)</label>
+                        <input type="text" id="qc_ngay_mat" placeholder="VD: 15/05/1995 DL">
+                    </div>
+                    <div class="form-group">
+                        <label>Ngày giỗ Âm lịch (tùy chọn)</label>
+                        <input type="text" id="qc_ngay_gio" placeholder="VD: 14/04 ÂL">
+                    </div>
+                    <div class="form-group full">
                         <label>Số điện thoại (tùy chọn)</label>
                         <input type="text" id="qc_sdt" placeholder="VD: 0912345678">
                     </div>
@@ -1401,6 +1413,9 @@
                 me: isFemale ? parent.ho_ten : otherParent,
                 thu_tu: document.getElementById("qc_thu_tu").value.trim(),
                 nam_sinh: document.getElementById("qc_nam_sinh").value.trim(),
+                nam_mat: document.getElementById("qc_nam_mat").value.trim(),
+                ngay_mat: document.getElementById("qc_ngay_mat").value.trim(),
+                ngay_gio: document.getElementById("qc_ngay_gio").value.trim(),
                 sdt: document.getElementById("qc_sdt").value.trim(),
             };
 
@@ -1422,6 +1437,9 @@
                 const nextOrder = (parseInt(document.getElementById("qc_thu_tu").value || "1", 10) || 1) + 1;
                 document.getElementById("qc_ho_ten").value = "";
                 document.getElementById("qc_nam_sinh").value = "";
+                document.getElementById("qc_nam_mat").value = "";
+                document.getElementById("qc_ngay_mat").value = "";
+                document.getElementById("qc_ngay_gio").value = "";
                 document.getElementById("qc_sdt").value = "";
                 document.getElementById("qc_thu_tu").value = nextOrder;
                 document.getElementById("qc_ho_ten").focus();
