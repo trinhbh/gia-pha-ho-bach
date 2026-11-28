@@ -446,14 +446,60 @@
     }
 
     .modal-close {
-      position: absolute;
-      top: 15px;
-      right: 18px;
-      font-size: 1.5rem;
+      position: sticky;
+      top: 0;
+      float: right;
+      z-index: 10;
+      width: 34px;
+      height: 34px;
+      border-radius: 50%;
+      font-size: 1.35rem;
+      line-height: 1;
       cursor: pointer;
-      border: none;
-      background: none;
-      color: var(--text-muted);
+      border: 1px solid var(--border);
+      background: rgba(255, 255, 255, 0.94);
+      backdrop-filter: blur(4px);
+      color: var(--text-main);
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      box-shadow: 0 2px 8px rgba(0, 0, 0, 0.12);
+      transition: all 0.2s;
+    }
+
+    .modal-close:hover {
+      background: #fee2e2;
+      color: #dc2626;
+      border-color: #fecaca;
+    }
+
+    .modal-footer-sticky {
+      position: sticky;
+      bottom: -24px;
+      margin: 18px -24px -24px -24px;
+      padding: 12px 24px;
+      background: rgba(255, 255, 255, 0.96);
+      backdrop-filter: blur(6px);
+      border-top: 1px solid var(--border);
+      display: flex;
+      justify-content: flex-end;
+      z-index: 10;
+    }
+
+    .btn-modal-close-bottom {
+      padding: 9px 20px;
+      background: #f1f5f9;
+      color: var(--text-main);
+      border: 1px solid var(--border);
+      border-radius: 8px;
+      font-size: 0.92rem;
+      font-weight: 600;
+      cursor: pointer;
+      transition: all 0.2s;
+    }
+
+    .btn-modal-close-bottom:hover {
+      background: #e2e8f0;
     }
 
     /* Footer */
@@ -1256,7 +1302,19 @@
         position: fixed;
         bottom: 0;
         max-height: 85vh;
-        padding: 20px 16px 30px 16px;
+        padding: 16px 16px 18px 16px;
+      }
+
+      .modal-footer-sticky {
+        bottom: -18px;
+        margin: 14px -16px -18px -16px;
+        padding: 10px 16px calc(12px + env(safe-area-inset-bottom, 0px)) 16px;
+      }
+
+      .btn-modal-close-bottom {
+        width: 100%;
+        padding: 11px 16px;
+        font-size: 0.95rem;
       }
     }
   </style>
@@ -1666,9 +1724,12 @@
   <!-- MODAL CHI TIẾT -->
   <div id="personModal" class="modal" onclick="closeModal(event)">
     <div class="modal-content" onclick="event.stopPropagation()">
-      <button class="modal-close" onclick="closeModalDirect()">&times;</button>
+      <button class="modal-close" onclick="closeModalDirect()" title="Đóng">&times;</button>
       <div id="modalBody">
         <!-- Injected by JS -->
+      </div>
+      <div class="modal-footer-sticky">
+        <button type="button" class="btn-modal-close-bottom" onclick="closeModalDirect()">✕ Đóng</button>
       </div>
     </div>
   </div>
