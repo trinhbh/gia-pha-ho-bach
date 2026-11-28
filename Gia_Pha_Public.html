@@ -5624,9 +5624,12 @@
             if (p.phoi_ngau) {
                 const isFemale = (p.gioi_tinh || "").trim().toLowerCase() === "nữ";
                 const spouseLabel = isFemale ? "Chồng" : "Vợ";
-                let spName = p.phoi_ngau.split(";")[0].split("(")[0].replace(/^(Bà\s*1:|Ông:|Vợ:|Chồng:)\s*/i, "").trim();
-                if (spName && !spName.includes("Chưa") && !spName.includes("Không")) {
-                    spouseHtml = `<div class="mc-spouse" title="${escapeHtml(p.phoi_ngau)}">${spouseLabel}: ${escapeHtml(spName)}</div>`;
+                const spList = p.phoi_ngau.split(";").map(part => {
+                    let s = part.split("(")[0].trim().replace(/^(Chồng|Vợ|Ông|Bà\s*\d*|Bà\s+cả|Bà\s+hai|Bà\s+ba|Bà\s+tư)\s*:\s*/i, "").trim();
+                    return (!s || /chưa|không/i.test(s)) ? "" : s;
+                }).filter(Boolean);
+                if (spList.length > 0) {
+                    spouseHtml = `<div class="mc-spouse" title="${escapeHtml(p.phoi_ngau)}">${spouseLabel}: ${escapeHtml(spList.join("; "))}</div>`;
                 }
             }
 
@@ -5951,9 +5954,12 @@
             if (p.phoi_ngau) {
                 const isFemale = (p.gioi_tinh || "").trim().toLowerCase() === "nữ";
                 const spouseLabel = isFemale ? "Chồng" : "Vợ";
-                let sp = p.phoi_ngau.split(";")[0].split("(")[0].replace(/^(Bà\s*1:|Ông:|Vợ:|Chồng:)\s*/i, "").trim();
-                if (sp && !sp.includes("Chưa") && !sp.includes("Không")) {
-                    spouseText = `<div class="vtree-spouse">${spouseLabel}: ${escapeHtml(sp)}</div>`;
+                const spList = p.phoi_ngau.split(";").map(part => {
+                    let s = part.split("(")[0].trim().replace(/^(Chồng|Vợ|Ông|Bà\s*\d*|Bà\s+cả|Bà\s+hai|Bà\s+ba|Bà\s+tư)\s*:\s*/i, "").trim();
+                    return (!s || /chưa|không/i.test(s)) ? "" : s;
+                }).filter(Boolean);
+                if (spList.length > 0) {
+                    spouseText = `<div class="vtree-spouse">${spouseLabel}: ${escapeHtml(spList.join("; "))}</div>`;
                 }
             }
 

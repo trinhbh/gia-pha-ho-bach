@@ -790,6 +790,11 @@
                         <label>Họ và Tên con *</label>
                         <input type="text" id="qc_ho_ten" required placeholder="Gõ nhanh họ tên (VD: Bạch Hưng ...)">
                     </div>
+                    <div class="form-group full" id="qc_other_parent_group">
+                        <label id="qc_other_parent_label">Thân mẫu (Mẹ)</label>
+                        <select id="qc_spouse_select" style="display:none; margin-bottom:6px;" onchange="onQuickSpouseSelect()"></select>
+                        <input type="text" id="qc_other_parent_input" placeholder="Nhập hoặc chọn tên Mẹ / Cha còn lại">
+                    </div>
                     <div class="form-group">
                         <label>Giới tính</label>
                         <select id="qc_gioi_tinh">
@@ -983,8 +988,8 @@
             else if (node.can === "Can 4") canClass = "node-can4";
 
             const isFemale = (node.gioi_tinh || "").trim().toLowerCase() === "nữ";
-            const spouseName = extractSpouseName(node.phoi_ngau);
-            const spouseTxt = spouseName ? `${isFemale ? "Chồng" : "Vợ"}: ${escapeHtml(spouseName)}` : "";
+            const spouseNames = extractAllSpouseNames(node.phoi_ngau);
+            const spouseTxt = spouseNames.length ? `${isFemale ? "Chồng" : "Vợ"}: ${escapeHtml(spouseNames.join("; "))}` : "";
             const years = (node.nam_sinh || node.nam_mat) ? `${escapeHtml(node.nam_sinh || "?")} – ${escapeHtml(node.nam_mat || "nay")}` : "";
             const orderBadge = node.thu_tu ? `<span class="badge" style="background:#e0f2fe; color:#0369a1;">Con thứ ${escapeHtml(node.thu_tu)}</span>` : "";
 
@@ -1197,12 +1202,21 @@
             dd.innerHTML = html;
         }
 
+        function extractAllSpouseNames(phoiNgau) {
+            if (!phoiNgau) return [];
+            return String(phoiNgau)
+                .split(";")
+                .map(part => {
+                    let s = part.split("(")[0].trim();
+                    s = s.replace(/^(Chồng|Vợ|Ông|Bà\s*\d*|Bà\s+cả|Bà\s+hai|Bà\s+ba|Bà\s+tư)\s*:\s*/i, "").trim();
+                    if (!s || /chưa|không/i.test(s)) return "";
+                    return s;
+                })
+                .filter(Boolean);
+        }
+
         function extractSpouseName(phoiNgau) {
-            if (!phoiNgau) return "";
-            let s = String(phoiNgau).split(";")[0].split("(")[0];
-            s = s.trim().replace(/^(Chồng|Vợ|Ông|Bà\s*\d*)\s*:\s*/i, "").trim();
-            if (!s || /chưa|không/i.test(s)) return "";
-            return s;
+            return extractAllSpouseNames(phoiNgau)[0] || "";
         }
 
         function selectFather(stt, isInitialLoad = false) {
@@ -1308,6 +1322,11 @@
             return "Đời 8";
         }
 
+        function onQuickSpouseSelect() {
+            const val = document.getElementById("qc_spouse_select").value;
+            document.getElementById("qc_other_parent_input").value = val;
+        }
+
         function openQuickChildModal(parentStt) {
             const parent = appData.people.find(x => x.stt === parentStt);
             if (!parent) return;
@@ -1316,16 +1335,38 @@
 
             const nextDoi = computeNextDoi(parent.doi);
             const isFemale = (parent.gioi_tinh || "").trim().toLowerCase() === "nữ";
-            const spouse = extractSpouseName(parent.phoi_ngau);
-            const chaName = isFemale ? spouse : parent.ho_ten;
-            const meName = isFemale ? parent.ho_ten : spouse;
+            const spouses = extractAllSpouseNames(parent.phoi_ngau);
+            const firstSpouse = spouses[0] || "";
             const existingKids = appData.people.filter(x => x.id_cha === parent.stt).length;
 
             document.getElementById("quickChildTitle").textContent = `➕ Thêm Con của: ${parent.ho_ten}`;
             document.getElementById("quickChildContext").innerHTML = `
                 <div><strong>Nhánh / Đời tự động:</strong> ${escapeHtml(parent.can)} • <strong>${escapeHtml(nextDoi)}</strong> (ID_CHA = ${parent.stt})</div>
-                <div><strong>Cha:</strong> ${escapeHtml(chaName || "—")} &nbsp;|&nbsp; <strong>Mẹ:</strong> ${escapeHtml(meName || "—")}</div>
+                <div><strong>${isFemale ? "Thân mẫu (Mẹ)" : "Thân phụ (Cha)"}:</strong> ${escapeHtml(parent.ho_ten)}</div>
             `;
+
+            document.getElementById("qc_other_parent_label").textContent = isFemale
+                ? "Thân phụ (Cha) — chọn chồng nếu có nhiều người"
+                : "Thân mẫu (Mẹ) — chọn vợ nếu có nhiều người";
+
+            const sel = document.getElementById("qc_spouse_select");
+            const inp = document.getElementById("qc_other_parent_input");
+            if (spouses.length > 1) {
+                sel.innerHTML = "";
+                spouses.forEach((sp, idx) => {
+                    const opt = document.createElement("option");
+                    opt.value = sp;
+                    opt.textContent = `${isFemale ? "Chồng" : "Bà"} ${idx + 1}: ${sp}`;
+                    sel.appendChild(opt);
+                });
+                sel.style.display = "block";
+                sel.value = firstSpouse;
+            } else {
+                sel.style.display = "none";
+                sel.innerHTML = "";
+            }
+            inp.value = firstSpouse;
+
             document.getElementById("qc_thu_tu").value = existingKids + 1;
             document.getElementById("quickChildModal").classList.add("active");
             setTimeout(() => document.getElementById("qc_ho_ten").focus(), 60);
@@ -1344,15 +1385,15 @@
             if (!parent) return;
 
             const isFemale = (parent.gioi_tinh || "").trim().toLowerCase() === "nữ";
-            const spouse = extractSpouseName(parent.phoi_ngau);
+            const otherParent = document.getElementById("qc_other_parent_input").value.trim();
             const payload = {
                 ho_ten: hoTen,
                 gioi_tinh: document.getElementById("qc_gioi_tinh").value,
                 can: parent.can || "Can 2",
                 doi: computeNextDoi(parent.doi),
                 id_cha: parent.stt,
-                cha: isFemale ? spouse : parent.ho_ten,
-                me: isFemale ? parent.ho_ten : spouse,
+                cha: isFemale ? otherParent : parent.ho_ten,
+                me: isFemale ? parent.ho_ten : otherParent,
                 thu_tu: document.getElementById("qc_thu_tu").value.trim(),
                 nam_sinh: document.getElementById("qc_nam_sinh").value.trim(),
                 sdt: document.getElementById("qc_sdt").value.trim(),
